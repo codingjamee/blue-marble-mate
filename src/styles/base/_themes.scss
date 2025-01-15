@@ -1,0 +1,48 @@
+$themes: (
+  light: (
+    background-primary: #ffffff,
+    background-secondary: #f5f5f5,
+    text-primary: #333333,
+    text-secondary: #666666,
+    accent-primary: #4664ff,
+    accent-secondary: #7b61ff,
+    border-color: #e0e0e0,
+    progress-bg: #eaeaea,
+    card-bg: #ffffff,
+  ),
+  dark: (
+    background-primary: #1a1b1e,
+    background-secondary: #262730,
+    text-primary: #ffffff,
+    text-secondary: #a0a0a0,
+    accent-primary: #4664ff,
+    accent-secondary: #7b61ff,
+    border-color: #363636,
+    progress-bg: #363636,
+    card-bg: #262730,
+  ),
+);
+
+//.theme-light 또는 .theme-dark 내의 블록 생성
+@mixin themed() {
+  @each $theme, $map in $themes {
+    .theme-#{$theme} & {
+      $theme-map: () !global;
+      @each $key, $value in $map {
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+      @content;
+      $theme-map: null !global;
+    }
+  }
+}
+
+
+@function t($key) {
+  @return map-get($theme-map, $key);
+}

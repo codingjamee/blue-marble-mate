@@ -1,0 +1,11 @@
+//베이스
+@import "./base/reset";
+@import "./base/themes";
+@import "./base/global";
+
+//유틸클래스
+@import "./utilities/spacing";
+@import "./utilities/breakpoints";
+
+//페이지
+@import "./pages/home";
