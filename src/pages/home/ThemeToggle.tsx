@@ -12,6 +12,7 @@ const ThemeToggle = () => {
       onClick={handleToggle}
       className="theme-toggle-btn"
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      data-testid="theme-btn"
     >
       {theme === "light" ? "🌙" : "☀️"}
     </button>
