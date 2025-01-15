@@ -1,0 +1,10 @@
+.blue-marble-container {
+  overflow: hidden;
+  @include themed() {
+    background-color: t("background-primary");
+    color: t("text-primary");
+  }
+  header {
+    @extend .mt-4;
+  }
+}
