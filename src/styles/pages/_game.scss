@@ -1,0 +1,64 @@
+.game-container {
+  display: flex;
+  justify-content: space-between;
+  // flex-wrap: wrap;
+  flex-direction: column;
+  flex: 1;
+  flex-shrink: 1;
+  width: 100%;
+  min-width: 510px;
+  @include responsive(mobile, tablet) {
+    min-width: auto;
+  }
+
+  @include responsive(laptop, desktop, wide) {
+    flex-direction: row;
+  }
+  @extend .mt-4;
+  //공통사용 console-container
+  .console-container {
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: map-get($map: $spacings, $key: '2');
+    @extend .p-4;
+    @include themed() {
+      background-color: t('btn-secondary-dark');
+      color: t('text-primary');
+    }
+    h3 {
+      @include text-size('base');
+      font-weight: 700;
+    }
+    button {
+      @include themed() {
+        background-color: t('btn-dark');
+        color: t('btn-text');
+      }
+    }
+  }
+}
+
+.cell {
+  width: 25px;
+  height: 25px;
+  @include responsive(tablet, laptop, desktop, wide) {
+    width: 40px;
+    height: 40px;
+  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.left {
+    background-color: #dbeafe;
+  }
+  &.top {
+    background-color: #fee2e2;
+  }
+  &.right {
+    background-color: #fef9c3;
+  }
+  &.bottom {
+    background-color: #dcfce7;
+  }
+}
