@@ -2,6 +2,7 @@
 import { Outlet } from "react-router-dom";
 import useThemeStore from "../stores/useThemeStore";
 import ThemeToggle from "../pages/home/ThemeToggle";
+import Header from "./Header";
 
 const RootLayout = () => {
   const theme = useThemeStore((state) => state.theme);
@@ -9,7 +10,7 @@ const RootLayout = () => {
   return (
     <div className={`theme-${theme}`}>
       <div className="wrapper">
-        <ThemeToggle />
+        <Header />
         <Outlet />
       </div>
     </div>
