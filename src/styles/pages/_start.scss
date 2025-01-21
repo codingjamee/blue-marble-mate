@@ -1,0 +1,118 @@
+.start-container {
+  display: flex;
+  flex-direction: column;
+  gap: map-get($map: $spacings, $key: '5');
+
+  @extend .p-6;
+  @extend .mt-10;
+  @include themed() {
+    background-color: t('btn-secondary-dark');
+    color: t('text-primary');
+  }
+  .game-title {
+    text-align: center;
+    @include text-size('2xl');
+  }
+
+  .select-input {
+    position: relative;
+    .select-label {
+      @extend .mb-2;
+    }
+    .selected {
+      display: flex;
+      background-color: white;
+      color: black;
+      align-items: center;
+      justify-content: space-between;
+      height: 33px;
+      box-sizing: border-box;
+      @extend .p-2;
+    }
+    .select-box {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      @include themed() {
+        background-color: t('btn-third-dark');
+        color: t('btn-text');
+      }
+      .select-elem {
+        @extend .p-4;
+      }
+    }
+  }
+
+  .random-input {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: map-get($map: $spacings, $key: '2');
+
+      .input-btn {
+        display: flex;
+        flex: 1;
+        gap: map-get($map: $spacings, $key: '2');
+        flex-wrap: wrap;
+        input {
+          display: flex;
+          flex: 1;
+        }
+        .color-container {
+          display: flex;
+          flex: 1;
+          gap: 0.5rem;
+          max-width: 263px;
+          background-color: transparent;
+          justify-content: space-between;
+          .elem-container {
+            display: flex;
+            flex: 1;
+            gap: 0.5rem;
+            max-width: 230px;
+          }
+          .color-elem {
+            color: transparent;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .color-checked {
+              color: #ffffff;
+            }
+            .checked-black {
+              color: #000000;
+            }
+          }
+        }
+
+        .btn-random {
+          @extend .p-2;
+          @include themed() {
+            background-color: t('btn-third-dark');
+            color: t('btn-text');
+          }
+          height: auto;
+          font-weight: 300;
+        }
+      }
+    }
+  }
+  .btn-start {
+    @include text-size('lg');
+    @include themed() {
+      background-color: t('btn-dark');
+      color: t('btn-text');
+    }
+    @extend .p-2;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+}

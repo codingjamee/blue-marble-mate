@@ -1,0 +1,121 @@
+.game-container {
+  .left-console {
+    display: flex;
+    flex-direction: column;
+    // display: none;
+
+    // background-color: bisque;
+    @extend .m-2;
+    gap: map-get($map: $spacings, $key: '4');
+
+    @include responsive(laptop, desktop, wide) {
+      flex-direction: column;
+      width: 230px;
+      // display: flex;
+    }
+    .name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: map-get($map: $spacings, $key: '2');
+      h1 {
+        font-weight: 700;
+        @include text-size('2xl');
+        @include themed() {
+          color: t('text-primary');
+        }
+      }
+      button {
+        @include themed() {
+          background-color: t('btn-dark');
+          color: t('btn-text');
+        }
+      }
+    }
+
+    .dice {
+      &.rolling {
+        animation: rolling 1s ease-in-out infinite;
+      }
+      .roll-dice {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        &.disabled {
+          @include themed() {
+            background-color: t('disabled');
+            color: t('text-primary');
+          }
+        }
+      }
+    }
+
+    .dice-number {
+      display: flex;
+      gap: map-get($map: $spacings, $key: '2');
+      max-width: 200px;
+      div {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        // @include themed() {
+        //   background-color: t('btn-third-dark');
+        //   color: t('btn-text');
+        // }
+        @extend .p-3;
+      }
+    }
+    .double {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &.none {
+        color: transparent;
+      }
+    }
+
+    .building {
+      .des {
+        display: flex;
+        justify-content: space-between;
+        .owner {
+          @include themed() {
+            color: t('accent-primary');
+          }
+        }
+        .tolls {
+          @include themed() {
+            color: t('danger');
+          }
+        }
+      }
+      h3 {
+        @extend .mb-4;
+      }
+      section.des-section {
+        @extend .mb-2;
+      }
+      section.btns {
+        display: flex;
+        flex-direction: column;
+        gap: map-get($map: $spacings, $key: '2');
+        button {
+          &.btn-border {
+            background-color: transparent;
+            @include themed() {
+              color: t('text-primary');
+            }
+          }
+          &.tolls {
+            @include themed() {
+              background-color: t('btn-third-dark');
+            }
+          }
+        }
+      }
+    }
+  }
+}

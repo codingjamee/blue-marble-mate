@@ -1,23 +1,176 @@
-#root {
-  min-height: 100vh;
-  display: flex;
+html {
+  font-size: 16px;
+  @include responsive(laptop, desktop, wide) {
+    font-size: 16px;
+  }
+  @include responsive(tablet) {
+    font-size: 14px;
+  }
 }
 
-//theme class
+body {
+  font-family:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-$theme-name: ("dark", "light");
+h1 {
+  @include text-size('3xl');
+}
 
-@mixin themeClass() {
-  @each $name in $theme-name {
-    .theme-#{$name} {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      flex: 1;
-      background-color: map-get(map-get($themes, $name), "background-primary");
-      color: map-get(map-get($themes, $name), "text-primary");
+h2 {
+  @include text-size('2xl');
+}
+
+h3 {
+  @include text-size('xl');
+}
+
+p {
+  @include text-size('base');
+}
+
+input {
+  @extend .p-2;
+  @include themed() {
+    border: t('border-color');
+  }
+}
+
+//버튼
+.btn {
+  cursor: pointer;
+  height: map-get($map: $spacings, $key: '10');
+  font-weight: 700;
+  @extend .p-5;
+  @include themed() {
+    background-color: t('light-gray');
+    // color: t("text-primary");
+  }
+  &.btn-common {
+    @extend .p-2;
+    height: auto;
+    border-radius: 4px;
+  }
+  &.btn-border {
+    background-color: transparent;
+    height: auto;
+    border-radius: 4px;
+    @extend .p-2;
+    @include themed() {
+      border: 0.4px solid t('text-primary');
+      color: t('text-primary');
+    }
+  }
+  &.btn-dark {
+    height: auto;
+    border-radius: 4px;
+
+    @extend .px-4;
+    @extend .py-2;
+    @include themed() {
+      background-color: t('btn-dark');
+      color: t('btn-text');
     }
   }
 }
 
-@include themeClass;
+.btn-start {
+  @include text-size('lg');
+  @include themed() {
+    background-color: t('btn-dark');
+    color: t('btn-text');
+  }
+}
+.btn-saved {
+  @include text-size('lg');
+  @include themed() {
+    background-color: t('btn-secondary-dark');
+    color: t('text-primary');
+  }
+}
+
+//헤더
+.header-container {
+  height: 4rem;
+  padding: 0 5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  @include responsive(tablet) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  @include responsive(laptop) {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
+  @include responsive(wide) {
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
+  }
+  @include themed() {
+    background-color: t('btn-secondary-dark');
+    color: t('text-primary');
+  }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    @extend .mb-0;
+  }
+  .navi-block {
+    display: flex;
+    gap: map-get($map: $spacings, $key: '5');
+
+    .logo-color {
+      @include themed() {
+        color: t('text-primary');
+      }
+    }
+    .navi-container {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: map-get($map: $spacings, $key: '6');
+    }
+  }
+}
+
+//progress bar
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: map-get($map: $spacings, $key: '4');
+  @extend .mt-5;
+  .background {
+    width: 100%;
+    height: 8px;
+    border-radius: 8px;
+    @include themed() {
+      background-color: #e5e7eb;
+    }
+    .inner {
+      background-color: black;
+      height: 100%;
+      border-radius: 8px;
+    }
+  }
+  .percentage {
+    @include text-size('base');
+  }
+}

@@ -1,10 +1,101 @@
-.blue-marble-container {
+.logo-container {
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  @extend .mb-4;
   @include themed() {
-    background-color: t("background-primary");
-    color: t("text-primary");
+    background-color: t('background-primary');
+    color: t('text-primary');
   }
   header {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     @extend .mt-4;
+    h1.game-title {
+      @include text-size('4xl');
+      font-weight: 700;
+      @include themed() {
+        color: t('accent-secondary');
+      }
+    }
+  }
+  main {
+    p.game-subtitle {
+      @include themed() {
+        color: t('text-secondary');
+      }
+    }
+  }
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: map-get($map: $spacings, $key: '4');
+  font-weight: 700;
+  @extend .mb-5;
+
+  .btn-start {
+    @include text-size('lg');
+    @include themed() {
+      background-color: t('btn-dark');
+      color: t('btn-text');
+    }
+  }
+  .btn-saved {
+    @include text-size('lg');
+    @include themed() {
+      background-color: t('btn-secondary-dark');
+      color: t('text-primary');
+    }
+  }
+}
+
+.recently-container {
+  display: flex;
+  flex-direction: column;
+  padding: map-get($map: $spacings, $key: '5');
+  gap: map-get($map: $spacings, $key: '4');
+  font-weight: 700;
+  @include text-size('base');
+  @include themed() {
+    background-color: t('btn-secondary-dark');
+    color: t('text-primary');
+  }
+  .btn-saved {
+    height: auto;
+    border-radius: map-get($map: $spacings, $key: '2');
+    @include themed() {
+      background-color: t('btn-third-dark');
+      color: t('btn-text');
+    }
+    .des-container {
+      display: flex;
+      justify-content: space-between;
+      .des-title {
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        gap: map-get($map: $spacings, $key: '1');
+        .title {
+          @include text-size('sm');
+        }
+        .player {
+          @include text-size('xs');
+        }
+      }
+      .des-sub {
+        @include text-size('xs');
+        .progress {
+          @include themed() {
+            font-weight: 600;
+            color: t('accent-secondary');
+          }
+        }
+      }
+    }
   }
 }

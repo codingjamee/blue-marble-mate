@@ -1,0 +1,78 @@
+.right-console {
+  @extend .m-2;
+  @include responsive(laptop, desktop, wide) {
+    flex-direction: column;
+    width: 230px;
+  }
+  .lucky {
+    .lucky-items {
+      display: flex;
+      flex-direction: column;
+      gap: map-get($map: $spacings, $key: '2');
+
+      .lucky-item {
+        @include themed() {
+          background-color: t('btn-third-dark');
+          border-radius: 4px;
+        }
+        .lucky-card {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          @extend .p-2;
+          h4 {
+            @include themed() {
+              color: t('btn-text');
+            }
+          }
+
+          button.btn.btn-border {
+            background-color: transparent;
+            @extend .p-2;
+            border-color: white;
+          }
+        }
+      }
+    }
+  }
+  .player-container {
+    @extend .mt-2;
+    max-height: 400px;
+    .players {
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column;
+      gap: map-get($map: $spacings, $key: '2');
+      .player {
+        @extend .p-2;
+        @include themed() {
+          background-color: t('btn-third-dark');
+          color: t('btn-text');
+          border-radius: 4px;
+        }
+        .name {
+          display: flex;
+          gap: map-get($map: $spacings, $key: '2');
+          align-items: center;
+          flex-wrap: wrap;
+          .turn {
+            width: auto;
+            border-radius: 4px;
+            @extend .px-2;
+            @extend .py-1;
+          }
+        }
+        .description {
+          .des {
+            display: flex;
+            gap: map-get($map: $spacings, $key: '2');
+            justify-content: space-between;
+            @include themed() {
+              color: t('btn-text');
+            }
+          }
+        }
+      }
+    }
+  }
+}
