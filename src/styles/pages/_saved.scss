@@ -1,0 +1,70 @@
+.game-list {
+  display: flex;
+  flex-direction: column;
+  padding: map-get($map: $spacings, $key: '5');
+  gap: map-get($map: $spacings, $key: '4');
+  font-weight: 700;
+  @include text-size('base');
+  @include themed() {
+    background-color: t('background-primary');
+  }
+  .btn-saved {
+    height: auto;
+    border-radius: map-get($map: $spacings, $key: '2');
+  }
+  .saved-header {
+    display: flex;
+    justify-content: space-between;
+    .saved {
+      display: flex;
+      align-items: center;
+      gap: map-get($map: $spacings, $key: '4');
+      h3 {
+        @include text-size('lg');
+      }
+    }
+    .btn-border {
+      display: flex;
+      justify-content: space-between;
+      border-radius: 0px;
+      border-color: #d1d5db;
+      width: 106px;
+      @include text-size('sm');
+    }
+  }
+  .des-container {
+    display: flex;
+    flex-direction: column;
+    .des-title {
+      display: flex;
+      flex-direction: row;
+      text-align: start;
+      justify-content: space-between;
+      .string-contianer {
+        align-items: center;
+        display: flex;
+      }
+      .title {
+        @include text-size('sm');
+      }
+      .player {
+        display: flex;
+        flex-direction: row;
+        gap: map-get($map: $spacings, $key: '2');
+        @include text-size('xs');
+      }
+      .action-btns {
+        display: flex;
+        gap: map-get($map: $spacings, $key: '2');
+        align-items: center;
+      }
+      .date {
+        @include text-size('sm');
+      }
+      .progress {
+        display: flex;
+        flex: 1;
+      }
+    }
+  }
+}
