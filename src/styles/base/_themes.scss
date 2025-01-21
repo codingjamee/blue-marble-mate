@@ -9,17 +9,31 @@ $themes: (
     border-color: #e0e0e0,
     progress-bg: #eaeaea,
     card-bg: #ffffff,
+    btn-dark: #6e64f6,
+    btn-secondary-dark: #f1f3f5,
+    btn-third-dark: #3f4756,
+    btn-text: #ffffff,
+    light-gray: #f3f4f6,
+    danger: #f87171,
+    disabled: #f3f4f688,
   ),
   dark: (
-    background-primary: #1a1b1e,
+    background-primary: #111827,
     background-secondary: #262730,
     text-primary: #ffffff,
-    text-secondary: #a0a0a0,
+    text-secondary: #fcfcfc,
     accent-primary: #4664ff,
     accent-secondary: #7b61ff,
     border-color: #363636,
     progress-bg: #363636,
     card-bg: #262730,
+    btn-dark: #000000,
+    btn-secondary-dark: #1f2937,
+    btn-third-dark: #374151,
+    btn-text: #ffffff,
+    light-gray: #f3f4f6,
+    danger: #f87171,
+    disabled: #f3f4f6,
   ),
 );
 
@@ -42,7 +56,24 @@ $themes: (
   }
 }
 
-
 @function t($key) {
   @return map-get($theme-map, $key);
 }
+
+//theme class 설정
+$theme-name: ('dark', 'light');
+
+@mixin themeClass() {
+  @each $name in $theme-name {
+    .theme-#{$name} {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      flex: 1;
+      background-color: map-get(map-get($themes, $name), 'background-primary');
+      color: map-get(map-get($themes, $name), 'text-primary');
+    }
+  }
+}
+
+@include themeClass;

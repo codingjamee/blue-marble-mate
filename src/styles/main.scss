@@ -1,11 +1,21 @@
 //베이스
-@import "./base/reset";
-@import "./base/themes";
-@import "./base/global";
+@import './base/reset';
+@import './base/themes';
 
 //유틸클래스
-@import "./utilities/spacing";
-@import "./utilities/breakpoints";
+@import './utilities/breakpoints';
+@import './utilities/fontSizes';
+@import './utilities/spacing';
+@import './utilities/animations';
+
+//글로벌
+@import './base/global';
 
 //페이지
-@import "./pages/home";
+@import './pages/home';
+@import './pages/saved';
+@import './pages/start';
+@import './pages/game';
+@import './pages/game/center';
+@import './pages/game/left';
+@import './pages/game/right';

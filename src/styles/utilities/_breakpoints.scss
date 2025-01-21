@@ -16,33 +16,42 @@ $container-max-widths: (
   // 1024 - (40px * 2)
   desktop: 1200px,
   // 1280 - (40px * 2)
-  wide: 1320px // 1440 - (60px * 2),,,,,,
+  wide: 1320px, // 1440 - (60px * 2),,,,,,,
 );
 
-@mixin responsive($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media screen and (min-width: map-get($breakpoints, $breakpoint)) {
-      @content;
+@mixin responsive($points...) {
+  @each $point in $points {
+    @if map-has-key($breakpoints, $point) {
+      $value: map-get($breakpoints, $point);
+      @media screen and (min-width: $value) {
+        @content;
+      }
+    } @else {
+      @warn "Unfortunately, no value could be retrieved from `#{$point}`. "
+        + "Please make sure it is defined in `$breakpoints` map.";
     }
   }
 }
 
 .container {
   width: 100%;
+  box-sizing: border-box;
+  min-width: 320px;
+  margin-bottom: 2rem;
   @extend .mx-auto;
 
   max-width: map-get($container-max-widths, mobile);
 
   @include responsive(tablet) {
     max-width: map-get($container-max-widths, tablet);
-    padding-left: 2rem;
-    padding-right: 2rem;
+    // padding-left: 2rem;
+    // padding-right: 2rem;
   }
 
   @include responsive(laptop) {
     max-width: map-get($container-max-widths, laptop);
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    // padding-left: 2.5rem;
+    // padding-right: 2.5rem;
   }
 
   @include responsive(desktop) {
@@ -51,12 +60,12 @@ $container-max-widths: (
 
   @include responsive(wide) {
     max-width: map-get($container-max-widths, wide);
-    padding-left: 3.75rem;
-    padding-right: 3.75rem;
+    // padding-left: 3.75rem;
+    // padding-right: 3.75rem;
   }
 }
 
 .wrapper {
-  width: 100vw;
-  min-height: 100vh;
+  width: 100%;
+  min-height: 100%;
 }
