@@ -376,7 +376,7 @@ button {
   margin-right: 0.5rem;
 }
 
-.p-2, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .random-input .input-container .input-btn .btn-random, .start-container .select-input .selected, .btn.btn-border, .btn.btn-common, input {
+.p-2, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, .btn.btn-border, .btn.btn-common, input {
   padding: 0.5rem;
 }
 
@@ -1550,6 +1550,12 @@ p {
   height: 33px;
   box-sizing: border-box;
 }
+.start-container .select-input .selected .icon {
+  transition: transform 0.3s ease-in-out;
+}
+.start-container .select-input .selected .icon.rotate {
+  transform: rotate(-180deg);
+}
 .start-container .select-input .select-box {
   position: absolute;
   z-index: 1;
@@ -1563,42 +1569,80 @@ p {
   background-color: #374151;
   color: #ffffff;
 }
-.start-container .random-input {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-.start-container .random-input .input-container {
+.start-container .input-container {
   display: flex;
   flex-direction: column;
+  width: 100%;
   flex: 1;
   gap: 0.5rem;
 }
-.start-container .random-input .input-container .input-btn {
+.start-container .input-container .input-btn {
   display: flex;
   flex: 1;
   gap: 0.5rem;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
-.start-container .random-input .input-container .input-btn input {
+.start-container .input-container .input-btn input {
   display: flex;
   flex: 1;
 }
-.start-container .random-input .input-container .input-btn .color-container {
+@media screen and (min-width: 768px) {
+  .start-container .input-container .input-btn {
+    justify-content: flex-start;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .start-container .input-container .input-btn {
+    justify-content: flex-start;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .start-container .input-container .input-btn {
+    justify-content: flex-start;
+  }
+}
+@media screen and (min-width: 1440px) {
+  .start-container .input-container .input-btn {
+    justify-content: flex-start;
+  }
+}
+.start-container .color-container {
   display: flex;
   flex: 1;
   gap: 0.5rem;
-  max-width: 263px;
+  max-width: 326px;
+  width: 100%;
   background-color: transparent;
   justify-content: space-between;
 }
-.start-container .random-input .input-container .input-btn .color-container .elem-container {
+@media screen and (min-width: 768px) {
+  .start-container .color-container {
+    max-width: 263px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .start-container .color-container {
+    max-width: 263px;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .start-container .color-container {
+    max-width: 263px;
+  }
+}
+@media screen and (min-width: 1440px) {
+  .start-container .color-container {
+    max-width: 263px;
+  }
+}
+.start-container .color-container .elem-container {
   display: flex;
   flex: 1;
-  gap: 0.5rem;
+  justify-content: space-between;
   max-width: 230px;
 }
-.start-container .random-input .input-container .input-btn .color-container .color-elem {
+.start-container .color-container .color-elem {
   color: transparent;
   border-radius: 50%;
   width: 30px;
@@ -1607,21 +1651,51 @@ p {
   justify-content: center;
   align-items: center;
 }
-.start-container .random-input .input-container .input-btn .color-container .color-elem .color-checked {
+.start-container .color-container .color-elem .color-checked {
   color: #ffffff;
 }
-.start-container .random-input .input-container .input-btn .color-container .color-elem .checked-black {
+.start-container .color-container .color-elem .checked-black {
   color: #000000;
 }
-.start-container .random-input .input-container .input-btn .btn-random {
+.start-container .players-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+@media screen and (min-width: 768px) {
+  .start-container .players-container {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .start-container .players-container {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .start-container .players-container {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+}
+@media screen and (min-width: 1440px) {
+  .start-container .players-container {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+}
+.start-container .btn-random {
   height: auto;
   font-weight: 300;
 }
-.theme-light .start-container .random-input .input-container .input-btn .btn-random {
+.theme-light .start-container .btn-random {
   background-color: #3f4756;
   color: #ffffff;
 }
-.theme-dark .start-container .random-input .input-container .input-btn .btn-random {
+.theme-dark .start-container .btn-random {
   background-color: #374151;
   color: #ffffff;
 }

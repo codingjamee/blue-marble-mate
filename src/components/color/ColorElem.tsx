@@ -1,6 +1,14 @@
-import Checked from "../../../src/assets/Checked.svg?react";
+import Checked from '../../assets/Checked.svg?react';
+import { ColorOption } from '../../constants/colors';
 
-const ColorElem = ({ label, value, color, setColor }) => {
+interface Props {
+  label: ColorOption['label'];
+  value: ColorOption['value'];
+  setColor: (value: ColorOption['value']) => void;
+  checked: boolean;
+}
+
+const ColorElem = ({ label, value, setColor, checked }: Props) => {
   return (
     <div
       style={{ backgroundColor: value }}
@@ -11,10 +19,8 @@ const ColorElem = ({ label, value, color, setColor }) => {
       }}
       key={`${label}-${value}`}
     >
-      {color === value && (
-        <div
-          className={`${label === "노랑" ? "checked-black" : "color-checked"}`}
-        >
+      {checked && (
+        <div className={`${label === '노랑' ? 'checked-black' : 'color-checked'}`}>
           <Checked />
         </div>
       )}

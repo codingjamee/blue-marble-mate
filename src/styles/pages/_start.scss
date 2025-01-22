@@ -28,6 +28,13 @@
       height: 33px;
       box-sizing: border-box;
       @extend .p-2;
+      .icon {
+        transition: transform 0.3s ease-in-out;
+
+        &.rotate {
+          transform: rotate(-180deg);
+        }
+      }
     }
     .select-box {
       position: absolute;
@@ -43,66 +50,83 @@
     }
   }
 
-  .random-input {
+  .input-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    width: 100%;
     flex: 1;
-    .input-container {
+    gap: map-get($map: $spacings, $key: '2');
+
+    .input-btn {
       display: flex;
-      flex-direction: column;
       flex: 1;
       gap: map-get($map: $spacings, $key: '2');
+      flex-wrap: wrap;
+      justify-content: space-between;
 
-      .input-btn {
+      input {
         display: flex;
         flex: 1;
-        gap: map-get($map: $spacings, $key: '2');
-        flex-wrap: wrap;
-        input {
-          display: flex;
-          flex: 1;
-        }
-        .color-container {
-          display: flex;
-          flex: 1;
-          gap: 0.5rem;
-          max-width: 263px;
-          background-color: transparent;
-          justify-content: space-between;
-          .elem-container {
-            display: flex;
-            flex: 1;
-            gap: 0.5rem;
-            max-width: 230px;
-          }
-          .color-elem {
-            color: transparent;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            .color-checked {
-              color: #ffffff;
-            }
-            .checked-black {
-              color: #000000;
-            }
-          }
-        }
-
-        .btn-random {
-          @extend .p-2;
-          @include themed() {
-            background-color: t('btn-third-dark');
-            color: t('btn-text');
-          }
-          height: auto;
-          font-weight: 300;
-        }
+      }
+      @include responsive(tablet, laptop, desktop, wide) {
+        justify-content: flex-start;
       }
     }
+  }
+
+  .color-container {
+    display: flex;
+    flex: 1;
+    gap: 0.5rem;
+    max-width: 326px;
+    width: 100%;
+    background-color: transparent;
+    justify-content: space-between;
+    @include responsive(tablet, laptop, desktop, wide) {
+      max-width: 263px;
+    }
+    .elem-container {
+      display: flex;
+      flex: 1;
+      justify-content: space-between;
+      max-width: 230px;
+    }
+    .color-elem {
+      color: transparent;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .color-checked {
+        color: #ffffff;
+      }
+      .checked-black {
+        color: #000000;
+      }
+    }
+  }
+
+  .players-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: map-get($map: $spacings, $key: '2');
+    @include responsive(tablet, laptop, desktop, wide) {
+      align-items: flex-end;
+      flex-direction: row;
+    }
+  }
+
+  .btn-random {
+    @extend .p-2;
+    @include themed() {
+      background-color: t('btn-third-dark');
+      color: t('btn-text');
+    }
+    height: auto;
+    font-weight: 300;
   }
   .btn-start {
     @include text-size('lg');
