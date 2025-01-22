@@ -10,7 +10,10 @@ const ColorSelectBox = ({
   playerId: string;
   playerColor: ColorOption['value'];
 }) => {
-  const { updatePlayerColor } = playerStore((state) => state);
+  const { updatePlayerColor, updateRandomPlayerColor } = playerStore((state) => state);
+  const unAvailableColors = playerStore((state) => state.playerNames).map((p) => p.color);
+
+  console.log(unAvailableColors);
 
   return (
     <div className="color-container">
@@ -20,7 +23,9 @@ const ColorSelectBox = ({
             key={`elem-${label}-${value}`}
             label={label}
             value={value}
-            setColor={() => updatePlayerColor(playerId, value)}
+            setColor={() => {
+              !unAvailableColors.includes(value) && updatePlayerColor(playerId, value);
+            }}
             checked={playerColor === value}
           />
         ))}
@@ -29,6 +34,7 @@ const ColorSelectBox = ({
         className="btn btn-random"
         onClick={() => {
           console.log('clicked');
+          updateRandomPlayerColor(playerId);
         }}
       >
         <Random />

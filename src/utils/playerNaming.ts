@@ -1,15 +1,11 @@
 import { NameRandom, nameRandom } from '../data/nameRandom';
+import { getRandomElement } from './utils';
 
 interface NameComponents {
   onomatopoeia: string;
   adjective: string;
   animal: string;
 }
-
-const getRandomElement = <T>(array: T[]): T => {
-  const randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-};
 
 const getNameComponents = (data: NameRandom): NameComponents => {
   return {
@@ -27,6 +23,7 @@ const generateRandomPlayerName = (): string => {
   const nameData = structuredClone(nameRandom);
   const components = getNameComponents(nameData);
   console.log(combineNameComponents(components));
+
   return combineNameComponents(components);
 };
 

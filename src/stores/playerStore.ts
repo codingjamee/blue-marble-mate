@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
 import { ColorOption, colorOptions } from '../constants/colors';
 import { generateRandomPlayerName } from '../utils/playerNaming';
+import { getRandomElement } from '../utils/utils';
+import { getAvailableColors, getPlayerInitialize } from './playerLogic';
 
 export interface PlayerNamesType {
   id: string;
@@ -10,7 +12,7 @@ export interface PlayerNamesType {
   color: ColorOption['value'];
 }
 
-interface PlayerState {
+export interface PlayerState {
   playerNumber: number;
   playerNames: PlayerNamesType[];
   setPlayerNumber: (number: PlayerState['playerNumber']) => void;
@@ -18,6 +20,7 @@ interface PlayerState {
   updatePlayerName: (index: number, state: PlayerNamesType['name']) => void;
   updateRandomPlayerName: (playerId: PlayerNamesType['id']) => void;
   updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['color']) => void;
+  updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
 }
 
 const playerStore = create<PlayerState>((set) => ({
@@ -34,25 +37,10 @@ const playerStore = create<PlayerState>((set) => ({
       playerNumber: number,
     })),
   setPlayerInit: (number) =>
-    set((state: PlayerState) => {
-      const restPlayer = number - state.playerNames.length;
-      if (restPlayer <= 0) {
-        const slicedState = {
-          ...state,
-          playerNames: state.playerNames.slice(0, number),
-        };
-        return slicedState;
-      }
-      const newToAddedInit = Array(restPlayer)
-        .fill(null)
-        .map((_: null, index: number) => ({
-          id: uuid(),
-          name: '',
-          color: colorOptions[state.playerNames.length + index].value,
-        }));
-      console.log(newToAddedInit);
-      return { ...state, playerNames: [...state.playerNames, ...newToAddedInit] };
-    }),
+    set((state: PlayerState) => ({
+      ...state,
+      playerNames: getPlayerInitialize({ number, state }),
+    })),
   updatePlayerName: (index: number, updates: PlayerNamesType['name']) =>
     set((state) => ({
       playerNames: state.playerNames.map((player, i) =>
@@ -67,11 +55,21 @@ const playerStore = create<PlayerState>((set) => ({
     })),
   updateRandomPlayerName: (playerId: PlayerNamesType['id']) =>
     set((state) => {
-      const updatePlayers = structuredClone(state.playerNames);
-      const newPlayers = updatePlayers.map((player) =>
+      const newPlayers = state.playerNames.map((player) =>
         player.id === playerId ? { ...player, name: generateRandomPlayerName() } : player,
       );
       return { ...state, playerNames: newPlayers };
+    }),
+  updateRandomPlayerColor: (playerId) =>
+    set((state) => {
+      const selectedColor = state.playerNames.map((p) => p.color);
+      const availableColor = getAvailableColors(selectedColor);
+
+      const stateWithNewColor = state.playerNames.map((player) =>
+        player.id === playerId ? { ...player, color: getRandomElement(availableColor) } : player,
+      );
+
+      return { ...state, playerNames: stateWithNewColor };
     }),
 }));
 
