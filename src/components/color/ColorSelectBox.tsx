@@ -1,6 +1,6 @@
 import Random from '../../assets/Random.svg?react';
 import ColorElem from './ColorElem';
-import usePlayerStore from '../../stores/usePlayerStore';
+import playerStore from '../../stores/playerStore';
 import { ColorOption, colorOptions } from '../../constants/colors';
 
 const ColorSelectBox = ({
@@ -10,7 +10,7 @@ const ColorSelectBox = ({
   playerId: string;
   playerColor: ColorOption['value'];
 }) => {
-  const { updatePlayerColor } = usePlayerStore((state) => state);
+  const { updatePlayerColor } = playerStore((state) => state);
 
   return (
     <div className="color-container">
