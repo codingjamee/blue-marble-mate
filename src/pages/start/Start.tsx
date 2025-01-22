@@ -4,20 +4,16 @@ import InputWithRandomButton from '../../components/input/InputWithRandomButton'
 import Players from './Players';
 import CloseWrapper from '../../components/CloseWrapper';
 import SelectPlayerNumber from './SelectPlayerNumber';
-import usePlayerStore from '../../stores/usePlayerStore';
-
-export interface PlayerNamesType {
-  id: string;
-  name: string;
-  color: string;
-}
+import playerStore from '../../stores/playerStore';
+import gameStore from '../../stores/gameStore';
 
 export type OpenType = boolean;
 
 const Start = () => {
   // const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
-  const { setGameName, gameName, playerNames } = usePlayerStore((state) => state);
+  const { playerNames } = playerStore();
+  const { setGameName, updateRandomGameName, gameName } = gameStore();
 
   return (
     <>
@@ -29,8 +25,9 @@ const Start = () => {
             label="게임 이름"
             placeholder="게임 이름을 설정해주세요"
             onClickRandom={() => {
-              setGameName('set randomValue');
+              updateRandomGameName();
             }}
+            value={gameName}
             onChangeFn={(value) => setGameName(value)}
           />
           <SelectPlayerNumber isOpen={isOpen} setIsOpen={setIsOpen} />

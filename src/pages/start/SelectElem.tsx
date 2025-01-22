@@ -1,7 +1,7 @@
-import usePlayerStore from '../../stores/usePlayerStore';
+import playerStore from '../../stores/playerStore';
 
 const SelectElem = () => {
-  const { setPlayerNumber, setPlayerInit } = usePlayerStore((state) => state);
+  const { setPlayerNumber, setPlayerInit } = playerStore((state) => state);
 
   return Array(5)
     .fill(undefined)

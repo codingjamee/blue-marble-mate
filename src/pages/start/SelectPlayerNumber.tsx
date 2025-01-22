@@ -1,5 +1,5 @@
 import ArrowDown from '../../assets/ArrowDown.svg?react';
-import usePlayerStore from '../../stores/usePlayerStore';
+import playerStore from '../../stores/playerStore';
 import SelectElem from './SelectElem';
 import { OpenType } from './Start';
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const SelectPlayerNumber = ({ isOpen, setIsOpen }: Props) => {
-  const { playerNumber } = usePlayerStore((state) => state);
+  const { playerNumber } = playerStore((state) => state);
 
   return (
     <div
