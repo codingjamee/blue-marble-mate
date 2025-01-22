@@ -19,6 +19,7 @@ export interface PlayerState {
   setPlayerInit: (number: PlayerState['playerNumber']) => void;
   updatePlayerName: (index: number, state: PlayerNamesType['name']) => void;
   updateRandomPlayerName: (playerId: PlayerNamesType['id']) => void;
+  updateEmptyName: () => void;
   updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['color']) => void;
   updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
 }
@@ -57,6 +58,13 @@ const playerStore = create<PlayerState>((set) => ({
     set((state) => {
       const newPlayers = state.playerNames.map((player) =>
         player.id === playerId ? { ...player, name: generateRandomPlayerName() } : player,
+      );
+      return { ...state, playerNames: newPlayers };
+    }),
+  updateEmptyName: () =>
+    set((state) => {
+      const newPlayers = state.playerNames.map((p) =>
+        p.name.length === 0 ? { ...p, name: generateRandomPlayerName() } : p,
       );
       return { ...state, playerNames: newPlayers };
     }),

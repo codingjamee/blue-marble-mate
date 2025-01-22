@@ -12,8 +12,8 @@ export type OpenType = boolean;
 const Start = () => {
   // const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
-  const { playerNames } = playerStore();
-  const { setGameName, updateRandomGameName, gameName } = gameStore();
+  const { playerNames, updateEmptyName } = playerStore();
+  const { setGameName, updateRandomGameName, updatEmptyGameName, gameName } = gameStore();
 
   return (
     <>
@@ -38,6 +38,8 @@ const Start = () => {
               console.log(gameName);
               console.log(playerNames);
               // navigate('/game');
+              updateEmptyName();
+              updatEmptyGameName();
             }}
           >
             게임시작
