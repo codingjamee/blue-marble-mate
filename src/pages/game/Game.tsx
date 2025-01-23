@@ -21,7 +21,7 @@ const Game = () => {
           <GameControl />
         </nav>
         <section className="map-container">
-          <MiniMap data={BOARD_DATA} />
+          <MiniMap BOARD_DATA={BOARD_DATA} />
         </section>
         <nav className="right-console">
           <PlayerInfo />

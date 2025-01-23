@@ -376,7 +376,7 @@ button {
   margin-right: 0.5rem;
 }
 
-.p-2, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, .btn.btn-border, .btn.btn-common, input {
+.p-2, .modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, .btn.btn-border, .btn.btn-common, input {
   padding: 0.5rem;
 }
 
@@ -496,7 +496,7 @@ button {
   margin-right: 1rem;
 }
 
-.p-4, .game-container .console-container, .start-container .select-input .select-box .select-elem {
+.p-4, .modal-wrapper .modal-container, .game-container .console-container, .start-container .select-input .select-box .select-elem {
   padding: 1rem;
 }
 
@@ -1511,6 +1511,837 @@ p {
   flex: 1;
 }
 
+.container {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 320px;
+  margin-bottom: 2rem;
+  max-width: 327px;
+}
+@media screen and (min-width: 768px) {
+  .container {
+    max-width: 704px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .container {
+    max-width: 944px;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+@media screen and (min-width: 1440px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+.wrapper {
+  width: 100%;
+  min-height: 100%;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+@media screen and (min-width: 768px) {
+  .text-xs {
+    font-size: 0.75rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-xs {
+    font-size: 0.875rem;
+  }
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+@media screen and (min-width: 768px) {
+  .text-sm {
+    font-size: 0.875rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-sm {
+    font-size: 1rem;
+  }
+}
+
+.text-base {
+  font-size: 1rem;
+}
+@media screen and (min-width: 768px) {
+  .text-base {
+    font-size: 1rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-base {
+    font-size: 1.125rem;
+  }
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+@media screen and (min-width: 768px) {
+  .text-lg {
+    font-size: 1.25rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-lg {
+    font-size: 1.375rem;
+  }
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+@media screen and (min-width: 768px) {
+  .text-xl {
+    font-size: 1.5rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-xl {
+    font-size: 1.75rem;
+  }
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+@media screen and (min-width: 768px) {
+  .text-2xl {
+    font-size: 1.875rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-2xl {
+    font-size: 2rem;
+  }
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+@media screen and (min-width: 768px) {
+  .text-3xl {
+    font-size: 2.25rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-3xl {
+    font-size: 2.5rem;
+  }
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+}
+@media screen and (min-width: 768px) {
+  .text-4xl {
+    font-size: 2.5rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .text-4xl {
+    font-size: 3rem;
+  }
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.mx-0 {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.my-0 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mb-0, .header-container .container {
+  margin-bottom: 0;
+}
+
+.ml-0 {
+  margin-left: 0;
+}
+
+.mr-0 {
+  margin-right: 0;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.px-0 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.py-0 {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.pt-0 {
+  padding-top: 0;
+}
+
+.pb-0 {
+  padding-bottom: 0;
+}
+
+.pl-0 {
+  padding-left: 0;
+}
+
+.pr-0 {
+  padding-right: 0;
+}
+
+.m-1 {
+  margin: 0.25rem;
+}
+
+.mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.my-1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.p-1 {
+  padding: 0.25rem;
+}
+
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.py-1, .right-console .player-container .players .player .name .turn {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pr-1 {
+  padding-right: 0.25rem;
+}
+
+.m-2, .right-console, .game-container .left-console {
+  margin: 0.5rem;
+}
+
+.mx-2, .map-container {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mt-2, .right-console .player-container {
+  margin-top: 0.5rem;
+}
+
+.mb-2, .game-container .left-console .building section.des-section, .start-container .select-input .select-label {
+  margin-bottom: 0.5rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.p-2, .modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, input, .btn.btn-common, .btn.btn-border {
+  padding: 0.5rem;
+}
+
+.px-2, .right-console .player-container .players .player .name .turn {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.py-2, .btn.btn-dark {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.pt-2 {
+  padding-top: 0.5rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.m-3 {
+  margin: 0.75rem;
+}
+
+.mx-3 {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+}
+
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.ml-3 {
+  margin-left: 0.75rem;
+}
+
+.mr-3 {
+  margin-right: 0.75rem;
+}
+
+.p-3, .game-container .left-console .dice-number div {
+  padding: 0.75rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
+.pb-3 {
+  padding-bottom: 0.75rem;
+}
+
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
+.m-4 {
+  margin: 1rem;
+}
+
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mt-4, .game-container, .logo-container header {
+  margin-top: 1rem;
+}
+
+.mb-4, .game-container .left-console .building h3, .logo-container {
+  margin-bottom: 1rem;
+}
+
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
+}
+
+.p-4, .modal-wrapper .modal-container, .game-container .console-container, .start-container .select-input .select-box .select-elem {
+  padding: 1rem;
+}
+
+.px-4, .btn.btn-dark {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
+.pr-4 {
+  padding-right: 1rem;
+}
+
+.m-5 {
+  margin: 1.5rem;
+}
+
+.mx-5 {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+.my-5 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.mt-5, .progress-container {
+  margin-top: 1.5rem;
+}
+
+.mb-5, .buttons-container {
+  margin-bottom: 1.5rem;
+}
+
+.ml-5 {
+  margin-left: 1.5rem;
+}
+
+.mr-5 {
+  margin-right: 1.5rem;
+}
+
+.p-5, .btn {
+  padding: 1.5rem;
+}
+
+.px-5 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-5 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.pt-5 {
+  padding-top: 1.5rem;
+}
+
+.pb-5 {
+  padding-bottom: 1.5rem;
+}
+
+.pl-5 {
+  padding-left: 1.5rem;
+}
+
+.pr-5 {
+  padding-right: 1.5rem;
+}
+
+.m-6 {
+  margin: 2rem;
+}
+
+.mx-6 {
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.my-6 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.mt-6 {
+  margin-top: 2rem;
+}
+
+.mb-6 {
+  margin-bottom: 2rem;
+}
+
+.ml-6 {
+  margin-left: 2rem;
+}
+
+.mr-6 {
+  margin-right: 2rem;
+}
+
+.p-6, .start-container {
+  padding: 2rem;
+}
+
+.px-6 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-6 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.pt-6 {
+  padding-top: 2rem;
+}
+
+.pb-6 {
+  padding-bottom: 2rem;
+}
+
+.pl-6 {
+  padding-left: 2rem;
+}
+
+.pr-6 {
+  padding-right: 2rem;
+}
+
+.m-7 {
+  margin: 2.5rem;
+}
+
+.mx-7 {
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+}
+
+.my-7 {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.mt-7 {
+  margin-top: 2.5rem;
+}
+
+.mb-7 {
+  margin-bottom: 2.5rem;
+}
+
+.ml-7 {
+  margin-left: 2.5rem;
+}
+
+.mr-7 {
+  margin-right: 2.5rem;
+}
+
+.p-7 {
+  padding: 2.5rem;
+}
+
+.px-7 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.py-7 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.pt-7 {
+  padding-top: 2.5rem;
+}
+
+.pb-7 {
+  padding-bottom: 2.5rem;
+}
+
+.pl-7 {
+  padding-left: 2.5rem;
+}
+
+.pr-7 {
+  padding-right: 2.5rem;
+}
+
+.m-8 {
+  margin: 3rem;
+}
+
+.mx-8 {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.my-8 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.mt-8 {
+  margin-top: 3rem;
+}
+
+.mb-8 {
+  margin-bottom: 3rem;
+}
+
+.ml-8 {
+  margin-left: 3rem;
+}
+
+.mr-8 {
+  margin-right: 3rem;
+}
+
+.p-8 {
+  padding: 3rem;
+}
+
+.px-8 {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.py-8 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.pt-8 {
+  padding-top: 3rem;
+}
+
+.pb-8 {
+  padding-bottom: 3rem;
+}
+
+.pl-8 {
+  padding-left: 3rem;
+}
+
+.pr-8 {
+  padding-right: 3rem;
+}
+
+.m-9 {
+  margin: 3.75rem;
+}
+
+.mx-9 {
+  margin-left: 3.75rem;
+  margin-right: 3.75rem;
+}
+
+.my-9 {
+  margin-top: 3.75rem;
+  margin-bottom: 3.75rem;
+}
+
+.mt-9 {
+  margin-top: 3.75rem;
+}
+
+.mb-9 {
+  margin-bottom: 3.75rem;
+}
+
+.ml-9 {
+  margin-left: 3.75rem;
+}
+
+.mr-9 {
+  margin-right: 3.75rem;
+}
+
+.p-9 {
+  padding: 3.75rem;
+}
+
+.px-9 {
+  padding-left: 3.75rem;
+  padding-right: 3.75rem;
+}
+
+.py-9 {
+  padding-top: 3.75rem;
+  padding-bottom: 3.75rem;
+}
+
+.pt-9 {
+  padding-top: 3.75rem;
+}
+
+.pb-9 {
+  padding-bottom: 3.75rem;
+}
+
+.pl-9 {
+  padding-left: 3.75rem;
+}
+
+.pr-9 {
+  padding-right: 3.75rem;
+}
+
+.m-10 {
+  margin: 4rem;
+}
+
+.mx-10 {
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
+
+.my-10 {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+.mt-10, .start-container {
+  margin-top: 4rem;
+}
+
+.mb-10 {
+  margin-bottom: 4rem;
+}
+
+.ml-10 {
+  margin-left: 4rem;
+}
+
+.mr-10 {
+  margin-right: 4rem;
+}
+
+.p-10 {
+  padding: 4rem;
+}
+
+.px-10 {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+.py-10 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.pt-10 {
+  padding-top: 4rem;
+}
+
+.pb-10 {
+  padding-bottom: 4rem;
+}
+
+.pl-10 {
+  padding-left: 4rem;
+}
+
+.pr-10 {
+  padding-right: 4rem;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.mx-auto, .container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@keyframes rolling {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: rotateX(90deg) rotateY(45deg) rotateZ(45deg);
+  }
+  50% {
+    transform: rotateX(180deg) rotateY(90deg) rotateZ(90deg);
+  }
+  75% {
+    transform: rotateX(270deg) rotateY(135deg) rotateZ(135deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(180deg) rotateZ(180deg);
+  }
+}
 .start-container {
   display: flex;
   flex-direction: column;
@@ -1842,6 +2673,7 @@ p {
 .map-container {
   display: flex;
   flex: 1;
+  width: 100%;
 }
 .map-container .map {
   width: 100%;
@@ -1853,6 +2685,8 @@ p {
   margin: 0 auto;
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 @media screen and (min-width: 768px) {
   .board-game {
@@ -1892,6 +2726,7 @@ p {
   display: flex;
   justify-content: space-between;
   margin: 0.25rem 0;
+  height: calc(100% - 2rem);
 }
 .board-game .middle-section .left-column,
 .board-game .middle-section .right-column {
@@ -1901,6 +2736,17 @@ p {
 }
 .board-game .middle-section .left-column {
   flex-direction: column-reverse;
+}
+.board-game .middle-section .center-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  background-image: url("/src/assets/BackgroundSpace.jpg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: red;
+  min-height: 256px;
+  margin: 0.25rem;
 }
 
 .game-container .left-console {
@@ -2118,5 +2964,106 @@ p {
   color: #ffffff;
 }
 .theme-dark .right-console .player-container .players .player .description .des {
+  color: #ffffff;
+}
+
+.modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-wrapper .modal-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-sizing: border-box;
+}
+.theme-light .modal-wrapper .modal-container {
+  background-color: #f1f3f5;
+  color: #333333;
+}
+.theme-dark .modal-wrapper .modal-container {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+.modal-wrapper .modal-container h1 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-align: center;
+}
+@media screen and (min-width: 768px) {
+  .modal-wrapper .modal-container h1 {
+    font-size: 1.25rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .modal-wrapper .modal-container h1 {
+    font-size: 1.375rem;
+  }
+}
+.modal-wrapper .modal-container .m-players-container {
+  width: 100%;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.modal-wrapper .modal-container .m-players-container .player-num {
+  display: flex;
+  gap: 6px;
+}
+.modal-wrapper .modal-container .m-players-container .players {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+}
+.modal-wrapper .modal-container .m-players-container .players .p-color {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+.modal-wrapper .modal-container .btn-container {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+}
+.modal-wrapper .modal-container .btn-container .btn {
+  display: flex;
+  flex: 1;
+  border-radius: 4px;
+  font-size: 1.25rem;
+}
+@media screen and (min-width: 768px) {
+  .modal-wrapper .modal-container .btn-container .btn {
+    font-size: 1.5rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  .modal-wrapper .modal-container .btn-container .btn {
+    font-size: 1.75rem;
+  }
+}
+.modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  display: flex;
+  justify-content: center;
+}
+.theme-light .modal-wrapper .modal-container .btn-container .btn.btn-random {
+  background-color: #3f4756;
+  color: #ffffff;
+}
+.theme-dark .modal-wrapper .modal-container .btn-container .btn.btn-random {
+  background-color: #374151;
   color: #ffffff;
 }/*# sourceMappingURL=main.css.map */

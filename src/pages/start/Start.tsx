@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import InputWithRandomButton from '../../components/input/InputWithRandomButton';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Players from './Players';
 import CloseWrapper from '../../components/CloseWrapper';
 import SelectPlayerNumber from './SelectPlayerNumber';
 import playerStore from '../../stores/playerStore';
 import gameStore from '../../stores/gameStore';
+import ConfirmModal from '../../components/modal/ConfirmModal';
+import StartModal from './StartModal';
 
 export type OpenType = boolean;
 
 const Start = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
-  const { playerNames, updateEmptyName } = playerStore();
+  const [modal, setModal] = useState(false);
+  const { updateEmptyName, playerNames } = playerStore();
   const { setGameName, updateRandomGameName, updatEmptyGameName, gameName } = gameStore();
 
   return (
@@ -35,17 +38,20 @@ const Start = () => {
           <div
             className="btn btn-start"
             onClick={() => {
-              console.log(gameName);
-              console.log(playerNames);
-              // navigate('/game');
               updateEmptyName();
               updatEmptyGameName();
+              setModal(true);
             }}
           >
             게임시작
           </div>
         </div>
       </div>
+      {modal && (
+        <ConfirmModal setModal={setModal} onConfirm={() => navigate('/game')}>
+          <StartModal gameName={gameName} playerNames={playerNames} />
+        </ConfirmModal>
+      )}
     </>
   );
 };
