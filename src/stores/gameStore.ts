@@ -1,13 +1,6 @@
 import { create } from 'zustand';
 // import { persist } from 'zustand/middleware';
-import { ColorOption } from '../constants/colors';
 import { generateRandomGameName } from '../utils/sessionNaming';
-
-export interface PlayerNamesType {
-  id: string;
-  name: string;
-  color: ColorOption['value'];
-}
 
 export type GameNameType = string;
 
@@ -16,6 +9,7 @@ interface GameState {
   setGameName: (name: string) => void;
   updateRandomGameName: () => void;
   updatEmptyGameName: () => void;
+  isOnline: boolean;
 }
 
 const gameStore = create<GameState>((set) => ({
@@ -27,6 +21,10 @@ const gameStore = create<GameState>((set) => ({
       ...state,
       gameName: state.gameName.length === 0 ? generateRandomGameName() : state.gameName,
     })),
+  isOnline: navigator.onLine,
 }));
+
+window.addEventListener('online', () => gameStore.setState({ isOnline: true }));
+window.addEventListener('offline', () => gameStore.setState({ isOnline: false }));
 
 export default gameStore;
