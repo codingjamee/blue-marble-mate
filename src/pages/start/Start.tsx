@@ -16,7 +16,8 @@ const Start = () => {
   const [isOpen, setIsOpen] = useState<OpenType>(false);
   const [modal, setModal] = useState(false);
   const { updateEmptyName, playerNames } = playerStore();
-  const { setGameName, updateRandomGameName, updatEmptyGameName, gameName } = gameStore();
+  const { setGameName, updateRandomGameName, updateEmptyGameName, gameName, startGame, loadGame } =
+    gameStore();
 
   return (
     <>
@@ -31,7 +32,10 @@ const Start = () => {
               updateRandomGameName();
             }}
             value={gameName}
-            onChangeFn={(value) => setGameName(value)}
+            onChangeFn={(value) => {
+              console.log('setGameName, 게임이름을 설정 해주세요');
+              setGameName(value);
+            }}
           />
           <SelectPlayerNumber isOpen={isOpen} setIsOpen={setIsOpen} />
           <Players />
@@ -39,7 +43,7 @@ const Start = () => {
             className="btn btn-start"
             onClick={() => {
               updateEmptyName();
-              updatEmptyGameName();
+              updateEmptyGameName();
               setModal(true);
             }}
           >
@@ -48,7 +52,14 @@ const Start = () => {
         </div>
       </div>
       {modal && (
-        <ConfirmModal setModal={setModal} onConfirm={() => navigate('/game')}>
+        <ConfirmModal
+          setModal={setModal}
+          onConfirm={() => {
+            startGame();
+            loadGame();
+            navigate('/game');
+          }}
+        >
           <StartModal gameName={gameName} playerNames={playerNames} />
         </ConfirmModal>
       )}

@@ -8,7 +8,7 @@ const Players = () => {
   console.log(playerNames);
 
   return playerNames.map(({ id, color }, index) => (
-    <section className="players-container">
+    <section className="players-container" key={`${id}-${color}`}>
       <InputWithRandomButton
         value={playerNames[index].name}
         label={`플레이어 ${index + 1} 이름 : ${playerNames[index]?.name || `플레이어 ${index + 1}`}`}

@@ -1,12 +1,12 @@
 import Random from '../../assets/Random.svg?react';
-import { GameNameType } from '../../stores/gameStore';
+import { GameState } from '../../stores/gameStore';
 import { PlayerNamesType } from '../../stores/playerStore';
 interface Props {
   label: string;
   placeholder: string;
   onClickRandom: () => void;
   onChangeFn: (value: string) => void;
-  value: GameNameType | PlayerNamesType['name'];
+  value: GameState['gameName'] | PlayerNamesType['name'];
 }
 const InputWithRandomButton = ({ label, placeholder, onClickRandom, onChangeFn, value }: Props) => {
   return (

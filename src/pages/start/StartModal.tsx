@@ -1,8 +1,8 @@
-import { GameNameType } from '../../stores/gameStore';
+import { GameState } from '../../stores/gameStore';
 import { PlayerNamesType } from '../../stores/playerStore';
 
 interface Props {
-  gameName: GameNameType;
+  gameName: GameState['gameName'];
   playerNames: PlayerNamesType[];
 }
 
@@ -19,7 +19,7 @@ const StartModal = ({ gameName, playerNames }: Props) => {
               <div>{playerNames.length}명</div>
             </div>
             {playerNames.map((player, index) => (
-              <div className="players">
+              <div className="players" key={`${player.id}-${player.name}`}>
                 <div className="p-label">
                   player {index + 1} : {player.name}
                 </div>

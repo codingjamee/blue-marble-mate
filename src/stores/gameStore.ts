@@ -1,30 +1,115 @@
+// gameStore.ts
 import { create } from 'zustand';
-// import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { generateRandomGameName } from '../utils/sessionNaming';
+import playerStore, { PlayerNamesType } from './playerStore';
+import dayjs from 'dayjs';
+import { createStore, UseStore } from 'idb-keyval';
+import { customStorage, loadGameService, startGameService } from './gameLogic';
 
-export type GameNameType = string;
-
-interface GameState {
-  gameName: GameNameType;
-  setGameName: (name: string) => void;
-  updateRandomGameName: () => void;
-  updatEmptyGameName: () => void;
+export interface GameState {
+  gameName: string;
   isOnline: boolean;
+  gameState: boolean;
+  players: PlayerNamesType[];
+  createdAt: dayjs.Dayjs | null;
+  round: number;
+  currentStore: ReturnType<typeof createStore> | null;
+  gameList: string[]; // 모든 게임 이름 목록
+  setGameName: (name: string) => Promise<void>;
+  updateRandomGameName: () => Promise<void>;
+  updateEmptyGameName: () => Promise<void>;
+  startGame: (value?: boolean) => Promise<void>;
+  loadGame: () => Promise<GameData | null | undefined>;
+  endGame: (value?: boolean) => void;
+  deleteGame: (name: string) => Promise<void>;
+  createNewStore: (name: string) => Promise<UseStore>;
 }
 
-const gameStore = create<GameState>((set) => ({
-  gameName: '',
-  setGameName: (name) => set((state) => ({ ...state, gameName: name })),
-  updateRandomGameName: () => set((state) => ({ ...state, gameName: generateRandomGameName() })),
-  updatEmptyGameName: () =>
-    set((state) => ({
-      ...state,
-      gameName: state.gameName.length === 0 ? generateRandomGameName() : state.gameName,
-    })),
-  isOnline: navigator.onLine,
-}));
+export interface GameData {
+  gameName: string;
+  players: PlayerNamesType[];
+  createdAt: dayjs.Dayjs;
+  gameState: boolean;
+}
 
+// 메인 스토어 생성
+const mainStore: UseStore = createStore('main-game-db', 'main-game-store');
+
+const gameStore = create<GameState>()(
+  persist(
+    (setState, getState) => ({
+      gameName: '',
+      isOnline: navigator.onLine,
+      gameState: false,
+      players: [],
+      createdAt: null,
+      currentStore: null,
+      gameList: [], // 게임 목록 초기화
+      round: 1,
+
+      createNewStore: async (name: string) => {
+        const newStore = createStore(`${name}-db`, `${name}-store`);
+        setState({ currentStore: newStore });
+        return newStore;
+      },
+
+      setGameName: async (name) => {
+        setState({ gameName: name });
+      },
+
+      updateRandomGameName: async () => {
+        const newName = generateRandomGameName();
+        await getState().setGameName(newName);
+      },
+
+      updateEmptyGameName: async () => {
+        const state = getState();
+        if (state.gameName.length === 0) {
+          await getState().updateRandomGameName();
+        }
+      },
+
+      startGame: async (value) => {
+        await startGameService(setState, getState, {
+          gameName: getState().gameName,
+          playerStore,
+          mainStore,
+        });
+      },
+
+      loadGame: async () => {
+        const result = await loadGameService(setState, getState, { mainStore });
+        return result;
+      },
+
+      deleteGame: async (name: string) => {
+        // 게임 목록에서 제거
+        setState((state) => ({
+          gameList: state.gameList.filter((gameName) => gameName !== name),
+        }));
+        // TODO: 해당 게임의 스토어 삭제 로직 추가
+      },
+
+      endGame: (value) => setState({ gameState: value ?? false }),
+    }),
+    {
+      name: 'game-store',
+      storage: createJSONStorage(() => customStorage(mainStore)),
+      partialize: (state) =>
+        ({
+          gameName: state.gameName,
+          gameList: state.gameList,
+        }) as GameState,
+    },
+  ),
+);
+
+// 온라인 상태 이벤트 리스너
 window.addEventListener('online', () => gameStore.setState({ isOnline: true }));
 window.addEventListener('offline', () => gameStore.setState({ isOnline: false }));
+
+// 초기 로드
+gameStore.getState().loadGame();
 
 export default gameStore;

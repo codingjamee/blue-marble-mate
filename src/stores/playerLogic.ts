@@ -1,7 +1,6 @@
 import { ColorOption, colorOptions } from '../constants/colors';
 import { getRandomElement } from '../utils/utils';
-import { PlayerNamesType } from './gameStore';
-import { PlayerState } from './playerStore';
+import { PlayerNamesType, PlayerState } from './playerStore';
 import { v4 as uuid } from 'uuid';
 
 const getAvailableColors = (usedColors: PlayerNamesType['color'][]): ColorOption['value'][] => {
