@@ -15,10 +15,17 @@
   - 예: 시작금액 대비 200% 성장 시 100% 계산
  */
 
-export const calculateProgress = (turns, properties, assets) => {
+const calculateProgress = (turns, properties, assets) => {
   const turnProgress = (turns / 4) * 0.4; // 바퀴 수 가중치 40%
   const propertyProgress = (properties / 28) * 0.3; // 건물 가중치 30%
   const assetProgress = Math.min(assets / startingMoney, 2) * 0.3; // 자산 가중치 30%
 
   return Math.floor((turnProgress + propertyProgress + assetProgress) * 100);
 };
+
+const getRandomElement = <T>(array: T[]): T => {
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
+};
+
+export { calculateProgress, getRandomElement };

@@ -1,30 +1,40 @@
-import Random from "../../../src/assets/Random.svg?react";
-import { useState } from "react";
-import { ColorOption, ValueLabel } from "../input/InputWithRandomButton";
-import ColorElem from "./ColorElem";
+import Random from '../../assets/Random.svg?react';
+import ColorElem from './ColorElem';
+import playerStore from '../../stores/playerStore';
+import { ColorOption, colorOptions } from '../../constants/colors';
 
-const ColorSelectBox = ({ colorOptions }: { colorOptions: ColorOption[] }) => {
-  const [color, setColor] = useState<ValueLabel>(
-    colorOptions[0].value as ValueLabel
-  );
+const ColorSelectBox = ({
+  playerId,
+  playerColor,
+}: {
+  playerId: string;
+  playerColor: ColorOption['value'];
+}) => {
+  const { updatePlayerColor, updateRandomPlayerColor } = playerStore((state) => state);
+  const unAvailableColors = playerStore((state) => state.playerNames).map((p) => p.color);
+
+  console.log(unAvailableColors);
 
   return (
     <div className="color-container">
       <div className="elem-container">
-        {colorOptions.map(({ label, value }, index) => (
+        {colorOptions.map(({ label, value }) => (
           <ColorElem
             key={`elem-${label}-${value}`}
             label={label}
             value={value}
-            color={color}
-            setColor={setColor}
+            setColor={() => {
+              !unAvailableColors.includes(value) && updatePlayerColor(playerId, value);
+            }}
+            checked={playerColor === value}
           />
         ))}
       </div>
       <button
         className="btn btn-random"
         onClick={() => {
-          console.log("clicked");
+          console.log('clicked');
+          updateRandomPlayerColor(playerId);
         }}
       >
         <Random />

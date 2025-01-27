@@ -3,7 +3,7 @@
 .map-container {
   display: flex;
   flex: 1;
-  // width: 100%;
+  width: 100%;
   @extend .mx-2;
 
   .map {
@@ -16,6 +16,8 @@
   margin: 0 auto;
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 100%;
   @include responsive(tablet, laptop, desktop, wide) {
     max-width: 520px;
   }
@@ -41,6 +43,7 @@
     display: flex;
     justify-content: space-between;
     margin: 0.25rem 0;
+    height: calc(100% - 2rem);
 
     .left-column,
     .right-column {
@@ -50,6 +53,45 @@
     }
     .left-column {
       flex-direction: column-reverse;
+    }
+
+    .center-area {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      // background-image: url('/src/assets/BackgroundSpace.jpg');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      min-height: 256px;
+      margin: map-get($map: $spacings, $key: '1');
+      img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      .line {
+        position: absolute;
+        top: 40px;
+        right: -17px;
+        transform: rotate(-45deg);
+        width: 120px;
+        height: 4px;
+        background-color: white;
+      }
+      .station {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        transform: rotate(90deg);
+        width: 100px;
+        height: 100px;
+
+        @include responsive(tablet, laptop, desktop, wide) {
+          width: 140px;
+          height: 140px;
+        }
+      }
     }
   }
 }

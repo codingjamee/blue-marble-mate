@@ -1,52 +1,69 @@
-import { useState } from "react";
-import InputWithRandomButton from "../../components/input/InputWithRandomButton";
-import ArrowDown from "../../../src/assets/ArrowDown.svg?react";
-import { useNavigate } from "react-router-dom";
-import Player from "./Player";
+import { useState } from 'react';
+import InputWithRandomButton from '../../components/input/InputWithRandomButton';
+import { useNavigate } from 'react-router-dom';
+import Players from './Players';
+import CloseWrapper from '../../components/CloseWrapper';
+import SelectPlayerNumber from './SelectPlayerNumber';
+import playerStore from '../../stores/playerStore';
+import gameStore from '../../stores/gameStore';
+import ConfirmModal from '../../components/modal/ConfirmModal';
+import StartModal from './StartModal';
+
+export type OpenType = boolean;
 
 const Start = () => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const [playerNumber, setPlayerNumber] = useState(2);
+  const [isOpen, setIsOpen] = useState<OpenType>(false);
+  const [modal, setModal] = useState(false);
+  const { updateEmptyName, playerNames } = playerStore();
+  const { setGameName, updateRandomGameName, updateEmptyGameName, gameName, startGame, loadGame } =
+    gameStore();
+
   return (
-    <div className="container">
-      <div className="start-container">
-        <h1 className="game-title">게임 설정</h1>
-        <InputWithRandomButton
-          label="게임 이름"
-          placeholder="게임 이름을 설정해주세요"
-        />
-        <div
-          className={`select-input ${isOpen ? "open" : ""}`}
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          <div className="select-label">플레이어 수</div>
-          <div className="selected">
-            <div className="label">{playerNumber}명</div>
-            <button className="icon">
-              <ArrowDown />
-            </button>
+    <>
+      {isOpen && <CloseWrapper onClickWrapper={() => setIsOpen(false)} />}
+      <div className="container">
+        <div className="start-container">
+          <h1 className="game-title">게임 설정</h1>
+          <InputWithRandomButton
+            label="게임 이름"
+            placeholder="게임 이름을 설정해주세요"
+            onClickRandom={() => {
+              updateRandomGameName();
+            }}
+            value={gameName}
+            onChangeFn={(value) => {
+              console.log('setGameName, 게임이름을 설정 해주세요');
+              setGameName(value);
+            }}
+          />
+          <SelectPlayerNumber isOpen={isOpen} setIsOpen={setIsOpen} />
+          <Players />
+          <div
+            className="btn btn-start"
+            onClick={() => {
+              updateEmptyName();
+              updateEmptyGameName();
+              setModal(true);
+            }}
+          >
+            게임시작
           </div>
-          <div className="select-box">
-            {isOpen &&
-              Array(5)
-                .fill(undefined)
-                .map((_, index) => (
-                  <div
-                    className="select-elem"
-                    onClick={() => setPlayerNumber(index + 2)}
-                  >
-                    {index + 2}명
-                  </div>
-                ))}
-          </div>
-        </div>
-        <Player playerNumber={playerNumber} />
-        <div className="btn btn-start" onClick={() => navigate("/game")}>
-          게임시작
         </div>
       </div>
-    </div>
+      {modal && (
+        <ConfirmModal
+          setModal={setModal}
+          onConfirm={() => {
+            startGame();
+            loadGame();
+            navigate('/game');
+          }}
+        >
+          <StartModal gameName={gameName} playerNames={playerNames} />
+        </ConfirmModal>
+      )}
+    </>
   );
 };
 export default Start;

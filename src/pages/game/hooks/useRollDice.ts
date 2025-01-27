@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+
+interface DicesType {
+  val1: number;
+  val2: number;
+}
 
 const pickNumber = () => {
   return Math.floor(Math.random() * 6 + 1);
@@ -8,16 +13,16 @@ const useRollDice = () => {
   const [dice2, setDice2] = useState(() => pickNumber());
   const [isRolling, setisRolling] = useState(false);
 
-  const dices = {
+  const dices: DicesType = {
     val1: dice1,
     val2: dice2,
   };
 
-  const rollIntervalDice = (setDice, setValue) => {
+  const rollIntervalDice = (setDice: Dispatch<SetStateAction<number>>, value: number) => {
     const intervalId = setInterval(() => {
       const result = pickNumber();
       setDice(result);
-      setValue = result;
+      value = result;
     }, 50 * Math.random());
 
     setTimeout(() => {
