@@ -5,7 +5,7 @@ import { generateRandomGameName } from '../utils/sessionNaming';
 import playerStore, { PlayerNamesType } from './playerStore';
 import dayjs from 'dayjs';
 import { createStore, UseStore } from 'idb-keyval';
-import { customStorage, loadGameService, startGameService, updateGameService } from './gameLogic';
+import { customStorage, loadGameService, saveToDB, startGameService } from './gameLogic';
 
 export interface GameState {
   gameName: string;
@@ -25,6 +25,7 @@ export interface GameState {
   resetGame: () => void;
   deleteGame: (name: string) => Promise<void>;
   createNewStore: (name: string) => Promise<UseStore>;
+  syncPlayers: (players: PlayerNamesType[]) => void;
 }
 
 export interface GameData {
@@ -35,7 +36,7 @@ export interface GameData {
 }
 
 // 메인 스토어 생성
-const mainStore: UseStore = createStore('main-game-db', 'main-game-store');
+export const mainStore: UseStore = createStore('main-game-db', 'main-game-store');
 
 const gameStore = create<GameState>()(
   persist(
@@ -71,12 +72,14 @@ const gameStore = create<GameState>()(
         }
       },
 
-      startGame: async (value) => {
+      startGame: async () => {
         await startGameService(setState, getState, {
           gameName: getState().gameName,
           playerStore,
           mainStore,
         });
+        getState().loadGame();
+        playerStore.getState().startTurn();
       },
 
       loadGame: async () => {
@@ -84,13 +87,10 @@ const gameStore = create<GameState>()(
         return result;
       },
 
-      // updatePlayer: async (id, value) => {
-      //   const playerInfo = playerStore
-      //   const result = await updateGameService(setState, getState, {
-      //     playerStore,
-      //   });
-      //   return result;
-      // },
+      syncPlayers: (players) => {
+        setState({ players });
+        saveToDB(getState, players);
+      },
 
       deleteGame: async (name: string) => {
         // 게임 목록에서 제거
@@ -113,6 +113,9 @@ const gameStore = create<GameState>()(
         ({
           gameName: state.gameName,
           gameList: state.gameList,
+          players: state.players,
+          gameState: state.gameState,
+          createdAt: state.createdAt,
         }) as GameState,
     },
   ),

@@ -15,7 +15,7 @@ const Start = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
   const [modal, setModal] = useState(false);
-  const { updateEmptyName, playerInfos, setPlayerInit } = playerStore();
+  const { updateEmptyName, playerInfos, setPlayerInit, startTurn } = playerStore();
   const {
     setGameName,
     updateRandomGameName,
@@ -68,7 +68,7 @@ const Start = () => {
           setModal={setModal}
           onConfirm={() => {
             startGame();
-            loadGame();
+
             navigate('/game');
           }}
         >

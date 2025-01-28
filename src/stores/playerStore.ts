@@ -1,7 +1,14 @@
 import { create } from 'zustand';
 import { ColorOption, colorOptions } from '../constants/colors';
 import { generateRandomPlayerName } from '../utils/playerNaming';
-import { getPlayerInitialize, getRandomColors, getUpdatedPlayerInit } from './playerLogic';
+import {
+  getPlayerInitialize,
+  getRandomColors,
+  getUpdatedPlayerInit,
+  loadGamePlayersService,
+} from './playerLogic';
+import gameStore, { GameState, mainStore } from './gameStore';
+import { updateNestedValue } from '../utils/utils';
 
 export interface PlayerNamesType {
   id: string;
@@ -27,6 +34,8 @@ export interface PlayerNamesType {
   islandTurnLeft: number;
   playerColor: ColorOption['value'];
   isCurrentTurn: boolean;
+  isDouble: boolean;
+  doubleTurnLeft: number;
 }
 
 export interface PlayerState {
@@ -41,15 +50,18 @@ export interface PlayerState {
   updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['playerColor']) => void;
   // up9datePlayerInfo: (id: PlayerNamesType['id'] value: Pick<PlayerNamesType>) => void;
   updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
+  updatePlayer: (id: string, path: string[], value: any) => void;
+  getNowTurnId: () => string;
+  startTurn: () => void;
+  loadGamePlayers: () => Promise<GameState | null | undefined>;
+  // setState: (fn: any) => void;
+  // syncToGame: (gameStore: StoreApi<GameState>) => Promise<void>;
 }
 
-const playerStore = create<PlayerState>((set) => ({
+const playerStore = create<PlayerState>((set, get) => ({
   playerNumber: 2,
   playerInfos: getPlayerInitialize({ number: 2 }),
-  setPlayerNumber: (number: PlayerState['playerNumber']) =>
-    set(() => ({
-      playerNumber: number,
-    })),
+  setPlayerNumber: (number: PlayerState['playerNumber']) => set(() => ({ playerNumber: number })),
   setPlayerInit: () =>
     set((state) => ({
       playerInfos: getPlayerInitialize({ number: 2, state: state }),
@@ -97,6 +109,46 @@ const playerStore = create<PlayerState>((set) => ({
 
       return { ...state, playerInfos: stateWithNewColor };
     }),
+
+  updatePlayer: (id, path, value) => {
+    set((state) => {
+      const updatedPlayerInfos = state.playerInfos.map((player) =>
+        player.id === id ? updateNestedValue(player, path, value) : player,
+      );
+
+      gameStore.getState().syncPlayers(updatedPlayerInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedPlayerInfos,
+      };
+    });
+  },
+
+  startTurn: () => {
+    const firstPlayer = get().playerInfos[0];
+    get().updatePlayer(firstPlayer.id, ['isCurrentTurn'], true);
+  },
+
+  nextTurn: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    if (!currentPlayer) return;
+    get().updatePlayer(currentPlayer?.id, ['isCurrentTurn'], false);
+  },
+
+  getNowTurnId: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    return currentPlayer?.id ?? get().playerInfos[0].id;
+  },
+
+  loadGamePlayers: async () => {
+    const result = await loadGamePlayersService(set, gameStore.getState().createNewStore, {
+      mainStore,
+    });
+    return result;
+  },
 }));
+
+playerStore.getState().loadGamePlayers();
 
 export default playerStore;

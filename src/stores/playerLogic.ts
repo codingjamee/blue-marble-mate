@@ -3,6 +3,10 @@ import { BOARD_DATA } from '../utils/mapInfo';
 import { getRandomElement } from '../utils/utils';
 import { PlayerNamesType, PlayerState } from './playerStore';
 import { v4 as uuid } from 'uuid';
+import { get as getFromDB } from 'idb-keyval';
+import { GameState } from './gameStore';
+
+export type SetStateFunction<T> = (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
 
 //선택 가능한 색상
 const getAvailableColors = (
@@ -51,12 +55,43 @@ export const playerInitObj = (color: ValueLabel) => ({
   islandTurnLeft: 0,
   playerColor: color,
   isCurrentTurn: false,
+  isDouble: false,
+  doubleTurnLeft: 0,
 });
 
 const getPlayerInitialize = ({ number, state }: { number: number; state?: PlayerState }) => {
   const randomColors = getRandomColors({ number, state });
   const newToAddedInit = randomColors?.map((color) => playerInitObj(color));
   return newToAddedInit;
+};
+
+const loadGamePlayersService = async (
+  setState: SetStateFunction<PlayerState>,
+  createNewStore: GameState['createNewStore'],
+  options: {
+    mainStore: any;
+  },
+) => {
+  try {
+    const lastGameName = await getFromDB<string>('currentGame', options.mainStore);
+    if (lastGameName) {
+      const store = await createNewStore(lastGameName);
+      const gameData = await getFromDB<GameState>(lastGameName, store);
+      console.log(gameData);
+
+      if (gameData) {
+        setState((state) => ({
+          ...state,
+          playerNumber: gameData.players.length,
+          playerInfos: gameData.players,
+        }));
+      }
+      return gameData;
+    }
+  } catch (error) {
+    console.error('Failed to load game:', error);
+    return null;
+  }
 };
 
 const getUpdatedPlayerInit = ({ number, state }: { number: number; state: PlayerState }) => {
@@ -74,4 +109,10 @@ const getUpdatedPlayerInit = ({ number, state }: { number: number; state: Player
   return [...currentPlayers, ...newToAddedInit];
 };
 
-export { getAvailableColors, getPlayerInitialize, getUpdatedPlayerInit, getRandomColors };
+export {
+  getAvailableColors,
+  getPlayerInitialize,
+  getUpdatedPlayerInit,
+  getRandomColors,
+  loadGamePlayersService,
+};

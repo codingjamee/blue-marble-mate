@@ -1,4 +1,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
+import playerStore from '../../../stores/playerStore';
+import useUpdatePlayerPosition from './useUpdatePlayerPosition';
 
 interface DicesType {
   val1: number;
@@ -12,6 +14,7 @@ const useRollDice = () => {
   const [dice1, setDice1] = useState(() => pickNumber());
   const [dice2, setDice2] = useState(() => pickNumber());
   const [isRolling, setisRolling] = useState(false);
+  const { updatePosition } = useUpdatePlayerPosition();
 
   const dices: DicesType = {
     val1: dice1,
@@ -28,6 +31,9 @@ const useRollDice = () => {
     setTimeout(() => {
       clearInterval(intervalId);
       setisRolling(false);
+      setTimeout(() => {
+        updatePosition({ diceNum: dices.val1 + dices.val2, isDouble: dices.val1 === dices.val2 });
+      }, 0);
     }, 1000);
   };
 
