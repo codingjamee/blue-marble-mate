@@ -25,7 +25,7 @@ const startGameService = async (
     gameName,
     players,
     createdAt: dayjs(),
-    gameState: true,
+    gameState: false,
   };
 
   try {

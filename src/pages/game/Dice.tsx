@@ -1,15 +1,8 @@
-import { useEffect } from 'react';
 import DiceSvg from '../../assets/Dice.svg?react';
 import DiceSvgs from './DiceSvgs';
 import useRollDice from './hooks/useRollDice';
-import gameStore from '../../stores/gameStore';
 const Dice = () => {
   const { dice1, dice2, isRolling, rollDice, isDouble } = useRollDice();
-  const isOnline = gameStore((state) => state.isOnline);
-
-  useEffect(() => {
-    console.log('isOnline :=======>', isOnline);
-  }, [isOnline]);
 
   return (
     <section className="dice console-container">

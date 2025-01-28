@@ -15,7 +15,8 @@ export interface GameState {
   createdAt: dayjs.Dayjs | null;
   round: number;
   currentStore: ReturnType<typeof createStore> | null;
-  gameList: string[]; // 모든 게임 이름 목록
+  gameList: string[]; // 모든 게임 이름 목록;
+  updateGameState: (state: boolean) => void;
   setGameName: (name: string) => Promise<void>;
   updateRandomGameName: () => Promise<void>;
   updateEmptyGameName: () => Promise<void>;
@@ -68,6 +69,10 @@ const gameStore = create<GameState>()(
         if (state.gameName.length === 0) {
           await getState().updateRandomGameName();
         }
+      },
+
+      updateGameState: (state: boolean) => {
+        setState({ gameState: state });
       },
 
       startGame: async (value) => {
