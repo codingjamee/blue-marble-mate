@@ -3,10 +3,10 @@ import { PlayerNamesType } from '../../stores/playerStore';
 
 interface Props {
   gameName: GameState['gameName'];
-  playerNames: PlayerNamesType[];
+  playerInfos: PlayerNamesType[];
 }
 
-const StartModal = ({ gameName, playerNames }: Props) => {
+const StartModal = ({ gameName, playerInfos }: Props) => {
   return (
     <div>
       <section className="container">
@@ -16,14 +16,14 @@ const StartModal = ({ gameName, playerNames }: Props) => {
           <div className="m-players-container">
             <div className="player-num">
               <div>플레이어 수 : </div>
-              <div>{playerNames.length}명</div>
+              <div>{playerInfos.length}명</div>
             </div>
-            {playerNames.map((player, index) => (
+            {playerInfos.map((player, index) => (
               <div className="players" key={`${player.id}-${player.name}`}>
                 <div className="p-label">
                   player {index + 1} : {player.name}
                 </div>
-                <div className="p-color" style={{ backgroundColor: player.color }}></div>
+                <div className="p-color" style={{ backgroundColor: player.playerColor }}></div>
               </div>
             ))}
           </div>

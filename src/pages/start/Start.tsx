@@ -15,7 +15,7 @@ const Start = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
   const [modal, setModal] = useState(false);
-  const { updateEmptyName, playerNames, setPlayerInit } = playerStore();
+  const { updateEmptyName, playerInfos, setPlayerInit } = playerStore();
   const {
     setGameName,
     updateRandomGameName,
@@ -72,7 +72,7 @@ const Start = () => {
             navigate('/game');
           }}
         >
-          <StartModal gameName={gameName} playerNames={playerNames} />
+          <StartModal gameName={gameName} playerInfos={playerInfos} />
         </ConfirmModal>
       )}
     </>

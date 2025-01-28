@@ -1,11 +1,9 @@
 import Dice from './Dice';
 import GameControl from './GameControl';
 import MiniMap from './MiniMap';
-import Lucky from './Lucky';
 import PlayerInfo from './PlayerInfo';
 import { BOARD_DATA } from '../../utils/mapInfo';
 import gameStore from '../../stores/gameStore';
-import { useEffect } from 'react';
 
 const Game = () => {
   const { players, gameName } = gameStore((state) => state);

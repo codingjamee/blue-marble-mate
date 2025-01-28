@@ -5,7 +5,7 @@ import { generateRandomGameName } from '../utils/sessionNaming';
 import playerStore, { PlayerNamesType } from './playerStore';
 import dayjs from 'dayjs';
 import { createStore, UseStore } from 'idb-keyval';
-import { customStorage, loadGameService, startGameService } from './gameLogic';
+import { customStorage, loadGameService, startGameService, updateGameService } from './gameLogic';
 
 export interface GameState {
   gameName: string;
@@ -83,6 +83,14 @@ const gameStore = create<GameState>()(
         const result = await loadGameService(setState, getState, { mainStore });
         return result;
       },
+
+      // updatePlayer: async (id, value) => {
+      //   const playerInfo = playerStore
+      //   const result = await updateGameService(setState, getState, {
+      //     playerStore,
+      //   });
+      //   return result;
+      // },
 
       deleteGame: async (name: string) => {
         // 게임 목록에서 제거

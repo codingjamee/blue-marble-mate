@@ -1,7 +1,7 @@
 import playerStore from '../../stores/playerStore';
 
 const SelectElem = () => {
-  const { setPlayerNumber, setPlayerInit } = playerStore((state) => state);
+  const { setPlayerNumber, updatePlayerNumber } = playerStore((state) => state);
 
   return Array(5)
     .fill(undefined)
@@ -10,7 +10,7 @@ const SelectElem = () => {
         className="select-elem"
         onClick={() => {
           setPlayerNumber(index + 2);
-          setPlayerInit(index + 2);
+          updatePlayerNumber(index + 2);
         }}
         key={`elem-${index + 1}`}
       >

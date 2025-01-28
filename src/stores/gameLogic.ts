@@ -7,19 +7,21 @@ import {
   UseStore,
   del as delFromDB,
 } from 'idb-keyval';
+import { PlayerState } from './playerStore';
+import { StoreApi } from 'zustand';
 
 const startGameService = async (
   setState: (state: Partial<GameState>) => void,
   getState: () => GameState,
   options: {
     gameName: string;
-    playerStore: any;
+    playerStore: StoreApi<PlayerState>;
     mainStore: any;
   },
 ) => {
   const { gameName } = getState();
   const newStore = createStore(`${gameName}-db`, `${gameName}-store`);
-  const players = options.playerStore.getState().playerNames;
+  const players = options.playerStore.getState().playerInfos;
 
   const gameData: GameData = {
     gameName,
@@ -71,6 +73,14 @@ const loadGameService = async (
   }
 };
 
+// const updateGameService = (
+//   setState: (state: Partial<GameState>) => void,
+//   getState: () => GameState,
+//   options: {
+//     playerStore: any;
+//   },
+// ) => {};
+
 const customStorage = (mainStore: UseStore) => ({
   getItem: async (name: IDBValidKey) => {
     try {
@@ -96,4 +106,4 @@ const customStorage = (mainStore: UseStore) => ({
   },
 });
 
-export { startGameService, loadGameService, customStorage };
+export { startGameService, loadGameService, updateGameService, customStorage };
