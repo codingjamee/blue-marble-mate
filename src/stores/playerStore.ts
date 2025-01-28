@@ -9,6 +9,7 @@ import {
 } from './playerLogic';
 import gameStore, { GameState, mainStore } from './gameStore';
 import { updateNestedValue } from '../utils/utils';
+import { BoardPosition } from '../utils/mapInfo';
 
 export interface PlayerNamesType {
   id: string;
@@ -27,8 +28,9 @@ export interface PlayerNamesType {
   }[];
   cash: number;
   position: {
+    id: number;
     name: string;
-    number: number;
+    position: BoardPosition;
   };
   isInIsland: boolean;
   islandTurnLeft: number;
@@ -48,14 +50,12 @@ export interface PlayerState {
   updateRandomPlayerName: (playerId: PlayerNamesType['id']) => void;
   updateEmptyName: () => void;
   updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['playerColor']) => void;
-  // up9datePlayerInfo: (id: PlayerNamesType['id'] value: Pick<PlayerNamesType>) => void;
   updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
   updatePlayer: (id: string, path: string[], value: any) => void;
   getNowTurnId: () => string;
+  getNowTurn: () => PlayerNamesType;
   startTurn: () => void;
   loadGamePlayers: () => Promise<GameState | null | undefined>;
-  // setState: (fn: any) => void;
-  // syncToGame: (gameStore: StoreApi<GameState>) => Promise<void>;
 }
 
 const playerStore = create<PlayerState>((set, get) => ({
@@ -116,6 +116,8 @@ const playerStore = create<PlayerState>((set, get) => ({
         player.id === id ? updateNestedValue(player, path, value) : player,
       );
 
+      console.log(updatedPlayerInfos);
+
       gameStore.getState().syncPlayers(updatedPlayerInfos);
 
       return {
@@ -139,6 +141,11 @@ const playerStore = create<PlayerState>((set, get) => ({
   getNowTurnId: () => {
     const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
     return currentPlayer?.id ?? get().playerInfos[0].id;
+  },
+
+  getNowTurn: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    return currentPlayer ?? get().playerInfos[0];
   },
 
   loadGamePlayers: async () => {

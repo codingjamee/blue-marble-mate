@@ -41,15 +41,16 @@ const getRandomColors = ({ number, state }: { number: number; state?: PlayerStat
   return randomColors;
 };
 
-export const playerInitObj = (color: ValueLabel) => ({
+export const playerInitObj = (color: ValueLabel): PlayerNamesType => ({
   id: uuid(),
   name: '',
   property: undefined,
   luckyKeys: undefined,
   cash: 200000,
   position: {
+    id: BOARD_DATA.top[0].id,
     name: BOARD_DATA.top[0].name,
-    number: BOARD_DATA.top[0].id,
+    position: 'top',
   },
   isInIsland: false,
   islandTurnLeft: 0,

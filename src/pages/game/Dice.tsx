@@ -2,7 +2,7 @@ import DiceSvg from '../../assets/Dice.svg?react';
 import DiceSvgs from './DiceSvgs';
 import useRollDice from './hooks/useRollDice';
 const Dice = () => {
-  const { dice1, dice2, isRolling, rollDice, isDouble } = useRollDice();
+  const { dices, isRolling, rollDice, isDouble } = useRollDice();
 
   return (
     <section className="dice console-container">
@@ -17,8 +17,8 @@ const Dice = () => {
         <div>{isRolling ? '주사위 굴리는 중.....' : '주사위 굴리기'}</div>
       </button>
       <article className={`dice-number ${isRolling ? 'rolling' : ''}`}>
-        <div>{DiceSvgs[dice1]}</div>
-        <div>{DiceSvgs[dice2]}</div>
+        <div>{DiceSvgs[dices.val1]}</div>
+        <div>{DiceSvgs[dices.val2]}</div>
       </article>
       <div className={`double ${isRolling && 'none'}`}>
         {!isRolling && isDouble ? <h3 style={{ color: 'red' }}>더블입니다!</h3> : '더블이 아닙니다'}

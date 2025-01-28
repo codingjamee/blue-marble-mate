@@ -73,15 +73,11 @@ const gameStore = create<GameState>()(
         }
       },
 
-<<<<<<< HEAD
       updateGameState: (state: boolean) => {
         setState({ gameState: state });
       },
 
       startGame: async (value) => {
-=======
-      startGame: async () => {
->>>>>>> 7167f011f5b3876778cbcfd1e7b2e759e495abea
         await startGameService(setState, getState, {
           gameName: getState().gameName,
           playerStore,

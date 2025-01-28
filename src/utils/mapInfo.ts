@@ -1,92 +1,8 @@
-import { Cell } from '../pages/game/MiniMap';
-
-// export const mapInfo: Cell[][] = [
-//   [
-//     { id: 0, type: "corner", name: "시작", position: "bottom" },
-//     {
-//       id: 1,
-//       type: "city",
-//       name: "타이페이",
-//       position: "left",
-//       price: 50000,
-//       color: "red",
-//     },
-//     {
-//       id: 2,
-//       type: "special",
-//       name: "황금열쇠",
-//       position: "left",
-//       color: "yellow",
-//     },
-//     {
-//       id: 3,
-//       type: "city",
-//       name: "홍콩",
-//       position: "left",
-//       price: 80000,
-//       color: "red",
-//     },
-//     {
-//       id: 4,
-//       type: "city",
-//       name: "마닐라",
-//       position: "left",
-//       price: 80000,
-//       color: "red",
-//     },
-//     {
-//       id: 5,
-//       type: "city",
-//       name: "제주도",
-//       position: "left",
-//       price: 200000,
-//       color: "red",
-//     },
-//     {
-//       id: 6,
-//       type: "city",
-//       name: "싱가폴",
-//       position: "left",
-//       price: 100000,
-//       color: "red",
-//     },
-//     {
-//       id: 7,
-//       type: "special",
-//       name: "황금열쇠",
-//       position: "left",
-//       color: "yellow",
-//     },
-//     {
-//       id: 8,
-//       type: "city",
-//       name: "카이로",
-//       position: "left",
-//       price: 100000,
-//       color: "red",
-//     },
-//     {
-//       id: 9,
-//       type: "city",
-//       name: "이스탄불",
-//       position: "left",
-//       price: 120000,
-//       color: "red",
-//     },
-//     {
-//       id: 10,
-//       type: "special",
-//       name: "우주여행",
-//       position: "top",
-//     },
-//   ],
-// ];
-
-type BoardPosition = 'top' | 'right' | 'bottom' | 'left';
-interface NationData {
+export type BoardPosition = 'top' | 'right' | 'bottom' | 'left';
+export interface NationData {
   id: number;
   name: string;
-  type: 'special' | 'city' | 'key' | 'airport';
+  type: 'special' | 'city' | 'k-city' | 'airport' | 'goldenKey' | 'fund' | 'start' | 'space';
   price?: number;
   country?: string;
   flag?: string;
@@ -95,7 +11,7 @@ export type BoardData = Record<BoardPosition, NationData[]>;
 
 const BOARD_DATA: BoardData = {
   top: [
-    { id: 0, name: '시작', type: 'special', price: 0, flag: '🏁' },
+    { id: 0, name: '시작', type: 'start', price: 0, flag: '🏁' },
     {
       id: 1,
       name: '타이페이',
@@ -105,7 +21,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 2,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -125,7 +41,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 5,
-      type: 'city',
+      type: 'k-city',
       name: '제주도',
       price: 200000,
       country: '대한민국',
@@ -140,7 +56,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 7,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -160,7 +76,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 10,
-      type: 'special',
+      type: 'space',
       name: '우주여행',
       price: 200000,
       flag: '🚀',
@@ -177,7 +93,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 12,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -214,7 +130,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 17,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -247,7 +163,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 22,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -293,7 +209,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 27,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -307,8 +223,8 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 29,
-      name: '사회복지기금',
-      type: 'special',
+      name: '사회복지기금수령',
+      type: 'fund',
       price: 0,
       flag: '🤲',
     },
@@ -346,7 +262,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 34,
-      type: 'special',
+      type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
@@ -367,11 +283,11 @@ const BOARD_DATA: BoardData = {
       country: '미국',
       flag: '🇺🇸',
     },
-    { id: 37, name: '사회복지기금', type: 'special', price: 0, flag: '👼🏻' },
+    { id: 37, name: '사회복지기금', type: 'fund', price: 0, flag: '👼🏻' },
     {
       id: 38,
       name: '서울',
-      type: 'city',
+      type: 'k-city',
       price: 1000000,
       country: '대한민국',
       flag: '🇰🇷',
@@ -379,4 +295,6 @@ const BOARD_DATA: BoardData = {
   ],
 };
 
-export { BOARD_DATA };
+const POSITION_DATA: NationData[] = Object.values(BOARD_DATA).flat();
+
+export { BOARD_DATA, POSITION_DATA };
