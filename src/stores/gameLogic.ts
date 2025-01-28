@@ -7,19 +7,21 @@ import {
   UseStore,
   del as delFromDB,
 } from 'idb-keyval';
+import { PlayerNamesType, PlayerState } from './playerStore';
+import { StoreApi } from 'zustand';
 
 const startGameService = async (
   setState: (state: Partial<GameState>) => void,
   getState: () => GameState,
   options: {
     gameName: string;
-    playerStore: any;
+    playerStore: StoreApi<PlayerState>;
     mainStore: any;
   },
 ) => {
   const { gameName } = getState();
   const newStore = createStore(`${gameName}-db`, `${gameName}-store`);
-  const players = options.playerStore.getState().playerNames;
+  const players = options.playerStore.getState().playerInfos;
 
   const gameData: GameData = {
     gameName,
@@ -41,6 +43,22 @@ const startGameService = async (
   }
 };
 
+const saveToDB = async (get: () => GameState, players: PlayerNamesType[]) => {
+  const gameName = get().gameName;
+  const currentStore = get().currentStore || (await get().createNewStore(get().gameName));
+
+  if (currentStore) {
+    const gameData = {
+      gameName: get().gameName,
+      players,
+      gameState: get().gameState,
+      createdAt: get().createdAt || dayjs(),
+      updatedAt: new Date(),
+    };
+    await setToDB(gameName, gameData, currentStore);
+  }
+};
+
 const loadGameService = async (
   setState: (state: Partial<GameState>) => void,
   getState: () => GameState,
@@ -53,7 +71,6 @@ const loadGameService = async (
     if (lastGameName) {
       const store = await getState().createNewStore(lastGameName);
       const gameData = await getFromDB<GameData>(lastGameName, store);
-      console.log(gameData);
 
       if (gameData) {
         setState({
@@ -96,4 +113,4 @@ const customStorage = (mainStore: UseStore) => ({
   },
 });
 
-export { startGameService, loadGameService, customStorage };
+export { startGameService, loadGameService, customStorage, saveToDB };

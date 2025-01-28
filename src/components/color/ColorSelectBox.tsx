@@ -11,9 +11,7 @@ const ColorSelectBox = ({
   playerColor: ColorOption['value'];
 }) => {
   const { updatePlayerColor, updateRandomPlayerColor } = playerStore((state) => state);
-  const unAvailableColors = playerStore((state) => state.playerNames).map((p) => p.color);
-
-  console.log(unAvailableColors);
+  const unAvailableColors = playerStore((state) => state.playerInfos).map((p) => p.playerColor);
 
   return (
     <div className="color-container">

@@ -5,7 +5,7 @@ import { generateRandomGameName } from '../utils/sessionNaming';
 import playerStore, { PlayerNamesType } from './playerStore';
 import dayjs from 'dayjs';
 import { createStore, UseStore } from 'idb-keyval';
-import { customStorage, loadGameService, startGameService } from './gameLogic';
+import { customStorage, loadGameService, saveToDB, startGameService } from './gameLogic';
 
 export interface GameState {
   gameName: string;
@@ -23,8 +23,10 @@ export interface GameState {
   startGame: (value?: boolean) => Promise<void>;
   loadGame: () => Promise<GameData | null | undefined>;
   endGame: (value?: boolean) => void;
+  resetGame: () => void;
   deleteGame: (name: string) => Promise<void>;
   createNewStore: (name: string) => Promise<UseStore>;
+  syncPlayers: (players: PlayerNamesType[]) => void;
 }
 
 export interface GameData {
@@ -35,7 +37,7 @@ export interface GameData {
 }
 
 // 메인 스토어 생성
-const mainStore: UseStore = createStore('main-game-db', 'main-game-store');
+export const mainStore: UseStore = createStore('main-game-db', 'main-game-store');
 
 const gameStore = create<GameState>()(
   persist(
@@ -71,21 +73,32 @@ const gameStore = create<GameState>()(
         }
       },
 
+<<<<<<< HEAD
       updateGameState: (state: boolean) => {
         setState({ gameState: state });
       },
 
       startGame: async (value) => {
+=======
+      startGame: async () => {
+>>>>>>> 7167f011f5b3876778cbcfd1e7b2e759e495abea
         await startGameService(setState, getState, {
           gameName: getState().gameName,
           playerStore,
           mainStore,
         });
+        getState().loadGame();
+        playerStore.getState().startTurn();
       },
 
       loadGame: async () => {
         const result = await loadGameService(setState, getState, { mainStore });
         return result;
+      },
+
+      syncPlayers: (players) => {
+        setState({ players });
+        saveToDB(getState, players);
       },
 
       deleteGame: async (name: string) => {
@@ -94,6 +107,10 @@ const gameStore = create<GameState>()(
           gameList: state.gameList.filter((gameName) => gameName !== name),
         }));
         // TODO: 해당 게임의 스토어 삭제 로직 추가
+      },
+
+      resetGame: () => {
+        setState({ gameName: '', players: [] });
       },
 
       endGame: (value) => setState({ gameState: value ?? false }),
@@ -105,6 +122,9 @@ const gameStore = create<GameState>()(
         ({
           gameName: state.gameName,
           gameList: state.gameList,
+          players: state.players,
+          gameState: state.gameState,
+          createdAt: state.createdAt,
         }) as GameState,
     },
   ),

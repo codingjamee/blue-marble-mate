@@ -1,3 +1,4 @@
+import playerStore from '../../stores/playerStore';
 import Lucky from './Lucky';
 import Player from './Player';
 
@@ -85,13 +86,15 @@ const players: PlayerType[] = [
 ];
 
 const PlayerInfo = () => {
+  const playerInfos = playerStore((state) => state.playerInfos);
+  console.log(playerInfos);
   return (
     <>
       <Lucky />
       <section className="player-container console-container">
         <h3>플레이어 정보</h3>
         <section className="players">
-          {players.map((player) => (
+          {playerInfos.map((player) => (
             <Player player={player} key={`${player.id}-${player.name}`} />
           ))}
         </section>
