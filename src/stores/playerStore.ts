@@ -16,7 +16,8 @@ export interface PlayerState {
   playerNumber: number;
   playerNames: PlayerNamesType[];
   setPlayerNumber: (number: PlayerState['playerNumber']) => void;
-  setPlayerInit: (number: PlayerState['playerNumber']) => void;
+  setPlayerInit: () => void;
+  updatePlayerNumber: (number: PlayerState['playerNumber']) => void;
   updatePlayerName: (index: number, state: PlayerNamesType['name']) => void;
   updateRandomPlayerName: (playerId: PlayerNamesType['id']) => void;
   updateEmptyName: () => void;
@@ -37,7 +38,17 @@ const playerStore = create<PlayerState>((set) => ({
     set(() => ({
       playerNumber: number,
     })),
-  setPlayerInit: (number) =>
+  setPlayerInit: () =>
+    set(() => ({
+      playerNames: Array(2)
+        .fill(null)
+        .map((_, index) => ({
+          id: uuid(),
+          name: '',
+          color: colorOptions[index].value,
+        })),
+    })),
+  updatePlayerNumber: (number) =>
     set((state: PlayerState) => ({
       ...state,
       playerNames: getPlayerInitialize({ number, state }),

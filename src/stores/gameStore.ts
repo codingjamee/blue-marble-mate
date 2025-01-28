@@ -22,6 +22,7 @@ export interface GameState {
   startGame: (value?: boolean) => Promise<void>;
   loadGame: () => Promise<GameData | null | undefined>;
   endGame: (value?: boolean) => void;
+  resetGame: () => void;
   deleteGame: (name: string) => Promise<void>;
   createNewStore: (name: string) => Promise<UseStore>;
 }
@@ -89,6 +90,10 @@ const gameStore = create<GameState>()(
           gameList: state.gameList.filter((gameName) => gameName !== name),
         }));
         // TODO: 해당 게임의 스토어 삭제 로직 추가
+      },
+
+      resetGame: () => {
+        setState({ gameName: '', players: [] });
       },
 
       endGame: (value) => setState({ gameState: value ?? false }),
