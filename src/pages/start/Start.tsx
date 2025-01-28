@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InputWithRandomButton from '../../components/input/InputWithRandomButton';
 import { useNavigate } from 'react-router-dom';
 import Players from './Players';
@@ -15,9 +15,21 @@ const Start = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
   const [modal, setModal] = useState(false);
-  const { updateEmptyName, playerNames } = playerStore();
-  const { setGameName, updateRandomGameName, updateEmptyGameName, gameName, startGame, loadGame } =
-    gameStore();
+  const { updateEmptyName, playerInfos, setPlayerInit, startTurn } = playerStore();
+  const {
+    setGameName,
+    updateRandomGameName,
+    updateEmptyGameName,
+    gameName,
+    startGame,
+    resetGame,
+    loadGame,
+  } = gameStore();
+
+  useEffect(() => {
+    resetGame();
+    setPlayerInit();
+  }, []);
 
   return (
     <>
@@ -56,11 +68,11 @@ const Start = () => {
           setModal={setModal}
           onConfirm={() => {
             startGame();
-            loadGame();
+
             navigate('/game');
           }}
         >
-          <StartModal gameName={gameName} playerNames={playerNames} />
+          <StartModal gameName={gameName} playerInfos={playerInfos} />
         </ConfirmModal>
       )}
     </>
