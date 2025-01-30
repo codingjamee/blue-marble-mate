@@ -14,8 +14,8 @@ export interface GameState {
   players: PlayerNamesType[];
   createdAt: dayjs.Dayjs | null;
   round: number;
-  currentStore: ReturnType<typeof createStore> | null;
   gameList: string[]; // 모든 게임 이름 목록;
+  currentStore: ReturnType<typeof createStore> | null;
   updateGameState: (state: boolean) => void;
   setGameName: (name: string) => Promise<void>;
   updateRandomGameName: () => Promise<void>;

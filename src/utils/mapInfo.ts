@@ -74,13 +74,15 @@ const BOARD_DATA: BoardData = {
       price: 120000,
       flag: '🇹🇷',
     },
-    {
-      id: 10,
-      type: 'space',
-      name: '우주여행',
-      price: 200000,
-      flag: '🚀',
-    },
+    { id: 10, name: '무인도', type: 'special', price: 0, flag: '🏝️' },
+
+    // {
+    //   id: 10,
+    //   type: 'space',
+    //   name: '우주여행',
+    //   price: 200000,
+    //   flag: '🚀',
+    // },
   ],
   right: [
     {
@@ -122,7 +124,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 16,
-      name: '취리히',
+      name: '베른',
       type: 'city',
       price: 180000,
       country: '스위스',
@@ -144,7 +146,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 19,
-      name: '몬트리올',
+      name: '오타와',
       type: 'city',
       price: 200000,
       country: '캐나다',
@@ -152,7 +154,13 @@ const BOARD_DATA: BoardData = {
     },
   ],
   bottom: [
-    { id: 20, name: '무인도', type: 'special', price: 0, flag: '🏝️' },
+    {
+      id: 20,
+      name: '사회복지기금수령',
+      type: 'fund',
+      price: 0,
+      flag: '🤲',
+    },
     {
       id: 21,
       name: '부에노스아이레스',
@@ -176,7 +184,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇸🇬',
     },
     {
-      id: 23,
+      id: 24,
       name: '시드니',
       type: 'city',
       price: 240000,
@@ -184,7 +192,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇦🇺',
     },
     {
-      id: 24,
+      id: 25,
       name: '부산',
       type: 'city',
       price: 500000,
@@ -192,7 +200,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇰🇷',
     },
     {
-      id: 25,
+      id: 26,
       name: '하와이',
       type: 'city',
       price: 260000,
@@ -200,7 +208,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇺🇸',
     },
     {
-      id: 26,
+      id: 27,
       name: '리스본',
       type: 'city',
       price: 260000,
@@ -208,13 +216,13 @@ const BOARD_DATA: BoardData = {
       flag: '🇵🇹',
     },
     {
-      id: 27,
-      type: 'goldenKey',
-      name: '황금열쇠',
-      flag: '🔑',
+      id: 28,
+      type: 'airport',
+      name: '퀸엘리자베스호',
+      flag: '🚢',
     },
     {
-      id: 28,
+      id: 29,
       name: '마드리드',
       type: 'city',
       price: 280000,
@@ -222,16 +230,16 @@ const BOARD_DATA: BoardData = {
       flag: '🇪🇸',
     },
     {
-      id: 29,
-      name: '사회복지기금수령',
-      type: 'fund',
+      id: 30,
+      name: '우주여행',
+      type: 'space',
       price: 0,
-      flag: '🤲',
+      flag: '🚀',
     },
   ],
   left: [
     {
-      id: 30,
+      id: 31,
       name: '도쿄',
       type: 'city',
       price: 300000,
@@ -239,13 +247,13 @@ const BOARD_DATA: BoardData = {
       flag: '🇯🇵',
     },
     {
-      id: 31,
+      id: 32,
       name: '콜럼비아호',
       type: 'airport',
       flag: '✈️',
     },
     {
-      id: 32,
+      id: 33,
       name: '파리',
       type: 'city',
       price: 32,
@@ -253,7 +261,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇫🇷',
     },
     {
-      id: 33,
+      id: 34,
       name: '로마',
       type: 'city',
       price: 32,
@@ -261,14 +269,14 @@ const BOARD_DATA: BoardData = {
       flag: '🇮🇹',
     },
     {
-      id: 34,
+      id: 35,
       type: 'goldenKey',
       name: '황금열쇠',
       flag: '🔑',
     },
 
     {
-      id: 35,
+      id: 36,
       name: '런던',
       type: 'city',
       price: 35,
@@ -276,16 +284,16 @@ const BOARD_DATA: BoardData = {
       flag: '🇬🇧',
     },
     {
-      id: 36,
+      id: 37,
       name: '뉴욕',
       type: 'city',
       price: 35,
       country: '미국',
       flag: '🇺🇸',
     },
-    { id: 37, name: '사회복지기금', type: 'fund', price: 0, flag: '👼🏻' },
+    { id: 38, name: '사회복지기금', type: 'fund', price: 0, flag: '👼🏻' },
     {
-      id: 38,
+      id: 39,
       name: '서울',
       type: 'k-city',
       price: 1000000,

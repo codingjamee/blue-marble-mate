@@ -1,8 +1,9 @@
 import DiceSvg from '../../assets/Dice.svg?react';
 import DiceSvgs from './DiceSvgs';
-import useRollDice from './hooks/useRollDice';
+import usePlayingGame from './hooks/usePlayingGame';
+
 const Dice = () => {
-  const { dices, isRolling, rollDice, isDouble } = useRollDice();
+  const { handleTurn, isRolling, isDouble, dices } = usePlayingGame();
 
   return (
     <section className="dice console-container">
@@ -10,7 +11,7 @@ const Dice = () => {
       <button
         className={`btn btn-common roll-dice ${isRolling ? 'disabled' : ''}`}
         onClick={() => {
-          !isRolling && rollDice();
+          !isRolling && handleTurn();
         }}
       >
         <DiceSvg />

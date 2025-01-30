@@ -1,16 +1,25 @@
+import { useState } from 'react';
 import playerStore from '../../../stores/playerStore';
 import { POSITION_DATA } from '../../../utils/mapInfo';
 
 const useUpdatePlayerPosition = () => {
-  const { updatePlayer, getNowTurn } = playerStore();
+  const { updateNestedPlayerInfo, getNowTurn } = playerStore();
+  const [isNeedSalary, setIsPaymentDue] = useState(false);
   const nowTurnInfo = getNowTurn();
   const updatePosition = ({ diceNum, isDouble }: { diceNum: number; isDouble: boolean }) => {
     //이동필요한 포지션 가져오기
     const nextPosition = POSITION_DATA.find((data) => {
-      return data.id === nowTurnInfo.position.id + diceNum;
+      const isNextRound = nowTurnInfo.position.id + diceNum > 40;
+      setIsPaymentDue(true);
+      const nextPointId = isNextRound
+        ? nowTurnInfo.position.id + diceNum - 40
+        : nowTurnInfo.position.id + diceNum;
+
+      return data.id === nextPointId;
     });
+
     if (nextPosition) {
-      updatePlayer(nowTurnInfo.id, ['position'], {
+      updateNestedPlayerInfo(nowTurnInfo.id, ['position'], {
         ...nowTurnInfo.position,
         name: nextPosition.name,
         id: nextPosition.id,
@@ -18,14 +27,9 @@ const useUpdatePlayerPosition = () => {
       });
     }
 
-    if (isDouble) {
-      updatePlayer(nowTurnInfo.id, ['isDouble'], true);
-      updatePlayer(nowTurnInfo.id, ['doubleTurnLeft'], 1);
-    }
-
     return nextPosition;
   };
-  return { updatePosition };
+  return { updatePosition, isNeedSalary };
 };
 
 export default useUpdatePlayerPosition;

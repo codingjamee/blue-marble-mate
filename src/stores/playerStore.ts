@@ -51,11 +51,15 @@ export interface PlayerState {
   updateEmptyName: () => void;
   updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['playerColor']) => void;
   updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
-  updatePlayer: (id: string, path: string[], value: any) => void;
+  updateNestedPlayerInfo: (id: string, path: string[], value: any) => void;
   getNowTurnId: () => string;
   getNowTurn: () => PlayerNamesType;
   startTurn: () => void;
+  nextTurn: (currentPlayer: PlayerNamesType) => void;
+  updateDouble: (id: PlayerNamesType['id'], isDouble: boolean, turnLeft: number) => void;
   loadGamePlayers: () => Promise<GameState | null | undefined>;
+  getPlayerInfo: (id: PlayerNamesType['id']) => PlayerNamesType;
+  processPayment: (id: PlayerNamesType['id'], amount: number) => void;
 }
 
 const playerStore = create<PlayerState>((set, get) => ({
@@ -65,6 +69,7 @@ const playerStore = create<PlayerState>((set, get) => ({
   setPlayerInit: () =>
     set((state) => ({
       playerInfos: getPlayerInitialize({ number: 2, state: state }),
+      playerNumber: 2,
     })),
   updatePlayerNumber: (number) =>
     set((state: PlayerState) => ({
@@ -110,7 +115,7 @@ const playerStore = create<PlayerState>((set, get) => ({
       return { ...state, playerInfos: stateWithNewColor };
     }),
 
-  updatePlayer: (id, path, value) => {
+  updateNestedPlayerInfo: (id, path, value) => {
     set((state) => {
       const updatedPlayerInfos = state.playerInfos.map((player) =>
         player.id === id ? updateNestedValue(player, path, value) : player,
@@ -127,15 +132,63 @@ const playerStore = create<PlayerState>((set, get) => ({
     });
   },
 
-  startTurn: () => {
-    const firstPlayer = get().playerInfos[0];
-    get().updatePlayer(firstPlayer.id, ['isCurrentTurn'], true);
+  getPlayerInfo: (id) => {
+    const playerInfo = get().playerInfos.find((player) => player.id === id);
+    //없다면 기본값 반환
+    if (!playerInfo) return getPlayerInitialize({ number: 1 })[0];
+    return playerInfo;
   },
 
-  nextTurn: () => {
-    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
-    if (!currentPlayer) return;
-    get().updatePlayer(currentPlayer?.id, ['isCurrentTurn'], false);
+  updateDouble: (id, isDouble, turnLeft) => {
+    const playerInfo = get().getPlayerInfo(id);
+
+    set((state) => {
+      const updatedPlayerInfos = state.playerInfos.map((player) => ({
+        ...player,
+        isDouble,
+        doubleTurnLeft: playerInfo.doubleTurnLeft + turnLeft,
+      }));
+
+      gameStore.getState().syncPlayers(updatedPlayerInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedPlayerInfos,
+      };
+    });
+  },
+
+  processPayment: (id, amount) => {
+    const playerInfo = get().getPlayerInfo(id);
+    const playerBalance = playerInfo.cash;
+    const addedAmount = playerBalance + amount;
+
+    get().updateNestedPlayerInfo(id, ['cash'], addedAmount);
+  },
+
+  startTurn: () => {
+    const firstPlayer = get().playerInfos[0];
+    get().updateNestedPlayerInfo(firstPlayer.id, ['isCurrentTurn'], true);
+  },
+
+  nextTurn: (currentPlayer) => {
+    const currentIndex = get().playerInfos.findIndex((player) => player.id === currentPlayer.id);
+    const nextIndex = (currentIndex + 1) % get().playerInfos.length;
+    const nextPlayer = get().playerInfos[nextIndex];
+
+    set((state) => {
+      const updatedPlayerInfos = state.playerInfos.map((player) => ({
+        ...player,
+        isCurrentTurn: player.id === nextPlayer.id,
+      }));
+
+      gameStore.getState().syncPlayers(updatedPlayerInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedPlayerInfos,
+      };
+    });
   },
 
   getNowTurnId: () => {

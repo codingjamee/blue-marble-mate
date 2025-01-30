@@ -7,7 +7,7 @@ interface DicesType {
   val2: DiceValue;
 }
 
-interface RollResult {
+export interface RollResult {
   total: number;
   isDouble: boolean;
   values: DicesType;
@@ -65,7 +65,12 @@ const useRollDice = () => {
     }
   };
 
-  return { dices, isRolling, rollDice, isDouble: dices.val1 === dices.val2 };
+  const handleRolling = async (alterPhase: () => void) => {
+    alterPhase();
+    return await rollDice();
+  };
+
+  return { dices, isRolling, rollDice, isDouble: dices.val1 === dices.val2, handleRolling };
 };
 
 export default useRollDice;
