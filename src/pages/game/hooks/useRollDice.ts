@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import useUpdatePlayerPosition from './useUpdatePlayerPosition';
 import { DiceValue } from '../DiceSvgs';
 
 interface DicesType {
@@ -22,7 +21,6 @@ const useRollDice = () => {
     val2: pickNumber(),
   });
   const [isRolling, setIsRolling] = useState(false);
-  const { updatePosition } = useUpdatePlayerPosition();
 
   const rollSingleDice = (diceKey: 'val1' | 'val2'): Promise<DiceValue> => {
     return new Promise((resolve) => {
@@ -52,11 +50,6 @@ const useRollDice = () => {
 
       setDices({ val1, val2 });
       setIsRolling(false);
-
-      await updatePosition({
-        diceNum: result.total,
-        isDouble: result.isDouble,
-      });
 
       return result;
     } catch (error) {

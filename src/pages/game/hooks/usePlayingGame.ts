@@ -45,7 +45,6 @@ const usePlayingGame = () => {
     alterPhase();
     const newPosition = await updatePosition({
       diceNum: diceResult.total,
-      isDouble: diceResult.isDouble,
     });
     return newPosition;
   };

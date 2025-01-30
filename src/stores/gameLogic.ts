@@ -10,6 +10,22 @@ import {
 import { PlayerNamesType, PlayerState } from './playerStore';
 import { StoreApi } from 'zustand';
 
+const connectionManager = {
+  connections: new Map<string, UseStore>(),
+
+  async getConnection(name: string): Promise<UseStore> {
+    if (!this.connections.has(name)) {
+      const store = createStore(`${name}-db`, `${name}-store`);
+      this.connections.set(name, store);
+    }
+    return this.connections.get(name)!;
+  },
+
+  async closeConnection(name: string) {
+    this.connections.delete(name);
+  },
+};
+
 const startGameService = async (
   setState: (state: Partial<GameState>) => void,
   getState: () => GameState,
@@ -20,7 +36,7 @@ const startGameService = async (
   },
 ) => {
   const { gameName } = getState();
-  const newStore = createStore(`${gameName}-db`, `${gameName}-store`);
+  const store = await connectionManager.getConnection(gameName);
   const players = options.playerStore.getState().playerInfos;
 
   const gameData: GameData = {
@@ -31,7 +47,7 @@ const startGameService = async (
   };
 
   try {
-    await setToDB(gameName, gameData, newStore);
+    await setToDB(gameName, gameData, store);
     await setToDB('currentGame', gameName, options.mainStore);
 
     setState({
@@ -44,19 +60,19 @@ const startGameService = async (
 };
 
 const saveToDB = async (get: () => GameState, players: PlayerNamesType[]) => {
+  const state = get();
   const gameName = get().gameName;
-  const currentStore = get().currentStore || (await get().createNewStore(get().gameName));
+  const store = await connectionManager.getConnection(gameName);
 
-  if (currentStore) {
-    const gameData = {
-      gameName: get().gameName,
-      players,
-      gameState: get().gameState,
-      createdAt: get().createdAt || dayjs(),
-      updatedAt: new Date(),
-    };
-    await setToDB(gameName, gameData, currentStore);
-  }
+  const gameData = {
+    gameName: state.gameName,
+    players,
+    gameState: state.gameState,
+    createdAt: state.createdAt || dayjs(),
+    updatedAt: new Date(),
+  };
+
+  await setToDB(gameName, gameData, store);
 };
 
 const loadGameService = async (
@@ -69,7 +85,7 @@ const loadGameService = async (
   try {
     const lastGameName = await getFromDB<string>('currentGame', options.mainStore);
     if (lastGameName) {
-      const store = await getState().createNewStore(lastGameName);
+      const store = await connectionManager.getConnection(lastGameName);
       const gameData = await getFromDB<GameData>(lastGameName, store);
 
       if (gameData) {
@@ -83,7 +99,9 @@ const loadGameService = async (
       return gameData;
     }
   } catch (error) {
-    console.error('Failed to load game:', error);
+    if (getState().gameName) {
+      await connectionManager.closeConnection(getState().gameName);
+    }
     return null;
   }
 };
@@ -106,7 +124,7 @@ const customStorage = (mainStore: UseStore) => ({
   },
   removeItem: async (name: IDBValidKey) => {
     try {
-      await delFromDB(name);
+      await delFromDB(name, mainStore);
     } catch (err) {
       console.error('Error removing from IndexedDB:', err);
     }

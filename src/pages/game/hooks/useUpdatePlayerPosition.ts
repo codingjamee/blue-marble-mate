@@ -6,7 +6,7 @@ const useUpdatePlayerPosition = () => {
   const { updateNestedPlayerInfo, getNowTurn } = playerStore();
   const [isNeedSalary, setIsPaymentDue] = useState(false);
   const nowTurnInfo = getNowTurn();
-  const updatePosition = ({ diceNum, isDouble }: { diceNum: number; isDouble: boolean }) => {
+  const updatePosition = ({ diceNum }: { diceNum: number }) => {
     //이동필요한 포지션 가져오기
     const nextPosition = POSITION_DATA.find((data) => {
       const isNextRound = nowTurnInfo.position.id + diceNum > 40;
