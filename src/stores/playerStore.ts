@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ColorOption, colorOptions } from '../constants/colors';
+import { colorOptions } from '../constants/colors';
 import { generateRandomPlayerName } from '../utils/playerNaming';
 import {
   getPlayerInitialize,
@@ -7,64 +7,38 @@ import {
   getUpdatedPlayerInit,
   loadGamePlayersService,
 } from './playerLogic';
-import gameStore, { GameState, mainStore } from './gameStore';
+import gameStore, { mainStore } from './gameStore';
 import { updateNestedValue } from '../utils/utils';
-import { BoardPosition } from '../utils/mapInfo';
-
-export interface PlayerNamesType {
-  id: string;
-  name: string;
-  property?: {
-    propertyId: string;
-    name: string;
-    buildings: {
-      villa: boolean;
-      building: boolean;
-      hotel: boolean;
-    }[];
-  }[];
-  luckyKeys?: {
-    name: string;
-  }[];
-  cash: number;
-  position: {
-    id: number;
-    name: string;
-    position: BoardPosition;
-  };
-  isInIsland: boolean;
-  islandTurnLeft: number;
-  playerColor: ColorOption['value'];
-  isCurrentTurn: boolean;
-  isDouble: boolean;
-  doubleTurnLeft: number;
-}
-
-export interface PlayerState {
-  playerNumber: number;
-  playerInfos: PlayerNamesType[];
-  setPlayerNumber: (number: PlayerState['playerNumber']) => void;
-  setPlayerInit: () => void;
-  updatePlayerNumber: (number: PlayerState['playerNumber']) => void;
-  updatePlayerName: (index: number, state: PlayerNamesType['name']) => void;
-  updateRandomPlayerName: (playerId: PlayerNamesType['id']) => void;
-  updateEmptyName: () => void;
-  updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['playerColor']) => void;
-  updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
-  updateNestedPlayerInfo: (id: string, path: string[], value: any) => void;
-  getNowTurnId: () => string;
-  getNowTurn: () => PlayerNamesType;
-  startTurn: () => void;
-  nextTurn: (currentPlayer: PlayerNamesType) => void;
-  updateDouble: (id: PlayerNamesType['id'], isDouble: boolean, turnLeft: number) => void;
-  loadGamePlayers: () => Promise<GameState | null | undefined>;
-  getPlayerInfo: (id: PlayerNamesType['id']) => PlayerNamesType;
-  processPayment: (id: PlayerNamesType['id'], amount: number) => void;
-}
+import { PlayerState, PlayerNamesType } from './playerType';
 
 const playerStore = create<PlayerState>((set, get) => ({
   playerNumber: 2,
   playerInfos: getPlayerInitialize({ number: 2 }),
+  //getter
+  getNowTurnId: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    return currentPlayer?.id ?? get().playerInfos[0].id;
+  },
+
+  getNowTurn: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    return currentPlayer ?? get().playerInfos[0];
+  },
+  getPlayerInfo: (id) => {
+    const playerInfo = get().playerInfos.find((player) => player.id === id);
+    //없다면 기본값 반환
+    if (!playerInfo) return getPlayerInitialize({ number: 1 })[0];
+    return playerInfo;
+  },
+
+  loadGamePlayers: async () => {
+    const result = await loadGamePlayersService(set, gameStore.getState().createNewStore, {
+      mainStore,
+    });
+    return result;
+  },
+
+  //setter
   setPlayerNumber: (number: PlayerState['playerNumber']) => set(() => ({ playerNumber: number })),
   setPlayerInit: () =>
     set((state) => ({
@@ -131,14 +105,21 @@ const playerStore = create<PlayerState>((set, get) => ({
       };
     });
   },
+  updatePlayerPosition: (nowTurnId, newPosition) => {
+    const nowTurnInfo = get().getNowTurn();
+    const nextPosition = gameStore.getState().lands.find((data) => {
+      return data.id === newPosition;
+    });
 
-  getPlayerInfo: (id) => {
-    const playerInfo = get().playerInfos.find((player) => player.id === id);
-    //없다면 기본값 반환
-    if (!playerInfo) return getPlayerInitialize({ number: 1 })[0];
-    return playerInfo;
+    if (nextPosition) {
+      get().updateNestedPlayerInfo(nowTurnId, ['position'], {
+        ...nowTurnInfo.position,
+        name: nextPosition.name,
+        id: nextPosition.id,
+        position: 'position',
+      });
+    }
   },
-
   updateDouble: (id, isDouble, turnLeft) => {
     const playerInfo = get().getPlayerInfo(id);
 
@@ -189,23 +170,6 @@ const playerStore = create<PlayerState>((set, get) => ({
         playerInfos: updatedPlayerInfos,
       };
     });
-  },
-
-  getNowTurnId: () => {
-    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
-    return currentPlayer?.id ?? get().playerInfos[0].id;
-  },
-
-  getNowTurn: () => {
-    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
-    return currentPlayer ?? get().playerInfos[0];
-  },
-
-  loadGamePlayers: async () => {
-    const result = await loadGamePlayersService(set, gameStore.getState().createNewStore, {
-      mainStore,
-    });
-    return result;
   },
 }));
 
