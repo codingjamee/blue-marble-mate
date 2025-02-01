@@ -1,7 +1,6 @@
-import { ColorOption } from "../constants/colors";
-import { BoardPosition } from "../utils/mapType";
-import { GameState } from "./gameStore";
-
+import { ColorOption } from '../constants/colors';
+import { BoardPosition } from '../utils/mapType';
+import { GameState } from './gameStoreType';
 
 export interface PlayerNamesType {
   id: string;
@@ -30,7 +29,6 @@ export interface PlayerNamesType {
   isCurrentTurn: boolean;
   isDouble: boolean;
   doubleTurnLeft: number;
-  needPayment: boolean;
 }
 
 export interface PlayerState {
@@ -53,8 +51,8 @@ export interface PlayerState {
   loadGamePlayers: () => Promise<GameState | null | undefined>;
   updatePlayerPosition: (
     id: PlayerNamesType['id'],
-    position: PlayerNamesType['position']['id']
+    position: PlayerNamesType['position']['id'],
   ) => void;
   getPlayerInfo: (id: PlayerNamesType['id']) => PlayerNamesType;
-  processPayment: (id: PlayerNamesType['id'], amount: number) => void;
+  processPayment: (id: PlayerNamesType['id'], amount: number, toId?: PlayerNamesType['id']) => void;
 }

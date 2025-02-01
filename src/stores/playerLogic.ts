@@ -1,10 +1,10 @@
 import { ColorOption, colorOptions, ValueLabel } from '../constants/colors';
 import { BOARD_DATA } from '../utils/mapInfo';
 import { getRandomElement } from '../utils/utils';
-import { PlayerNamesType, PlayerState } from './playerStore';
+import { PlayerNamesType, PlayerState } from './playerType';
 import { v4 as uuid } from 'uuid';
-import { get as getFromDB } from 'idb-keyval';
-import { GameState } from './gameStore';
+import { get as getFromDB, UseStore } from 'idb-keyval';
+import { GameState } from './gameStoreType';
 
 export type SetStateFunction<T> = (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
 
@@ -70,7 +70,7 @@ const loadGamePlayersService = async (
   setState: SetStateFunction<PlayerState>,
   createNewStore: GameState['createNewStore'],
   options: {
-    mainStore: any;
+    mainStore: UseStore;
   },
 ) => {
   try {

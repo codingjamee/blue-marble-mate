@@ -1,34 +1,35 @@
-import { PriceType, RentPriceType, LandType } from '../utils/mapType';
-import { GameData } from './gameStore';
+import { PriceType, RentPriceType, LandType, NationType, BuildingRentType } from '../utils/mapType';
+import { GameData } from './gameStoreType';
 import { PlayerNamesType } from './playerType';
 
 export interface BuildingType {
-  villa: boolean;
+  villa1: boolean;
+  villa2: boolean;
   building: boolean;
   hotel: boolean;
 }
 
 export interface LandState {
-  lands: LandType[];
+  lands: Array<LandType> & Record<number, LandType>;
   currentGameName: string;
 
   // Getters
   getLandInfo: (position: number) => LandType | null;
   getOwnerLands: (ownerId: string) => LandType[];
-  checkLandOwner: (
+  getCityRentPrice: (landId: number) => number;
+  getLandOwnerAndRent: (
     landId: LandType['id'],
     ownerId: PlayerNamesType['id'],
   ) => {
     isCurrentPlayerOwner: boolean;
     hasOwner: boolean;
-    ownerId: PlayerNamesType['id'] | null;
-    price: PriceType;
-    rentPrice: RentPriceType;
+    ownerId: NationType['owner'];
+    rentPrice: number;
   };
 
   // Setters
-  updateLandOwner: (position: number, owner: string | null) => void;
-  updateBuildings: (position: number, buildings: BuildingType[]) => void;
+  updateLandOwner: (position: number, owner: NationType['owner']) => void;
+  updateBuildings: (position: number, buildings: BuildingRentType[]) => void;
   updateNestedLandInfo: (position: number, path: string[], value: any) => void;
 
   // Initialization & Loading

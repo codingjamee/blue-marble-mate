@@ -1,4 +1,5 @@
-import playerStore, { PlayerNamesType } from '../../../stores/playerStore';
+import playerStore from '../../../stores/playerStore';
+import { PlayerNamesType } from '../../../stores/playerType';
 
 const usePayment = () => {
   const { processPayment } = playerStore();

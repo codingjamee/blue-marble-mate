@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { DiceValue } from '../DiceSvgs';
+import { PlayState } from '../../../stores/gamePlayType';
 
-interface DicesType {
+export interface DicesType {
   val1: DiceValue;
   val2: DiceValue;
 }
@@ -15,7 +16,7 @@ export interface RollResult {
 const pickNumber = (): DiceValue => {
   return Math.floor(Math.random() * 6 + 1) as DiceValue;
 };
-const useRollDice = () => {
+const useRollDice = (setDicesToStore: PlayState['setDices']) => {
   const [dices, setDices] = useState<DicesType>({
     val1: pickNumber(),
     val2: pickNumber(),
@@ -49,6 +50,7 @@ const useRollDice = () => {
       };
 
       setDices({ val1, val2 });
+      setDicesToStore(result);
       setIsRolling(false);
 
       return result;

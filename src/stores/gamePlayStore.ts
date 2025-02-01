@@ -1,47 +1,14 @@
 import { create } from 'zustand';
-import { NationType } from '../utils/mapInfo';
-import playerStore, { PlayerNamesType } from './playerStore';
+import playerStore from './playerStore';
+import { PlayerNamesType } from './playerType';
 import landStore from './landStore';
 import { positionActions } from './gamePlayLogic';
 import { RollResult } from '../pages/game/hooks/useRollDice';
-// import { RollResult } from '../types/dice';
-// import { handleGoldenKey } from '../utils/goldenKeyLogic';
+import { LandType, NationType } from '../utils/mapType';
+import { PlayState, ActionType } from './gamePlayType';
 
-type ActionType = 'BUY' | 'BUILD' | 'PAY_RENT' | 'SELL';
-
-interface PlayState {
-  // 게임 진행 상태
-  gamePhase: 'ROLL' | 'MOVE' | 'ACTION' | 'END_TURN';
-  isRolling: boolean;
-  dices: RollResult | null;
-  isDouble: boolean;
-  pendingAction: {
-    type: ActionType;
-    landId: NationType['id'];
-    price: NationType['price'];
-  } | null;
-
-  // 주사위 관련 액션
-  setGamePhase: (phase: PlayState['gamePhase']) => void;
-  setDices: (dices: RollResult) => void;
-  // handleRolling: () => Promise<RollResult>;
-
-  // 이동 관련 액션
-  handleMoving: (diceResult: RollResult) => Promise<NationType | null>;
-  handlePositionAction: (position: NationType, currentPlayer: PlayerNamesType) => Promise<void>;
-
-  // 턴 관련 액션
-  handleTurn: () => Promise<void>;
-  handleUserAction: (actionType: ActionType, accept: boolean) => Promise<void>;
-  handleNextTurn: (diceResult: RollResult) => void;
-}
-
-type PositionAction<T extends NationType['type']> = T extends 'city' | 'k-city' | 'airport'
-  ? (pos: NationType) => Promise<void>
-  : () => Promise<void>;
-
-type PositionActions = {
-  [K in NationType['type']]: PositionAction<K>;
+const isDiceRolled = (dices: RollResult | null): dices is RollResult => {
+  return dices !== null;
 };
 
 const usePlayStore = create<PlayState>()((set, get) => ({
@@ -55,6 +22,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
   //이동처리 //월급체크해서 받기 //새로운 위치 설정 및 반환
   handleMoving: async (diceResult: RollResult) => {
+    console.log('handleMoving is Called');
     const currentPlayer = playerStore.getState().getNowTurn();
     const currentPositionInfo = currentPlayer.position;
     const newPosition = (currentPositionInfo.id + diceResult.total) % 40; // 보드의 크기에 따라 조정
@@ -71,38 +39,65 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   //땅 구매, 임대료 지불, 건물 건설 등의 사용자 선택 처리
   // pendingAction 상태에 따른 적절한 액션 실행
   // 액션 완료 후 상태 초기화
-  handleUserAction: async (actionType: ActionType, accept: boolean) => {
+  handleUserAction: async (actionType: ActionType) => {
     const { pendingAction } = get();
     const currentPlayer = playerStore.getState().getNowTurn();
 
-    if (!pendingAction || pendingAction.type !== actionType) return;
+    console.log('handleUserAction is called', pendingAction);
 
+    if (!pendingAction || pendingAction.type !== actionType) {
+      console.warn('Invalid action or no pending action');
+      return;
+    }
     const actionFn = {
       BUY: async () => {
         await playerStore.getState().processPayment(currentPlayer.id, -pendingAction.price);
-        get().updateLandOwner(pendingAction.landId, currentPlayer.id);
+        landStore.getState().updateLandOwner(pendingAction.landId, currentPlayer.id);
       },
       PAY_RENT: async () => {
+        console.log('PAY_RENT is called!!!');
         await playerStore
           .getState()
-          .handlePayment(currentPlayer.id, pendingAction.options?.owner!, pendingAction.price);
+          .processPayment(currentPlayer.id, -pendingAction.price, pendingAction.options?.owner!);
       },
       BUILD: async () => {},
       SELL: async () => {},
+      SKIP: async () => {
+        return get().handleNextTurn();
+      },
+      INISLAND: async () => {
+        const diceResult = get().dices;
+        if (!isDiceRolled(diceResult)) {
+          return;
+        }
+
+        //주사위 굴리기
+        //값에 따라 다음 턴으로 돌리기 또는 inisland false로 설정
+        if (diceResult.isDouble) {
+          await playerStore.getState().updateNestedPlayerInfo(curPlayer.id, ['isInIsland'], false);
+        }
+      },
+      GOLDEN_KEY: async () => {
+        return undefined;
+      },
     };
 
-    accept && (await actionFn[actionType]());
+    await actionFn[actionType]();
 
     // 액션 처리 후 초기화
     set({ pendingAction: null });
+    get().handleNextTurn();
   },
+
+  setPendingAction: (pendingAction) => set({ pendingAction }),
 
   //플레이어가 도착한 칸의 타입에 따른 액션 실행
   // gamePlayLogic.ts에 정의된 positionActions 실행
-  handlePositionAction: async (position: NationType, currentPlayer: PlayerNamesType) => {
+  handlePositionAction: async (position: LandType, currentPlayer: PlayerNamesType) => {
+    const { setPendingAction, setGamePhase } = get();
     const action = positionActions[position.type];
     if (action) {
-      await action(position);
+      await action({ position, currentPlayer, setPendingAction, setGamePhase });
     }
   },
 
@@ -111,8 +106,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   //더블 여부에 따른 추가 턴 처리
   // 다음 플레이어로 턴 넘기기
   // 게임 페이즈 초기화
-  handleNextTurn: (diceResult) => {
+  handleNextTurn: () => {
+    console.log('handleNextTurn is called');
     const { getNowTurn, updateDouble, nextTurn } = playerStore.getState();
+    const diceResult = get().dices;
     const currentPlayer = getNowTurn();
 
     if (diceResult.isDouble && currentPlayer.doubleTurnLeft) {
@@ -132,21 +129,15 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   // 4. 이동 처리
   // 5. 위치 기반 액션 실행
   // 6. 다음 턴 진행
+
   handleTurn: async () => {
     const diceResult = get().dices;
-    const { handleMoving, handlePositionAction, handleNextTurn } = get();
+    const { handleMoving, handlePositionAction, handleNextTurn, handleUserAction } = get();
 
     const currentPlayer = playerStore.getState().getNowTurn();
 
-    // 무인도 체크
-    if (currentPlayer.isInIsland) {
-      if (diceResult.isDouble) {
-        await playerStore
-          .getState()
-          .updateNestedPlayerInfo(currentPlayer.id, ['isInIsland'], false);
-      }
-      handleNextTurn(diceResult);
-      return;
+    if (!isDiceRolled(diceResult)) {
+      throw new Error('Dice must be rolled before handling turn');
     }
 
     // 더블 처리
@@ -158,9 +149,18 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
     if (newPosition) {
       await handlePositionAction(newPosition, currentPlayer);
-    }
+      const updatedPendingAction = get().pendingAction;
 
-    handleNextTurn(diceResult);
+      if (updatedPendingAction) {
+        if (updatedPendingAction.type === 'PAY_RENT') {
+          await handleUserAction(updatedPendingAction.type, true);
+        } else {
+          return;
+        }
+      } else {
+        handleNextTurn(diceResult);
+      }
+    }
   },
 }));
 

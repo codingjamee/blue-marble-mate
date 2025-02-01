@@ -1,6 +1,6 @@
 import { get as getFromDB } from 'idb-keyval';
 import { UseStore } from 'idb-keyval';
-import { GameData } from './gameStore';
+import { GameData } from './gameStoreType';
 import { SetStateFunction } from './playerLogic';
 import { LandState } from './landType';
 

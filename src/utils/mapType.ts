@@ -1,5 +1,3 @@
-import { BuildingType } from '../stores/landType';
-
 export type BoardPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export type BuildingRentType = 'land' | 'villa1' | 'villa2' | 'building' | 'hotel';
@@ -16,7 +14,7 @@ export interface NationType {
   rentPrice: RentPriceType;
   country: string;
   flag: string;
-  owner: string | null;
+  owner: string | undefined;
   buildings: RentPriceType[];
 }
 
@@ -25,7 +23,7 @@ interface BaseLandType {
   id: number;
   name: string;
   flag: string;
-  owner: string | null;
+  owner: string | undefined;
   buildings: BuildingRentType[];
 }
 

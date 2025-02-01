@@ -1,4 +1,5 @@
-import { GameData, GameState } from './gameStore';
+import { GameData } from './gameStoreType';
+import { GameState } from './gameStoreType';
 import dayjs from 'dayjs';
 import {
   createStore,
@@ -7,10 +8,12 @@ import {
   UseStore,
   del as delFromDB,
 } from 'idb-keyval';
-import { PlayerNamesType, PlayerState } from './playerStore';
+import { PlayerNamesType, PlayerState } from './playerType';
 import { StoreApi } from 'zustand';
+import { LandState } from './landType';
+import { LandType } from '../utils/mapType';
 
-const connectionManager = {
+export const connectionManager = {
   connections: new Map<string, UseStore>(),
 
   async getConnection(name: string): Promise<UseStore> {
@@ -33,15 +36,18 @@ const startGameService = async (
     gameName: string;
     playerStore: StoreApi<PlayerState>;
     mainStore: any;
+    landStore: StoreApi<LandState>;
   },
 ) => {
   const { gameName } = getState();
   const store = await connectionManager.getConnection(gameName);
   const players = options.playerStore.getState().playerInfos;
+  const lands = options.landStore.getState().lands;
 
   const gameData: GameData = {
     gameName,
     players,
+    lands,
     createdAt: dayjs(),
     gameState: false,
   };
@@ -59,14 +65,23 @@ const startGameService = async (
   }
 };
 
-const saveToDB = async (get: () => GameState, players: PlayerNamesType[]) => {
+const saveToDB = async ({
+  get,
+  players,
+  lands,
+}: {
+  get: () => GameState;
+  players?: PlayerNamesType[];
+  lands?: LandType[];
+}) => {
   const state = get();
   const gameName = get().gameName;
   const store = await connectionManager.getConnection(gameName);
 
   const gameData = {
     gameName: state.gameName,
-    players,
+    players: state.players || players,
+    lands: state.lands || lands,
     gameState: state.gameState,
     createdAt: state.createdAt || dayjs(),
     updatedAt: new Date(),

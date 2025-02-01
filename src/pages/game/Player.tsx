@@ -1,5 +1,5 @@
 import User from '../../assets/User.svg?react';
-import { PlayerNamesType } from '../../stores/playerStore';
+import { PlayerNamesType } from '../../stores/playerType';
 
 const Player = ({ player }: { player: PlayerNamesType }) => {
   return (

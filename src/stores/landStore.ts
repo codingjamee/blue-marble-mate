@@ -3,10 +3,10 @@ import gameStore, { mainStore } from './gameStore';
 import { updateNestedValue } from '../utils/utils';
 import { loadGameLandsService } from './landLogic';
 import { POSITION_DATA } from '../utils/mapInfo';
-import { BuildingType, LandState } from './landType';
+import { LandState } from './landType';
 import { BuildingRentType, CityLandType, LandType, RentPriceType } from '../utils/mapType';
 
-function isThisLand(land: LandType): land is CityLandType {
+export function isThisCity(land: LandType): land is CityLandType {
   return 'owner' in land;
 }
 
@@ -24,7 +24,7 @@ const landStore = create<LandState>((set, get) => ({
 
   getOwnerLands: (ownerId) => {
     return Object.values(get().lands)
-      .filter(isThisLand)
+      .filter(isThisCity)
       .filter((land) => land.owner && land.owner === ownerId);
   },
 
@@ -33,7 +33,7 @@ const landStore = create<LandState>((set, get) => ({
     if (!isThereOwner(landId)) {
       throw new Error("This land dosen't have land lord");
     }
-    if (!isThisLand(land)) {
+    if (!isThisCity(land)) {
       throw new Error('rent price cannot be calculated');
     }
 
@@ -51,18 +51,18 @@ const landStore = create<LandState>((set, get) => ({
     return calculateRentPrice();
   },
 
-  checkLandOwner: (landId, playerId) => {
+  getLandOwnerAndRent: (landId, playerId) => {
     const land = get().lands[landId];
+    const getCityRentPrice = get().getCityRentPrice;
 
-    if (!isThisLand(land)) {
+    if (!isThisCity(land)) {
       throw new Error('This land is not a land');
     }
     return {
       isCurrentPlayerOwner: land.owner === playerId,
       hasOwner: land.owner !== null,
       ownerId: land.owner,
-      price: land.price,
-      rentPrice: land.rentPrice,
+      rentPrice: getCityRentPrice(landId),
     };
   },
 

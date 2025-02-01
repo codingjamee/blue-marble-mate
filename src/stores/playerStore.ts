@@ -107,9 +107,11 @@ const playerStore = create<PlayerState>((set, get) => ({
   },
   updatePlayerPosition: (nowTurnId, newPosition) => {
     const nowTurnInfo = get().getNowTurn();
-    const nextPosition = gameStore.getState().lands.find((data) => {
-      return data.id === newPosition;
-    });
+    //TODO: Lands데이터 업데이트 설정 안되고 있음 수정필요
+    console.log('lands-----------??', gameStore.getState().lands);
+    const nextPosition = gameStore.getState().lands[newPosition];
+
+    console.log(nextPosition);
 
     if (nextPosition) {
       get().updateNestedPlayerInfo(nowTurnId, ['position'], {
@@ -139,12 +141,16 @@ const playerStore = create<PlayerState>((set, get) => ({
     });
   },
 
-  processPayment: (id, amount) => {
-    const playerInfo = get().getPlayerInfo(id);
+  processPayment: (fromId, amount, toId) => {
+    const playerInfo = get().getPlayerInfo(fromId);
     const playerBalance = playerInfo.cash;
+    console.log('processPayment?????', amount);
     const addedAmount = playerBalance + amount;
 
-    get().updateNestedPlayerInfo(id, ['cash'], addedAmount);
+    get().updateNestedPlayerInfo(fromId, ['cash'], addedAmount);
+    if (toId) {
+      get().updateNestedPlayerInfo(toId, ['cash'], -addedAmount);
+    }
   },
 
   startTurn: () => {

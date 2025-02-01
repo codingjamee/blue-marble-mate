@@ -1,4 +1,4 @@
-import { BoardData } from '../../utils/mapInfo';
+import { BoardData } from '../../utils/mapType';
 import Cell from './Cell';
 
 interface MiniMapProps {

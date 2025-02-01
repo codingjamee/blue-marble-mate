@@ -4,18 +4,22 @@ import DiceSvgs from './DiceSvgs';
 import useRollDice from './hooks/useRollDice';
 
 const Dice = () => {
-  const { setGamePhase, handleTurn } = usePlayStore();
-  const { dices, isRolling, isDouble, handleRolling } = useRollDice();
+  const { setGamePhase, gamePhase, handleTurn, setDices } = usePlayStore();
+  const { dices, isRolling, isDouble, handleRolling } = useRollDice(setDices);
+
+  const rollDice = async () => {
+    if (!isRolling) await handleRolling(() => setGamePhase('ROLL'));
+
+    if (gamePhase === 'INISLAND') return;
+    await handleTurn();
+  };
 
   return (
     <section className="dice console-container">
-      <h3>주사위 </h3>
+      {gamePhase === 'INISLAND' ? <h3>무인도 탈출 주사위(더블이면 탈출)</h3> : <h3>주사위 </h3>}
       <button
         className={`btn btn-common roll-dice ${isRolling ? 'disabled' : ''}`}
-        onClick={async () => {
-          !isRolling && (await handleRolling(() => setGamePhase('ROLL')));
-          handleTurn();
-        }}
+        onClick={rollDice}
       >
         <DiceSvg />
         <div>{isRolling ? '주사위 굴리는 중.....' : '주사위 굴리기'}</div>

@@ -1,4 +1,8 @@
+import usePlayStore from '../../stores/gamePlayStore';
+
 const GameControl = () => {
+  const handleUserAction = usePlayStore((state) => state.handleUserAction);
+
   return (
     <section className="console-container">
       <div className="building">
@@ -20,9 +24,15 @@ const GameControl = () => {
         <section className="btns">
           <button className="btn btn-common">건물 업그레이드</button>
           <button className="btn btn-common tolls">통행료 지불</button>
-          <button className="btn btn-border">건물 매입</button>
-          <button className="btn btn-border">건물 매각</button>
-          <button className="btn btn-border">턴 종료</button>
+          <button className="btn btn-border" onClick={() => handleUserAction('BUY', true)}>
+            건물 매입
+          </button>
+          <button className="btn btn-border" onClick={() => handleUserAction('SELL', true)}>
+            건물 매각
+          </button>
+          <button className="btn btn-border" onClick={() => handleUserAction('SKIP', true)}>
+            턴 종료
+          </button>
         </section>
       </div>
     </section>

@@ -15,20 +15,12 @@ const Start = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<OpenType>(false);
   const [modal, setModal] = useState(false);
-  const { updateEmptyName, playerInfos, setPlayerInit, startTurn } = playerStore();
-  const {
-    setGameName,
-    updateRandomGameName,
-    updateEmptyGameName,
-    gameName,
-    startGame,
-    resetGame,
-    loadGame,
-  } = gameStore();
+  const { updateEmptyName, playerInfos } = playerStore();
+  const { setGameName, updateRandomGameName, updateEmptyGameName, gameName, startGame, resetGame } =
+    gameStore();
 
   useEffect(() => {
     resetGame();
-    setPlayerInit();
   }, []);
 
   return (
