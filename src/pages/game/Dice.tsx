@@ -1,9 +1,11 @@
 import DiceSvg from '../../assets/Dice.svg?react';
 import DiceSvgs from './DiceSvgs';
+import useDiceStore from '../../stores/useDiceStore';
 import usePlayingGame from './hooks/usePlayingGame';
 
 const Dice = () => {
-  const { handleTurn, isRolling, isDouble, dices } = usePlayingGame();
+  const { handleTurn, isDouble } = usePlayingGame();
+  const { isRolling, dices } = useDiceStore();
 
   return (
     <section className="dice console-container">
