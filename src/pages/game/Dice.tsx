@@ -1,19 +1,20 @@
 import DiceSvg from '../../assets/Dice.svg?react';
+import usePlayStore from '../../stores/gamePlayStore';
 import DiceSvgs from './DiceSvgs';
-import useDiceStore from '../../stores/useDiceStore';
-import usePlayingGame from './hooks/usePlayingGame';
+import useRollDice from './hooks/useRollDice';
 
 const Dice = () => {
-  const { handleTurn, isDouble } = usePlayingGame();
-  const { isRolling, dices } = useDiceStore();
+  const { setGamePhase, handleTurn } = usePlayStore();
+  const { dices, isRolling, isDouble, handleRolling } = useRollDice();
 
   return (
     <section className="dice console-container">
       <h3>주사위 </h3>
       <button
         className={`btn btn-common roll-dice ${isRolling ? 'disabled' : ''}`}
-        onClick={() => {
-          !isRolling && handleTurn();
+        onClick={async () => {
+          !isRolling && (await handleRolling(() => setGamePhase('ROLL')));
+          handleTurn();
         }}
       >
         <DiceSvg />
