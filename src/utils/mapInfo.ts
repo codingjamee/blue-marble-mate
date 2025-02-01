@@ -1,4 +1,4 @@
-import { BoardData, SquareType } from './mapType';
+import { BoardData, LandType } from './mapType';
 
 const BOARD_DATA: BoardData = {
   top: [
@@ -8,8 +8,6 @@ const BOARD_DATA: BoardData = {
       name: '시작',
       type: 'start',
       flag: '🏁',
-      owner: null,
-      buildings: [],
     },
     {
       id: 1,
@@ -206,11 +204,7 @@ const BOARD_DATA: BoardData = {
       id: 20,
       name: '사회복지기금수령',
       type: 'fund',
-      price: 0,
       flag: '🤲',
-      rentPrice: 0,
-      owner: null,
-      buildings: [],
     },
     {
       id: 21,
@@ -307,13 +301,13 @@ const BOARD_DATA: BoardData = {
       buildings: [],
     },
     {
-      //컬럼비아호 소유주에게 20만원 지급
+      //컬럼비아호 소유주에게 20만원 지급 //컬럼비아호일때 우주여행 owner도 함께 추가 필요
       id: 30,
       name: '우주여행',
       type: 'space',
-      price: 0,
+      price: { land: 0, villa: 0, building: 0, hotel: 0 },
       flag: '🚀',
-      rentPrice: 0,
+      rentPrice: { land: 200000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
       owner: null,
       buildings: [],
     },
@@ -399,11 +393,7 @@ const BOARD_DATA: BoardData = {
       id: 38,
       name: '사회복지기금',
       type: 'fund',
-      price: 0,
       flag: '👼🏻',
-      rentPrice: 0,
-      owner: null,
-      buildings: [],
     },
     {
       id: 39,
@@ -419,6 +409,6 @@ const BOARD_DATA: BoardData = {
   ],
 };
 
-const POSITION_DATA: SquareType[] = Object.values(BOARD_DATA).flat();
+const POSITION_DATA: LandType[] = Object.values(BOARD_DATA).flat();
 
 export { BOARD_DATA, POSITION_DATA };

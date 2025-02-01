@@ -2,11 +2,11 @@ import { BuildingType } from '../stores/landType';
 
 export type BoardPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export type RentPriceType =
-  | { land: number; villa1: number; villa2: number; building: number; hotel: number }
-  | 0;
+export type BuildingRentType = 'land' | 'villa1' | 'villa2' | 'building' | 'hotel';
 
-export type PriceType = { land: number; villa: number; building: number; hotel: number } | 0;
+export type RentPriceType = Record<BuildingRentType, number>;
+
+export type PriceType = { land: number; villa: number; building: number; hotel: number };
 
 export interface NationType {
   id: number;
@@ -17,7 +17,7 @@ export interface NationType {
   country: string;
   flag: string;
   owner: string | null;
-  buildings: BuildingType[];
+  buildings: RentPriceType[];
 }
 
 // Base interface for all lands
@@ -26,7 +26,7 @@ interface BaseLandType {
   name: string;
   flag: string;
   owner: string | null;
-  buildings: BuildingType[];
+  buildings: BuildingRentType[];
 }
 
 // City specific data
@@ -44,13 +44,12 @@ export interface IslandType extends BaseLandType {
 }
 
 // Fund specific data
-export interface FundType extends BaseLandType {
+export interface FundType extends Omit<BaseLandType, 'owner' | 'buildings' | 'country'> {
   type: 'fund';
-  country: string;
 }
 
 // Start specific data
-export interface StartType extends BaseLandType {
+export interface StartType extends Omit<BaseLandType, 'owner' | 'buildings' | 'country'> {
   type: 'start';
   country: string;
 }
@@ -58,7 +57,8 @@ export interface StartType extends BaseLandType {
 // Space specific data
 export interface SpaceType extends BaseLandType {
   type: 'space';
-  country: string;
+  price: PriceType;
+  rentPrice: RentPriceType;
 }
 
 // Golden key specific data
