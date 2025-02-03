@@ -24,13 +24,13 @@ const GameControl = () => {
         <section className="btns">
           <button className="btn btn-common">건물 업그레이드</button>
           <button className="btn btn-common tolls">통행료 지불</button>
-          <button className="btn btn-border" onClick={() => handleUserAction('BUY', true)}>
+          <button className="btn btn-border" onClick={() => handleUserAction('BUY')}>
             건물 매입
           </button>
-          <button className="btn btn-border" onClick={() => handleUserAction('SELL', true)}>
+          <button className="btn btn-border" onClick={() => handleUserAction('SELL')}>
             건물 매각
           </button>
-          <button className="btn btn-border" onClick={() => handleUserAction('SKIP', true)}>
+          <button className="btn btn-border" onClick={() => handleUserAction('SKIP')}>
             턴 종료
           </button>
         </section>

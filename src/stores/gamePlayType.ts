@@ -29,6 +29,6 @@ export interface PlayState {
 
   // 턴 관련 액션
   handleTurn: () => Promise<void>;
-  handleUserAction: (actionType: ActionType, accept: boolean) => Promise<void>;
-  handleNextTurn: (diceResult: RollResult) => void;
+  handleUserAction: (actionType: ActionType) => Promise<void>;
+  handleNextTurn: () => void;
 }

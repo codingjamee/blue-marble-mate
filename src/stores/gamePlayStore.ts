@@ -4,7 +4,7 @@ import { PlayerNamesType } from './playerType';
 import landStore from './landStore';
 import { positionActions } from './gamePlayLogic';
 import { RollResult } from '../pages/game/hooks/useRollDice';
-import { LandType, NationType } from '../utils/mapType';
+import { LandType } from '../utils/mapType';
 import { PlayState, ActionType } from './gamePlayType';
 
 const isDiceRolled = (dices: RollResult | null): dices is RollResult => {
@@ -44,6 +44,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     const currentPlayer = playerStore.getState().getNowTurn();
 
     console.log('handleUserAction is called', pendingAction);
+
+    if (actionType === 'SKIP') {
+      return get().handleNextTurn();
+    }
 
     if (!pendingAction || pendingAction.type !== actionType) {
       console.warn('Invalid action or no pending action');
@@ -95,6 +99,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   // gamePlayLogic.ts에 정의된 positionActions 실행
   handlePositionAction: async (position: LandType, currentPlayer: PlayerNamesType) => {
     const { setPendingAction, setGamePhase } = get();
+
     const action = positionActions[position.type];
     if (action) {
       await action({ position, currentPlayer, setPendingAction, setGamePhase });
@@ -108,15 +113,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   // 게임 페이즈 초기화
   handleNextTurn: () => {
     console.log('handleNextTurn is called');
-    const { getNowTurn, updateDouble, nextTurn } = playerStore.getState();
-    const diceResult = get().dices;
+    const { getNowTurn, nextTurn } = playerStore.getState();
     const currentPlayer = getNowTurn();
 
-    if (diceResult.isDouble && currentPlayer.doubleTurnLeft) {
-      updateDouble(currentPlayer.id, true, -1);
-    } else {
-      nextTurn(currentPlayer);
-    }
+    nextTurn(currentPlayer);
 
     set({ gamePhase: 'ROLL' });
   },
@@ -132,15 +132,21 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
   handleTurn: async () => {
     const diceResult = get().dices;
-    const { handleMoving, handlePositionAction, handleNextTurn, handleUserAction } = get();
-
     const currentPlayer = playerStore.getState().getNowTurn();
+    const { updateDouble } = playerStore.getState();
+
+    const { handleMoving, handlePositionAction } = get();
 
     if (!isDiceRolled(diceResult)) {
       throw new Error('Dice must be rolled before handling turn');
     }
 
-    // 더블 처리
+    // 턴 시작 시 남은 더블 턴 체크 및 처리
+    if (diceResult && currentPlayer.doubleTurnLeft) {
+      updateDouble(currentPlayer.id, true, -1);
+    }
+
+    // 더블처리
     if (diceResult.isDouble) {
       await playerStore.getState().updateDouble(currentPlayer.id, true, 1);
     }
@@ -151,14 +157,8 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       await handlePositionAction(newPosition, currentPlayer);
       const updatedPendingAction = get().pendingAction;
 
-      if (updatedPendingAction) {
-        if (updatedPendingAction.type === 'PAY_RENT') {
-          await handleUserAction(updatedPendingAction.type, true);
-        } else {
-          return;
-        }
-      } else {
-        handleNextTurn(diceResult);
+      if (updatedPendingAction?.type === 'PAY_RENT') {
+        await get().handleUserAction('PAY_RENT');
       }
     }
   },
