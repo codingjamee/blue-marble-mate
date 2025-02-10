@@ -30,8 +30,8 @@ export interface PlayState {
   handlePendingAction: (position: LandType, currentPlayer: PlayerNamesType) => Promise<void>;
 
   // 턴 관련 액션
-  handleTurn: () => Promise<void>;
-  handleIslandTurn: () => Promise<false | 'fullfilled'>;
+  handleTurn: () => Promise<true | void>;
+  handleIslandTurn: () => Promise<true | void>;
   handleUserAction: (actionType: ActionType) => Promise<void>;
   handleNextTurn: () => void;
   validateAndResetDice: () => void;

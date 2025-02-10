@@ -192,6 +192,8 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     const { handleMoving, handlePendingAction, dices: diceResult, validateAndResetDice } = get();
     const curPlayer = getNowTurn();
 
+    if (!diceResult) throw Error('dice result is undefined');
+
     validateAndResetDice();
     console.log({ curPlayer });
 

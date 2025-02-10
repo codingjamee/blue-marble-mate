@@ -60,4 +60,5 @@ export interface PlayerState {
     toId?: PlayerNamesType['id'],
   ) => Promise<boolean>;
   updateIslandTurn: (id: PlayerNamesType['id'], value: number) => void;
+  updateFirstIslandState: (id: PlayerNamesType['id']) => void;
 }
