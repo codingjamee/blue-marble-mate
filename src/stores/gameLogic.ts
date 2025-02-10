@@ -103,6 +103,8 @@ const loadGameService = async (
       const store = await connectionManager.getConnection(lastGameName);
       const gameData = await getFromDB<GameData>(lastGameName, store);
 
+      console.log('gameLogic', gameData);
+
       if (gameData) {
         setState({
           ...gameData,

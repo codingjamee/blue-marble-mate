@@ -6,12 +6,8 @@ import { BOARD_DATA } from '../../utils/mapInfo';
 import gameStore from '../../stores/gameStore';
 
 const Game = () => {
-  const { players, gameName, updateGameState, round } = gameStore((state) => state);
+  const { gameName, updateGameState, round } = gameStore((state) => state);
   const gameState = gameStore((state) => state.gameState);
-
-  console.log(gameState);
-
-  console.log({ players, gameName });
 
   return (
     <section className="container">

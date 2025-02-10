@@ -25,6 +25,7 @@ const gameStore = create<GameState>()(
       round: 1,
 
       createNewStore: async (name: string) => {
+        console.log('createNewStore 호출 name', name);
         const newStore = createStore(`${name}-db`, `${name}-store`);
         setState({ currentStore: newStore });
         return newStore;
@@ -51,6 +52,7 @@ const gameStore = create<GameState>()(
       },
 
       startGame: async () => {
+        console.log('gameStore startGame called');
         await startGameService(setState, getState, {
           gameName: getState().gameName,
           playerStore,
@@ -78,6 +80,7 @@ const gameStore = create<GameState>()(
       },
 
       syncLands: (lands) => {
+        console.log('syncLands is called', lands);
         setState({ lands });
         saveToDB({ get: getState, lands });
       },
@@ -91,6 +94,7 @@ const gameStore = create<GameState>()(
       },
 
       resetGame: () => {
+        console.log('reset Game is Called');
         setState({ gameName: '', players: [] });
         playerStore.getState().setPlayerInit();
         landStore.getState().initializeLands();
@@ -108,6 +112,7 @@ const gameStore = create<GameState>()(
           players: state.players,
           gameState: state.gameState,
           createdAt: state.createdAt,
+          lands: state.lands,
         }) as GameState,
     },
   ),

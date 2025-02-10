@@ -107,11 +107,9 @@ const playerStore = create<PlayerState>((set, get) => ({
   },
   updatePlayerPosition: (nowTurnId, newPosition) => {
     const nowTurnInfo = get().getNowTurn();
-    //TODO: Lands데이터 업데이트 설정 안되고 있음 수정필요
+    console.log('updatedPlayerPosition', nowTurnId, newPosition);
     console.log('lands-----------??', gameStore.getState().lands);
     const nextPosition = gameStore.getState().lands[newPosition];
-
-    console.log(nextPosition);
 
     if (nextPosition) {
       get().updateNestedPlayerInfo(nowTurnId, ['position'], {
@@ -123,6 +121,7 @@ const playerStore = create<PlayerState>((set, get) => ({
     }
   },
   updateDouble: (id, isDouble, turnLeft) => {
+    console.log('updateDouble is called');
     const playerInfo = get().getPlayerInfo(id);
 
     set((state) => {
@@ -142,15 +141,27 @@ const playerStore = create<PlayerState>((set, get) => ({
   },
 
   processPayment: (fromId, amount, toId) => {
-    const playerInfo = get().getPlayerInfo(fromId);
-    const playerBalance = playerInfo.cash;
-    console.log('processPayment?????', amount);
-    const addedAmount = playerBalance + amount;
+    //from은 - to는 +로
+    return new Promise((resolve) => {
+      set((state) => {
+        const updatedInfos = state.playerInfos.map((player) => ({
+          ...player,
+          cash:
+            player.id === fromId
+              ? player.cash - amount
+              : player.id === toId
+                ? player.cash + amount
+                : player.cash,
+        }));
 
-    get().updateNestedPlayerInfo(fromId, ['cash'], addedAmount);
-    if (toId) {
-      get().updateNestedPlayerInfo(toId, ['cash'], -addedAmount);
-    }
+        gameStore.getState().syncPlayers(updatedInfos);
+
+        return {
+          ...state,
+          playerInfos: updatedInfos,
+        };
+      });
+    });
   },
 
   startTurn: () => {
@@ -167,6 +178,7 @@ const playerStore = create<PlayerState>((set, get) => ({
       const updatedPlayerInfos = state.playerInfos.map((player) => ({
         ...player,
         isCurrentTurn: player.id === nextPlayer.id,
+        isDouble: false,
       }));
 
       gameStore.getState().syncPlayers(updatedPlayerInfos);
@@ -174,6 +186,37 @@ const playerStore = create<PlayerState>((set, get) => ({
       return {
         ...state,
         playerInfos: updatedPlayerInfos,
+      };
+    });
+  },
+  updateIslandTurn: (playerId, value) => {
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => ({
+        ...player,
+        islandTurnLeft:
+          player.id === playerId ? player.islandTurnLeft + value : player.islandTurnLeft,
+      }));
+
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+  updateFirstIslandState: (playerId) => {
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => ({
+        ...player,
+        isInIsland: player.id === playerId,
+        islandTurnLeft: player.id === playerId ? 3 : player.islandTurnLeft,
+      }));
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
       };
     });
   },

@@ -1,5 +1,5 @@
 import { ColorOption } from '../constants/colors';
-import { BoardPosition } from '../utils/mapType';
+import { BoardPosition, LandType } from '../utils/mapType';
 import { GameState } from './gameStoreType';
 
 export interface PlayerNamesType {
@@ -21,7 +21,7 @@ export interface PlayerNamesType {
   position: {
     id: number;
     name: string;
-    position: BoardPosition;
+    position: LandType;
   };
   isInIsland: boolean;
   islandTurnLeft: number;
@@ -54,5 +54,10 @@ export interface PlayerState {
     position: PlayerNamesType['position']['id'],
   ) => void;
   getPlayerInfo: (id: PlayerNamesType['id']) => PlayerNamesType;
-  processPayment: (id: PlayerNamesType['id'], amount: number, toId?: PlayerNamesType['id']) => void;
+  processPayment: (
+    id: PlayerNamesType['id'],
+    amount: number,
+    toId?: PlayerNamesType['id'],
+  ) => Promise<boolean>;
+  updateIslandTurn: (id: PlayerNamesType['id'], value: number) => void;
 }

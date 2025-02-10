@@ -16,7 +16,10 @@ export interface RollResult {
 const pickNumber = (): DiceValue => {
   return Math.floor(Math.random() * 6 + 1) as DiceValue;
 };
-const useRollDice = (setDicesToStore: PlayState['setDices']) => {
+const useRollDice = (
+  setDicesToStore: PlayState['setDices'],
+  setDiceIsRolled: PlayState['setDiceIsRolled'],
+) => {
   const [dices, setDices] = useState<DicesType>({
     val1: pickNumber(),
     val2: pickNumber(),
@@ -51,6 +54,7 @@ const useRollDice = (setDicesToStore: PlayState['setDices']) => {
 
       setDices({ val1, val2 });
       setDicesToStore(result);
+      setDiceIsRolled(true);
       setIsRolling(false);
 
       return result;

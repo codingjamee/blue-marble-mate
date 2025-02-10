@@ -5,12 +5,18 @@ import gameStore from './gameStore';
 import { PlayerNamesType } from './playerType';
 import { BuildingRentType, LandType } from '../utils/mapType';
 import { PlayState } from './gamePlayType';
+import { RollResult } from '../pages/game/hooks/useRollDice';
 
 interface ActionContext {
   position: LandType;
   currentPlayer: PlayerNamesType;
   setPendingAction: PlayState['setPendingAction'];
+  setGamePhase?: PlayState['setGamePhase'];
 }
+
+export const isDiceRolled = (dices: RollResult | null): dices is RollResult => {
+  return dices !== null;
+};
 
 export function hasPrice(land: LandType): land is LandType & { price: { land: number } } {
   return 'price' in land && 'land' in land.price;
@@ -20,7 +26,7 @@ const getAvailableBuildings = (id: number): BuildingRentType[] => {
   return ['villa1'];
 };
 
-const positionActions = {
+const positionPendingActions = {
   city: async ({ position, currentPlayer, setPendingAction }: ActionContext) => {
     const { isCurrentPlayerOwner, hasOwner, ownerId, rentPrice } = await landStore
       .getState()
@@ -37,9 +43,9 @@ const positionActions = {
         landId: position.id,
         price: position.price.land,
       });
-    } else if (!isCurrentPlayerOwner) {
+    } else if (hasOwner && !isCurrentPlayerOwner) {
       //owner가 있는데 현재 플레이어가 아닌경우
-
+      console.log({ hasOwner, isCurrentPlayerOwner });
       setPendingAction({
         type: 'PAY_RENT',
         landId: position.id,
@@ -69,19 +75,21 @@ const positionActions = {
     });
   },
 
-  island: async ({ setPendingAction, setGamePhase }) => {
-    // 무인도 로직
+  island: async ({ position, setPendingAction, setGamePhase }: ActionContext) => {
     setPendingAction({
       type: 'INISLAND',
+      landId: position.id,
+      price: 0,
+      options: null,
     });
-    setGamePhase('INISLAND');
+    setGamePhase && setGamePhase('INISLAND');
 
     return;
   },
 
   airport: async (context: ActionContext) => {
     // 공항 로직
-    return positionActions.city(context);
+    return positionPendingActions.city(context);
   },
 
   fund: async () => {},
@@ -100,4 +108,5 @@ const positionActions = {
 //     });
 //   }
 // }
-export { positionActions };
+
+export { positionPendingActions };

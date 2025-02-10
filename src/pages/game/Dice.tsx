@@ -1,22 +1,25 @@
 import DiceSvg from '../../assets/Dice.svg?react';
 import usePlayStore from '../../stores/gamePlayStore';
+import playerStore from '../../stores/playerStore';
 import DiceSvgs from './DiceSvgs';
 import useRollDice from './hooks/useRollDice';
 
 const Dice = () => {
-  const { setGamePhase, gamePhase, handleTurn, setDices } = usePlayStore();
-  const { dices, isRolling, isDouble, handleRolling } = useRollDice(setDices);
+  const { setGamePhase, gamePhase, handleTurn, handleIslandTurn, setDices, setDiceIsRolled } =
+    usePlayStore();
+  const { dices, isRolling, isDouble, handleRolling } = useRollDice(setDices, setDiceIsRolled);
+  const currentPlayer = playerStore.getState().getNowTurn();
 
   const rollDice = async () => {
-    if (!isRolling) await handleRolling(() => setGamePhase('ROLL'));
+    if (!isRolling)
+      await handleRolling(() => (currentPlayer.isInIsland ? () => {} : setGamePhase('ROLL')));
 
-    if (gamePhase === 'INISLAND') return;
-    await handleTurn();
+    currentPlayer.isInIsland ? await handleIslandTurn() : await handleTurn();
   };
 
   return (
     <section className="dice console-container">
-      {gamePhase === 'INISLAND' ? <h3>무인도 탈출 주사위(더블이면 탈출)</h3> : <h3>주사위 </h3>}
+      {currentPlayer.isInIsland ? <h3>무인도 탈출 주사위(더블이면 탈출)</h3> : <h3>주사위 </h3>}
       <button
         className={`btn btn-common roll-dice ${isRolling ? 'disabled' : ''}`}
         onClick={rollDice}

@@ -76,6 +76,7 @@ const loadGamePlayersService = async (
   try {
     const lastGameName = await getFromDB<string>('currentGame', options.mainStore);
     if (lastGameName) {
+      console.log('loadGamePlayersService lastGameName', lastGameName);
       const store = await createNewStore(lastGameName);
       const gameData = await getFromDB<GameState>(lastGameName, store);
       console.log(gameData);

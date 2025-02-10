@@ -17,7 +17,7 @@ const BOARD_DATA: BoardData = {
       country: '타이완',
       price: { land: 50000, villa: 50000, building: 150000, hotel: 250000 },
       rentPrice: { land: 2000, villa1: 10000, villa2: 30000, building: 90000, hotel: 250000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -34,7 +34,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇨🇳',
       country: '중국',
       rentPrice: { land: 4000, villa1: 20000, villa2: 60000, building: 180000, hotel: 450000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -45,7 +45,7 @@ const BOARD_DATA: BoardData = {
       price: { land: 80000, villa: 50000, building: 150000, hotel: 250000 },
       flag: '🇵🇭',
       rentPrice: { land: 4000, villa1: 20000, villa2: 60000, building: 180000, hotel: 450000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -56,7 +56,7 @@ const BOARD_DATA: BoardData = {
       country: '대한민국',
       flag: '🇰🇷',
       rentPrice: { land: 300000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -67,7 +67,7 @@ const BOARD_DATA: BoardData = {
       price: { land: 100000, villa: 50000, building: 150000, hotel: 250000 },
       flag: '🇸🇬',
       rentPrice: { land: 6000, villa1: 30000, villa2: 90000, building: 270000, hotel: 550000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -84,7 +84,7 @@ const BOARD_DATA: BoardData = {
       price: { land: 100000, villa: 50000, building: 150000, hotel: 250000 },
       flag: '🇪🇬',
       rentPrice: { land: 6000, villa1: 30000, villa2: 90000, building: 270000, hotel: 550000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -95,7 +95,7 @@ const BOARD_DATA: BoardData = {
       price: { land: 120000, villa: 50000, building: 150000, hotel: 250000 },
       flag: '🇹🇷',
       rentPrice: { land: 8000, villa1: 40000, villa2: 100000, building: 300000, hotel: 600000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -104,7 +104,7 @@ const BOARD_DATA: BoardData = {
       country: '무인도',
       type: 'island',
       flag: '🏝️',
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
   ],
@@ -117,7 +117,7 @@ const BOARD_DATA: BoardData = {
       country: '그리스',
       flag: '🇬🇷',
       rentPrice: { land: 10000, villa1: 50000, villa2: 150000, building: 450000, hotel: 750000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -134,7 +134,7 @@ const BOARD_DATA: BoardData = {
       country: '덴마크',
       flag: '🇩🇰',
       rentPrice: { land: 12000, villa1: 60000, villa2: 180000, building: 500000, hotel: 900000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -145,7 +145,7 @@ const BOARD_DATA: BoardData = {
       country: '스웨덴',
       flag: '🇸🇪',
       rentPrice: { land: 12000, villa1: 60000, villa2: 180000, building: 500000, hotel: 900000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -156,7 +156,7 @@ const BOARD_DATA: BoardData = {
       country: '여객기',
       flag: '✈️',
       rentPrice: { land: 300000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -167,7 +167,7 @@ const BOARD_DATA: BoardData = {
       country: '스위스',
       flag: '🇨🇭',
       rentPrice: { land: 14000, villa1: 70000, villa2: 200000, building: 550000, hotel: 950000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -184,7 +184,7 @@ const BOARD_DATA: BoardData = {
       country: '독일',
       flag: '🇩🇪',
       rentPrice: { land: 14000, villa1: 70000, villa2: 200000, building: 550000, hotel: 950000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -195,7 +195,7 @@ const BOARD_DATA: BoardData = {
       country: '캐나다',
       flag: '🇨🇦',
       rentPrice: { land: 16000, villa1: 80000, villa2: 220000, building: 600000, hotel: 1000000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
   ],
@@ -214,7 +214,7 @@ const BOARD_DATA: BoardData = {
       country: '아르헨티나',
       flag: '🇦🇷',
       rentPrice: { land: 18000, villa1: 90000, villa2: 250000, building: 700000, hotel: 1050000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -231,7 +231,7 @@ const BOARD_DATA: BoardData = {
       country: '브라질',
       flag: '🇸🇬',
       rentPrice: { land: 20000, villa1: 100000, villa2: 300000, building: 750000, hotel: 1100000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -242,7 +242,7 @@ const BOARD_DATA: BoardData = {
       country: '호주',
       flag: '🇦🇺',
       rentPrice: { land: 20000, villa1: 100000, villa2: 300000, building: 750000, hotel: 1100000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -253,7 +253,7 @@ const BOARD_DATA: BoardData = {
       country: '대한민국',
       flag: '🇰🇷',
       rentPrice: { land: 600000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -264,7 +264,7 @@ const BOARD_DATA: BoardData = {
       country: '미국',
       flag: '🇺🇸',
       rentPrice: { land: 22000, villa1: 110000, villa2: 330000, building: 800000, hotel: 1150000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -275,7 +275,7 @@ const BOARD_DATA: BoardData = {
       country: '포르투갈',
       flag: '🇵🇹',
       rentPrice: { land: 22000, villa1: 110000, villa2: 330000, building: 800000, hotel: 1150000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -286,7 +286,7 @@ const BOARD_DATA: BoardData = {
       country: '퀸엘리자베스호',
       price: { land: 300000, villa: 0, building: 0, hotel: 0 },
       rentPrice: { land: 250000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -297,7 +297,7 @@ const BOARD_DATA: BoardData = {
       rentPrice: { land: 24000, villa1: 120000, villa2: 360000, building: 850000, hotel: 1200000 },
       country: '스페인',
       flag: '🇪🇸',
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -308,7 +308,7 @@ const BOARD_DATA: BoardData = {
       price: { land: 0, villa: 0, building: 0, hotel: 0 },
       flag: '🚀',
       rentPrice: { land: 200000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
   ],
@@ -321,7 +321,7 @@ const BOARD_DATA: BoardData = {
       rentPrice: { land: 26000, villa1: 130000, villa2: 390000, building: 900000, hotel: 1270000 },
       country: '일본',
       flag: '🇯🇵',
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -335,7 +335,7 @@ const BOARD_DATA: BoardData = {
       //컬럼비아호 통행료
       rentPrice: { land: 400000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
       //우주여행 200000
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -346,7 +346,7 @@ const BOARD_DATA: BoardData = {
       rentPrice: { land: 28000, villa1: 150000, villa2: 450000, building: 1000000, hotel: 1400000 },
       country: '프랑스',
       flag: '🇫🇷',
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -357,7 +357,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇮🇹',
       price: { land: 320000, villa: 200000, building: 600000, hotel: 1000000 },
       rentPrice: { land: 28000, villa1: 150000, villa2: 450000, building: 1000000, hotel: 1400000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -375,7 +375,7 @@ const BOARD_DATA: BoardData = {
       flag: '🇬🇧',
       price: { land: 350000, villa: 200000, building: 600000, hotel: 1000000 },
       rentPrice: { land: 35000, villa1: 170000, villa2: 500000, building: 1100000, hotel: 1500000 },
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -386,7 +386,7 @@ const BOARD_DATA: BoardData = {
       rentPrice: { land: 35000, villa1: 170000, villa2: 500000, building: 1100000, hotel: 1500000 },
       country: '미국',
       flag: '🇺🇸',
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
     {
@@ -403,7 +403,7 @@ const BOARD_DATA: BoardData = {
       rentPrice: { land: 2000000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
       country: '대한민국',
       flag: '🇰🇷',
-      owner: null,
+      owner: undefined,
       buildings: [],
     },
   ],

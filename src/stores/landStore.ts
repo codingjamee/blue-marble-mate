@@ -19,7 +19,8 @@ const landStore = create<LandState>((set, get) => ({
   currentGameName: '',
 
   getLandInfo: (position) => {
-    return get().lands[position] || null;
+    if (!get().lands[position]) console.error('position is not validate');
+    return get().lands[position];
   },
 
   getOwnerLands: (ownerId) => {
@@ -60,7 +61,7 @@ const landStore = create<LandState>((set, get) => ({
     }
     return {
       isCurrentPlayerOwner: land.owner === playerId,
-      hasOwner: land.owner !== null,
+      hasOwner: land.owner !== undefined,
       ownerId: land.owner,
       rentPrice: getCityRentPrice(landId),
     };
@@ -113,6 +114,7 @@ const landStore = create<LandState>((set, get) => ({
   },
 
   initializeLands: () => {
+    console.log('initializeLands is called');
     const initialLands = structuredClone(POSITION_DATA);
     console.log('initialLands??????', initialLands);
 
