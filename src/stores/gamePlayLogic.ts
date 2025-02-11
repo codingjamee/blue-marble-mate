@@ -1,10 +1,11 @@
 // gamePlayLogic.ts
-import landStore, { isThisOwnableCity } from './landStore';
+import landStore, { hereIsFund, isThisOwnableCity } from './landStore';
 import { PlayerNamesType } from './playerType';
 import { LandType } from '../utils/mapType';
 import { PlayState } from './gamePlayType';
 import { RollResult } from '../pages/game/hooks/useRollDice';
 import { LandState } from './landType';
+import playerStore from './playerStore';
 
 interface ActionContext {
   position: LandType;
@@ -67,6 +68,29 @@ const positionPendingActions = {
           buildings: getAvailableBuildings(position.id),
         },
       });
+
+      playerStore.getState().updateNestedPlayerInfo(currentPlayer.id, ['canSkipTurn'], true);
+    }
+  },
+
+  fund: async ({ position, setPendingAction }: ActionContext) => {
+    if (hereIsFund(position)) {
+      setPendingAction({
+        type: 'FUND_RECEIVE',
+        landId: position.id,
+        fund: position.fund,
+      });
+      return;
+    }
+  },
+  fundRaise: async ({ position, setPendingAction }: ActionContext) => {
+    if (hereIsFund(position)) {
+      setPendingAction({
+        type: 'FUND_RAISE',
+        landId: position.id,
+        fund: 200000,
+      });
+      return;
     }
   },
 
@@ -97,7 +121,6 @@ const positionPendingActions = {
     return positionPendingActions.city(context);
   },
 
-  fund: async () => {},
   start: async () => {},
   space: async () => {},
 } as const;

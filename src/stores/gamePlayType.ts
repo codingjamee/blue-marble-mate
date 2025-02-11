@@ -4,7 +4,16 @@ import { PlayerNamesType } from './playerType';
 
 // import { RollResult } from '../types/dice';
 // import { handleGoldenKey } from '../utils/goldenKeyLogic';
-export type ActionType = 'BUY' | 'BUILD' | 'PAY_RENT' | 'SELL' | 'SKIP' | 'INISLAND' | 'GOLDEN_KEY';
+export type ActionType =
+  | 'BUY'
+  | 'BUILD'
+  | 'PAY_RENT'
+  | 'SELL'
+  | 'SKIP'
+  | 'INISLAND'
+  | 'GOLDEN_KEY'
+  | 'FUND_RECEIVE'
+  | 'FUND_RAISE';
 type pendingOptionType = { owner: PlayerNamesType['id'] | null; buildings?: BuildingRentType[] };
 export interface PlayState {
   // 게임 진행 상태
@@ -15,8 +24,9 @@ export interface PlayState {
   pendingAction: {
     type: ActionType;
     landId: LandType['id'];
-    price: number;
+    price?: number;
     options?: pendingOptionType | null;
+    fund?: number;
   } | null;
   diceIsRolled: boolean;
   setDiceIsRolled: (value: boolean) => void;
@@ -38,4 +48,5 @@ export interface PlayState {
   ) => Promise<void>;
   handleNextTurn: () => void;
   validateAndResetDice: () => void;
+  handleMovingAndPendingAction: () => Promise<void>;
 }

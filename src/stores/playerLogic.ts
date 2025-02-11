@@ -1,5 +1,5 @@
 import { ColorOption, colorOptions, ValueLabel } from '../constants/colors';
-import { BOARD_DATA } from '../utils/mapInfo';
+import { POSITION_DATA } from '../utils/mapInfo';
 import { getRandomElement } from '../utils/utils';
 import { PlayerNamesType, PlayerState } from './playerType';
 import { v4 as uuid } from 'uuid';
@@ -47,11 +47,7 @@ export const playerInitObj = (color: ValueLabel): PlayerNamesType => ({
   property: undefined,
   luckyKeys: undefined,
   cash: 200000,
-  position: {
-    id: BOARD_DATA.top[0].id,
-    name: BOARD_DATA.top[0].name,
-    flag: '🏁',
-  },
+  position: POSITION_DATA[0],
   isInIsland: false,
   islandTurnLeft: 0,
   playerColor: color,

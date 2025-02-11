@@ -42,8 +42,13 @@ export interface IslandType extends Omit<BaseLandType, 'owner' | 'buildings' | '
 }
 
 // Fund specific data
-export interface FundType extends Omit<BaseLandType, 'owner' | 'buildings' | 'country'> {
+export interface FundType extends FundRaiseType {
   type: 'fund';
+  fund: number;
+}
+
+export interface FundRaiseType extends Omit<BaseLandType, 'owner' | 'buildings' | 'country'> {
+  type: 'fund' | 'fundRaise';
 }
 
 // Start specific data
@@ -53,10 +58,9 @@ export interface StartType extends Omit<BaseLandType, 'owner' | 'buildings' | 'c
 }
 
 // Space specific data
-export interface SpaceType extends BaseLandType {
+export interface SpaceType extends Omit<BaseLandType, 'owner' | 'buildings'> {
   type: 'space';
-  price: PriceType;
-  rentPrice: RentPriceType;
+  country: string;
 }
 
 // Golden key specific data
@@ -67,9 +71,16 @@ export interface GoldenKeyType extends Omit<BaseLandType, 'owner' | 'buildings'>
 }
 
 // Union type for a single land
-export type LandType = CityLandType | IslandType | FundType | StartType | SpaceType | GoldenKeyType;
+export type LandType =
+  | CityLandType
+  | IslandType
+  | FundType
+  | StartType
+  | SpaceType
+  | GoldenKeyType
+  | FundRaiseType;
 
-export type OwnerLand = CityLandType | SpaceType;
+// export type OwnerLand = CityLandType | SpaceType;
 
 export interface GoldenKeyType {
   id: number;

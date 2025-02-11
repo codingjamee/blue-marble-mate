@@ -28,13 +28,7 @@ const ColorSelectBox = ({
           />
         ))}
       </div>
-      <button
-        className="btn btn-random"
-        onClick={() => {
-          console.log('clicked');
-          updateRandomPlayerColor(playerId);
-        }}
-      >
+      <button className="btn btn-random" onClick={() => updateRandomPlayerColor(playerId)}>
         <Random />
       </button>
     </div>

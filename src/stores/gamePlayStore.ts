@@ -30,7 +30,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
     // 월급 체크
     if (newPosition < currentPositionInfo.id) {
-      await playerStore.getState().processPayment(currentPlayer.id, 200000);
+      await playerStore.getState().processPayment(200000, currentPlayer.id);
     }
 
     await playerStore.getState().updatePlayerPosition(currentPlayer.id, newPosition);
@@ -59,7 +59,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         try {
           const result = await playerStore
             .getState()
-            .processPayment(currentPlayer.id, -pendingAction.price);
+            .processPayment(pendingAction.price ? -pendingAction.price : 0, currentPlayer.id);
 
           console.log(result, 'processPayment is Fulfilled');
 
@@ -74,7 +74,11 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         if (!pendingAction.options?.owner) return console.log('owner is not exist');
         await playerStore
           .getState()
-          .processPayment(currentPlayer.id, -pendingAction.price, pendingAction.options?.owner!);
+          .processPayment(
+            pendingAction.price ? -pendingAction.price : 0,
+            currentPlayer.id,
+            pendingAction.options?.owner!,
+          );
       },
       BUILD: async () => {
         console.log(building);
@@ -89,6 +93,18 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       },
       SKIP: async () => {
         return get().handleNextTurn();
+      },
+      FUND_RAISE: async () => {
+        console.log('fund raise 👼🏻👼🏻👼🏻👼🏻👼🏻');
+        playerStore.getState().processPayment(-pendingAction.fund!, currentPlayer.id);
+        landStore.getState().fundRaising(currentPlayer.position, pendingAction.fund!);
+      },
+      FUND_RECEIVE: () => {
+        console.log('fund receive 🤲🤲🤲🤲🤲🤲');
+        playerStore.getState().processPayment(pendingAction.fund || 0, currentPlayer.id);
+        landStore
+          .getState()
+          .fundRaising(currentPlayer.position, pendingAction.fund ? -pendingAction.fund : 0);
       },
 
       INISLAND: async () => {
@@ -167,22 +183,28 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   },
 
   handleIslandTurn: async () => {
-    console.log('handleIslandTurn is called');
+    console.log('handleIslandTurn is called🏝️🏝️🏝️🏝️🏝️🏝️');
+
+    const { updateNestedPlayerInfo, updateIslandTurn } = playerStore.getState();
     const { getNowTurn } = playerStore.getState();
 
     const curPlayer = getNowTurn();
+    console.log('curPlayer.islandTurnLeft🏝️🏝️🏝️', curPlayer.islandTurnLeft);
 
     if (curPlayer.isInIsland) {
-      if (curPlayer.islandTurnLeft === 0) {
-        //islandLeft턴을 소진하여 탈출 턴임
-        return console.log('무인도 탈출턴');
-      }
-
-      //탈출시 다른 액션으로 넘기기
       const diceResult = get().dices;
       const diceIsRolled = get().diceIsRolled;
 
-      const { updateNestedPlayerInfo, updateIslandTurn } = playerStore.getState();
+      if (curPlayer.islandTurnLeft === 0) {
+        //islandLeft턴을 소진하여 탈출 턴임
+
+        updateNestedPlayerInfo(curPlayer.id, ['isInIsland'], false);
+        updateNestedPlayerInfo(curPlayer.id, ['islandTurnLeft'], 0);
+        return await get().handleMovingAndPendingAction();
+      }
+
+      //탈출시 다른 액션으로 넘기기
+
       if (!isDiceRolled(diceResult) || !diceIsRolled) {
         throw new Error('주사위를 굴려주세요');
       }
@@ -200,6 +222,35 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     get().handleNextTurn();
   },
 
+  handleMovingAndPendingAction: async () => {
+    const { getNowTurn } = playerStore.getState();
+    const { dices: diceResult, handleMoving, handlePendingAction } = get();
+
+    if (!diceResult) throw Error('dice result is undefined');
+    const curPlayer = getNowTurn();
+
+    const newPosition = await handleMoving(diceResult);
+
+    if (newPosition) {
+      //무인도 새로 진입시
+      if (newPosition.type === 'island') {
+        console.log('newPositionType이 island임!', newPosition);
+        //해당 플레이어 isInIsland 및 islandTurnLeft 상태 업데이트
+        playerStore.getState().updateFirstIslandState(curPlayer.id);
+        return get().handleNextTurn();
+      }
+
+      //newPosition이 플레이어의 땅일때
+
+      await handlePendingAction(newPosition, curPlayer);
+      // const updatedPendingAction = get().pendingAction;
+
+      // if (updatedPendingAction?.type === 'PAY_RENT') {
+      //   await get().handleUserAction('PAY_RENT');
+      // }
+    }
+  },
+
   // 턴의 전체 흐름을 제어하는 메인 메서드
   // 순서:
   // 1. 무인도 상태 체크
@@ -211,13 +262,12 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
   handleTurn: async () => {
     const { getNowTurn, updateDouble } = playerStore.getState();
-    const { handleMoving, handlePendingAction, dices: diceResult, validateAndResetDice } = get();
+    const { dices: diceResult, validateAndResetDice } = get();
     const curPlayer = getNowTurn();
 
     if (!diceResult) throw Error('dice result is undefined');
 
     validateAndResetDice();
-    console.log({ curPlayer });
 
     // 무인도 처리
     const escapeIslandTurn = curPlayer.islandTurnLeft === 0;
@@ -237,24 +287,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       await playerStore.getState().updateDouble(curPlayer.id, true, 1);
     }
 
-    const newPosition = await handleMoving(diceResult);
-
-    if (newPosition) {
-      //무인도 새로 진입시
-      if (newPosition.type === 'island') {
-        console.log('newPositionType이 island임!', newPosition);
-        //해당 플레이어 isInIsland 및 islandTurnLeft 상태 업데이트
-        playerStore.getState().updateFirstIslandState(curPlayer.id);
-        return get().handleNextTurn();
-      }
-
-      await handlePendingAction(newPosition, curPlayer);
-      // const updatedPendingAction = get().pendingAction;
-
-      // if (updatedPendingAction?.type === 'PAY_RENT') {
-      //   await get().handleUserAction('PAY_RENT');
-      // }
-    }
+    get().handleMovingAndPendingAction();
   },
 }));
 

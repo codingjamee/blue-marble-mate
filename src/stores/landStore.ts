@@ -4,13 +4,18 @@ import { updateNestedValue } from '../utils/utils';
 import { loadGameLandsService } from './landLogic';
 import { availableBuildings, POSITION_DATA } from '../utils/mapInfo';
 import { LandState } from './landType';
-import { BuildingRentType, LandType, OwnerLand } from '../utils/mapType';
+import { BuildingRentType, CityLandType, FundType, LandType } from '../utils/mapType';
 import playerStore from './playerStore';
 
-export function isThisOwnableCity(land: LandType): land is OwnerLand {
-  if (!('owner' in land)) return false;
+export function isThisOwnableCity(land: LandType | null): land is CityLandType {
+  if (!land || !('owner' in land)) return false;
 
   return 'buildings' in land;
+}
+
+export function hereIsFund(land: LandType): land is FundType {
+  console.log('here is fund', land, land.type === 'fund' || land.type === 'fundRaise');
+  return land.type === 'fund' || land.type === 'fundRaise';
 }
 
 function isThereOwner(landId: number | null): landId is number {
@@ -57,7 +62,6 @@ const landStore = create<LandState>((set, get) => ({
       return rentPrice;
     };
 
-    console.log(land);
     return calculateRentPrice();
   },
 
@@ -140,6 +144,29 @@ const landStore = create<LandState>((set, get) => ({
         [position]: updatedLand,
       };
 
+      gameStore.getState().syncLands(updatedLands);
+
+      return { lands: updatedLands };
+    });
+  },
+
+  fundRaising: (position, fundPrice) => {
+    console.log('fund raising is called 👼🏻👼🏻👼🏻👼🏻👼🏻');
+    if (!hereIsFund(position)) return console.log('You cannot fund raise from here');
+    //모금
+
+    set((state) => {
+      const updatedLands = state.lands.map((land) => {
+        if (hereIsFund(land) && 'fund' in land) {
+          return {
+            ...land,
+            fund: land.fund + fundPrice,
+          } as FundType;
+        }
+        return land;
+      });
+
+      console.log('fund raising updatedLands👼🏻👼🏻👼🏻👼🏻👼🏻', updatedLands);
       gameStore.getState().syncLands(updatedLands);
 
       return { lands: updatedLands };

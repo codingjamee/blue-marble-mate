@@ -210,6 +210,7 @@ const BOARD_DATA: BoardData = {
       name: '사회복지기금수령',
       type: 'fund',
       flag: '🤲',
+      fund: 0,
     },
     {
       id: 21,
@@ -310,11 +311,12 @@ const BOARD_DATA: BoardData = {
       id: 30,
       name: '우주여행',
       type: 'space',
-      price: { land: 0, villa: 0, building: 0, hotel: 0 },
+      // price: { land: 0, villa: 0, building: 0, hotel: 0 },
       flag: '🚀',
-      rentPrice: { land: 200000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
-      owner: null,
-      buildings: [],
+      country: '우주',
+      // rentPrice: { land: 200000, villa1: 0, villa2: 0, building: 0, hotel: 0 },
+      // owner: null,
+      // buildings: [],
     },
   ],
   left: [
@@ -397,7 +399,7 @@ const BOARD_DATA: BoardData = {
     {
       id: 38,
       name: '사회복지기금',
-      type: 'fund',
+      type: 'fundRaise',
       flag: '👼🏻',
     },
     {

@@ -16,11 +16,7 @@ export interface PlayerNamesType {
     name: string;
   }[];
   cash: number;
-  position: {
-    id: number;
-    name: string;
-    flag: LandType['flag'];
-  };
+  position: LandType;
   isInIsland: boolean;
   islandTurnLeft: number;
   playerColor: ColorOption['value'];
@@ -55,8 +51,8 @@ export interface PlayerState {
   getPlayerInfo: (id: PlayerNamesType['id']) => PlayerNamesType;
   getNameById: (id: PlayerNamesType['id']) => PlayerNamesType['name'];
   processPayment: (
-    id: PlayerNamesType['id'],
     amount: number,
+    fromId?: PlayerNamesType['id'],
     toId?: PlayerNamesType['id'],
   ) => Promise<boolean>;
   updateIslandTurn: (id: PlayerNamesType['id'], value: number) => void;

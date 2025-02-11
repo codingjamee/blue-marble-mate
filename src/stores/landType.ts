@@ -33,6 +33,7 @@ export interface LandState {
   updateLandOwner: (position: number, owner: NationType['owner']) => void;
   updateBuildings: (position: number, buildings: BuildingRentType) => void;
   updateNestedLandInfo: (position: number, path: string[], value: any) => void;
+  fundRaising: (position: LandType, fundPrice: number) => void;
 
   // Initialization & Loading
   initializeLands: () => void;

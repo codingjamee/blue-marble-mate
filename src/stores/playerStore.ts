@@ -95,13 +95,10 @@ const playerStore = create<PlayerState>((set, get) => ({
     }),
 
   updateNestedPlayerInfo: (id, path, value) => {
-    console.log('updateNestedPlayerInfo is called', { id, path, value });
     set((state) => {
       const updatedPlayerInfos = state.playerInfos.map((player) =>
         player.id === id ? updateNestedValue(player, path, value) : player,
       );
-
-      console.log(updatedPlayerInfos);
 
       gameStore.getState().syncPlayers(updatedPlayerInfos);
 
@@ -113,11 +110,8 @@ const playerStore = create<PlayerState>((set, get) => ({
   },
   updatePlayerPosition: (nowTurnId, newPosition) => {
     const nowTurnInfo = get().getNowTurn();
-    console.log('updatedPlayerPosition', nowTurnId, newPosition);
-    console.log('lands-----------??', gameStore.getState().lands);
-    const nextPosition = gameStore.getState().lands[newPosition];
 
-    console.log('nextPosition', nextPosition.flag);
+    const nextPosition = gameStore.getState().lands[newPosition];
 
     if (nextPosition) {
       if (!nextPosition.owner) {
@@ -128,11 +122,11 @@ const playerStore = create<PlayerState>((set, get) => ({
         name: nextPosition.name,
         id: nextPosition.id,
         flag: nextPosition.flag,
+        type: nextPosition.type,
       });
     }
   },
   updateDouble: (id, isDouble, turnLeft) => {
-    console.log('updateDouble is called');
     const playerInfo = get().getPlayerInfo(id);
 
     set((state) => {
@@ -151,7 +145,7 @@ const playerStore = create<PlayerState>((set, get) => ({
     });
   },
 
-  processPayment: (fromId, amount, toId) => {
+  processPayment: (amount, fromId, toId) => {
     // fromId : 내는 친구 toId : 받는 친구 // amount는 내는친구 위주
     return new Promise((resolve, reject) => {
       try {
@@ -264,7 +258,6 @@ const playerStore = create<PlayerState>((set, get) => ({
               ]
             : player.property,
       }));
-      console.log('in playerStore updateLandOwner is called', updatedInfos);
       gameStore.getState().syncPlayers(updatedInfos);
 
       return {

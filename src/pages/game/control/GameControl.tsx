@@ -10,23 +10,16 @@ import GameActionControls from './GameActionControls';
 const GameControl = () => {
   const handleUserAction = usePlayStore((state) => state.handleUserAction);
   const currentPlayer = playerStore.getState().getNowTurn();
-  console.log(currentPlayer.id);
   const landInfo = landStore.getState().getLandInfo(currentPlayer.position.id);
   const canControl = usePlayStore.getState().diceIsRolled;
-
   const ownerAndRent = landStore
     .getState()
     .getLandOwnerAndRent(currentPlayer.position.id, currentPlayer.id);
-  const [modal, setModal] = useState(false);
-  const [building, setBuilding] = useState<Exclude<BuildingRentType, 'land'>>('villa1');
-  //플레이어 상태에 따라 버튼 다르게 렌더링
-
-  console.log('rentPrice-------', ownerAndRent);
-
-  const ownerLand = landInfo && (landInfo.type === 'city' || landInfo.type === 'space');
+  const ownerLand = landInfo && landInfo.type === 'city';
   const isCurrentPlayerOwner = ownerLand && ownerAndRent.isCurrentPlayerOwner;
 
-  //가능한 buildings
+  const [modal, setModal] = useState(false);
+  const [building, setBuilding] = useState<Exclude<BuildingRentType, 'land'>>('villa1');
   const buildings = landStore.getState().getAvailableBuildings(currentPlayer.position.id);
 
   return (
@@ -63,8 +56,10 @@ const GameControl = () => {
               onAction={handleUserAction}
               onBuildingPurchase={() => setModal(true)}
               isLandOwner={isCurrentPlayerOwner}
-              hasOwner={landInfo ? landInfo.owner : null}
+              // hasOwner={landInfo ? landInfo.owner : null}
               canSkipTurn={currentPlayer.canSkipTurn && !currentPlayer.doubleTurnLeft}
+              landType={landInfo?.type}
+              landInfo={landInfo}
             />
           </div>
           {modal && (
