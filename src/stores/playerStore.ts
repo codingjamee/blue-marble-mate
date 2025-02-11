@@ -10,6 +10,7 @@ import {
 import gameStore, { mainStore } from './gameStore';
 import { updateNestedValue } from '../utils/utils';
 import { PlayerState, PlayerNamesType } from './playerType';
+import landStore from './landStore';
 
 const playerStore = create<PlayerState>((set, get) => ({
   playerNumber: 2,
@@ -29,6 +30,10 @@ const playerStore = create<PlayerState>((set, get) => ({
     //없다면 기본값 반환
     if (!playerInfo) return getPlayerInitialize({ number: 1 })[0];
     return playerInfo;
+  },
+  getNameById: (id) => {
+    const playerInfo = get().getPlayerInfo(id);
+    return playerInfo.name;
   },
 
   loadGamePlayers: async () => {
@@ -90,6 +95,7 @@ const playerStore = create<PlayerState>((set, get) => ({
     }),
 
   updateNestedPlayerInfo: (id, path, value) => {
+    console.log('updateNestedPlayerInfo is called', { id, path, value });
     set((state) => {
       const updatedPlayerInfos = state.playerInfos.map((player) =>
         player.id === id ? updateNestedValue(player, path, value) : player,
@@ -111,12 +117,17 @@ const playerStore = create<PlayerState>((set, get) => ({
     console.log('lands-----------??', gameStore.getState().lands);
     const nextPosition = gameStore.getState().lands[newPosition];
 
+    console.log('nextPosition', nextPosition.flag);
+
     if (nextPosition) {
+      if (!nextPosition.owner) {
+        playerStore.getState().updateNestedPlayerInfo(nowTurnInfo.id, ['canSkipTurn'], true);
+      }
       get().updateNestedPlayerInfo(nowTurnId, ['position'], {
         ...nowTurnInfo.position,
         name: nextPosition.name,
         id: nextPosition.id,
-        position: 'position',
+        flag: nextPosition.flag,
       });
     }
   },
@@ -141,26 +152,33 @@ const playerStore = create<PlayerState>((set, get) => ({
   },
 
   processPayment: (fromId, amount, toId) => {
-    //from은 - to는 +로
-    return new Promise((resolve) => {
-      set((state) => {
-        const updatedInfos = state.playerInfos.map((player) => ({
-          ...player,
-          cash:
-            player.id === fromId
-              ? player.cash - amount
-              : player.id === toId
+    // fromId : 내는 친구 toId : 받는 친구 // amount는 내는친구 위주
+    return new Promise((resolve, reject) => {
+      try {
+        set((state) => {
+          const updatedInfos = state.playerInfos.map((player) => ({
+            ...player,
+            cash:
+              player.id === fromId
                 ? player.cash + amount
-                : player.cash,
-        }));
+                : player.id === toId
+                  ? player.cash - amount
+                  : player.cash,
+          }));
 
-        gameStore.getState().syncPlayers(updatedInfos);
+          console.log('processPayment', updatedInfos);
+          gameStore.getState().syncPlayers(updatedInfos);
 
-        return {
-          ...state,
-          playerInfos: updatedInfos,
-        };
-      });
+          return {
+            ...state,
+            playerInfos: updatedInfos,
+          };
+        });
+
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 
@@ -178,6 +196,7 @@ const playerStore = create<PlayerState>((set, get) => ({
       const updatedPlayerInfos = state.playerInfos.map((player) => ({
         ...player,
         isCurrentTurn: player.id === nextPlayer.id,
+        canSkipTurn: false,
         isDouble: false,
       }));
 
@@ -212,6 +231,73 @@ const playerStore = create<PlayerState>((set, get) => ({
         isInIsland: player.id === playerId,
         islandTurnLeft: player.id === playerId ? 3 : player.islandTurnLeft,
       }));
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+
+  updateLandOwner: (landId, playerId) => {
+    const landInfo = landStore.getState().getLandInfo(landId);
+    if (!landInfo) throw Error('유효하지 않은 landID');
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => ({
+        ...player,
+
+        property:
+          player.id === playerId
+            ? [
+                ...(player.property || []),
+                {
+                  propertyId: landId,
+                  name: landInfo.name,
+                  buildings: {
+                    villa1: false,
+                    villa2: false,
+                    building: false,
+                    hotel: false,
+                  },
+                },
+              ]
+            : player.property,
+      }));
+      console.log('in playerStore updateLandOwner is called', updatedInfos);
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+  constructBuilding: (landId, playerId, buildingType) => {
+    const landInfo = landStore.getState().getLandInfo(landId);
+    if (!landInfo) throw Error('유효하지 않은 landID');
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => {
+        if (player.id !== playerId) return player;
+
+        const updatedProperty = (player.property || []).map((prop) => {
+          if (prop.propertyId !== landId) return prop;
+
+          const updatedBuildings = { ...prop.buildings };
+          updatedBuildings[buildingType] = true;
+
+          return {
+            ...prop,
+            buildings: updatedBuildings,
+          };
+        });
+
+        return {
+          ...player,
+          property: updatedProperty,
+        };
+      });
+
       gameStore.getState().syncPlayers(updatedInfos);
 
       return {

@@ -14,7 +14,7 @@ export interface NationType {
   rentPrice: RentPriceType;
   country: string;
   flag: string;
-  owner: string | undefined;
+  owner: string | null;
   buildings: RentPriceType[];
 }
 
@@ -23,7 +23,7 @@ interface BaseLandType {
   id: number;
   name: string;
   flag: string;
-  owner: string | undefined;
+  owner: string | null;
   buildings: BuildingRentType[];
 }
 
@@ -36,7 +36,7 @@ export interface CityLandType extends BaseLandType {
 }
 
 // Island specific data
-export interface IslandType extends BaseLandType {
+export interface IslandType extends Omit<BaseLandType, 'owner' | 'buildings' | 'country'> {
   type: 'island';
   country: '무인도';
 }
@@ -68,6 +68,8 @@ export interface GoldenKeyType extends Omit<BaseLandType, 'owner' | 'buildings'>
 
 // Union type for a single land
 export type LandType = CityLandType | IslandType | FundType | StartType | SpaceType | GoldenKeyType;
+
+export type OwnerLand = CityLandType | SpaceType;
 
 export interface GoldenKeyType {
   id: number;

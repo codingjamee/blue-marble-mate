@@ -5,7 +5,7 @@ import { PlayerNamesType } from './playerType';
 // import { RollResult } from '../types/dice';
 // import { handleGoldenKey } from '../utils/goldenKeyLogic';
 export type ActionType = 'BUY' | 'BUILD' | 'PAY_RENT' | 'SELL' | 'SKIP' | 'INISLAND' | 'GOLDEN_KEY';
-type pendingOptionType = { owner?: PlayerNamesType['id']; buildings?: BuildingRentType[] };
+type pendingOptionType = { owner: PlayerNamesType['id'] | null; buildings?: BuildingRentType[] };
 export interface PlayState {
   // 게임 진행 상태
   gamePhase: 'ROLL' | 'MOVE' | 'ACTION' | 'END_TURN' | 'INISLAND';
@@ -32,7 +32,10 @@ export interface PlayState {
   // 턴 관련 액션
   handleTurn: () => Promise<true | void>;
   handleIslandTurn: () => Promise<true | void>;
-  handleUserAction: (actionType: ActionType) => Promise<void>;
+  handleUserAction: (
+    actionType: ActionType,
+    building?: Exclude<BuildingRentType, 'land'>,
+  ) => Promise<void>;
   handleNextTurn: () => void;
   validateAndResetDice: () => void;
 }

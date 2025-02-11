@@ -1,17 +1,17 @@
 // gamePlayLogic.ts
-import landStore, { isThisCity } from './landStore';
-import gameStore from './gameStore';
-// import { calculateBuildingPrice, getAvailableBuildings } from '../utils/buildingUtils';
+import landStore, { isThisOwnableCity } from './landStore';
 import { PlayerNamesType } from './playerType';
-import { BuildingRentType, LandType } from '../utils/mapType';
+import { LandType } from '../utils/mapType';
 import { PlayState } from './gamePlayType';
 import { RollResult } from '../pages/game/hooks/useRollDice';
+import { LandState } from './landType';
 
 interface ActionContext {
   position: LandType;
   currentPlayer: PlayerNamesType;
   setPendingAction: PlayState['setPendingAction'];
   setGamePhase?: PlayState['setGamePhase'];
+  getAvailableBuildings: LandState['getAvailableBuildings'];
 }
 
 export const isDiceRolled = (dices: RollResult | null): dices is RollResult => {
@@ -22,19 +22,23 @@ export function hasPrice(land: LandType): land is LandType & { price: { land: nu
   return 'price' in land && 'land' in land.price;
 }
 
-const getAvailableBuildings = (id: number): BuildingRentType[] => {
-  return ['villa1'];
-};
-
 const positionPendingActions = {
-  city: async ({ position, currentPlayer, setPendingAction }: ActionContext) => {
+  city: async ({
+    position,
+    currentPlayer,
+    setPendingAction,
+    getAvailableBuildings,
+  }: ActionContext) => {
     const { isCurrentPlayerOwner, hasOwner, ownerId, rentPrice } = await landStore
       .getState()
       .getLandOwnerAndRent(position.id, currentPlayer.id);
 
-    if (!isThisCity(position)) {
-      throw new Error('Here is not A City');
+    if (!isThisOwnableCity(position)) {
+      console.log('Here is not A City');
+      return;
     }
+
+    console.log('hasOwner---------', hasOwner);
 
     if (!hasOwner) {
       //owner가 없는 경우
@@ -49,7 +53,7 @@ const positionPendingActions = {
       setPendingAction({
         type: 'PAY_RENT',
         landId: position.id,
-        price: rentPrice,
+        price: rentPrice || 0,
         options: { owner: ownerId },
       });
     } else {
@@ -59,13 +63,14 @@ const positionPendingActions = {
         landId: position.id,
         price: 0,
         options: {
+          owner: ownerId,
           buildings: getAvailableBuildings(position.id),
         },
       });
     }
   },
 
-  goldenKey: async ({ position, currentPlayer, setPendingAction }: ActionContext) => {
+  goldenKey: async ({ position, setPendingAction }: ActionContext) => {
     // 골든키 로직
     setPendingAction({
       type: 'GOLDEN_KEY',
@@ -96,17 +101,5 @@ const positionPendingActions = {
   start: async () => {},
   space: async () => {},
 } as const;
-
-// gameStore나 다른 store에서 사용할 때
-// handlePositionAction: async (position: NationData, currentPlayer: PlayerNamesType) => {
-//   const action = positionActions[position.type];
-//   if (action) {
-//     await action({
-//       position,
-//       currentPlayer,
-//       setPendingAction: get().setPendingAction
-//     });
-//   }
-// }
 
 export { positionPendingActions };

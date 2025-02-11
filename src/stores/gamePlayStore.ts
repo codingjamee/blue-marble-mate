@@ -5,7 +5,7 @@ import landStore from './landStore';
 import { isDiceRolled, positionPendingActions } from './gamePlayLogic';
 import { RollResult } from '../pages/game/hooks/useRollDice';
 import { LandType } from '../utils/mapType';
-import { PlayState, ActionType } from './gamePlayType';
+import { PlayState } from './gamePlayType';
 
 const usePlayStore = create<PlayState>()((set, get) => ({
   gamePhase: 'ROLL',
@@ -15,7 +15,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   pendingAction: null,
   diceIsRolled: false,
 
-  setDiceIsRolled: (diceIsRolled) => set({ diceIsRolled }),
+  setDiceIsRolled: (diceIsRolled) => {
+    console.log('setDiceIsRolled is called', diceIsRolled);
+    set({ diceIsRolled });
+  },
   setGamePhase: (phase) => set({ gamePhase: phase }),
 
   //이동처리 //월급체크해서 받기 //새로운 위치 설정 및 반환
@@ -37,7 +40,8 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   //땅 구매, 임대료 지불, 건물 건설 등의 사용자 선택 처리
   // pendingAction 상태에 따른 적절한 액션 실행
   // 액션 완료 후 상태 초기화
-  handleUserAction: async (actionType: ActionType) => {
+  handleUserAction: async (actionType, building) => {
+    console.log('handleUserAction is called 😈', actionType);
     const { pendingAction } = get();
     const currentPlayer = playerStore.getState().getNowTurn();
 
@@ -49,24 +53,34 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       console.warn('Invalid action or no pending action');
       return;
     }
+
     const actionFn = {
       BUY: async () => {
-        const result = await playerStore
-          .getState()
-          .processPayment(currentPlayer.id, pendingAction.price);
-        console.log(result, 'processPayment is Fullfilled');
-        landStore.getState().updateLandOwner(pendingAction.landId, currentPlayer.id);
+        try {
+          const result = await playerStore
+            .getState()
+            .processPayment(currentPlayer.id, -pendingAction.price);
+
+          console.log(result, 'processPayment is Fulfilled');
+
+          landStore.getState().updateLandOwner(pendingAction.landId, currentPlayer.id);
+          playerStore.getState().updateLandOwner(pendingAction.landId, currentPlayer.id);
+        } catch (error) {
+          console.error('Error during buy process:', error);
+        }
       },
       PAY_RENT: async () => {
         console.log('PAY_RENT is called!!!');
+        if (!pendingAction.options?.owner) return console.log('owner is not exist');
         await playerStore
           .getState()
-          .processPayment(currentPlayer.id, pendingAction.price, pendingAction.options?.owner!);
+          .processPayment(currentPlayer.id, -pendingAction.price, pendingAction.options?.owner!);
       },
       BUILD: async () => {
-        // return new Promise((resolve) => {
-        //   resolve(true);
-        // });
+        console.log(building);
+        if (!building) return console.log('building is undefined');
+        landStore.getState().updateBuildings(pendingAction.landId, building);
+        playerStore.getState().constructBuilding(pendingAction.landId, currentPlayer.id, building);
       },
       SELL: async () => {
         // return new Promise((resolve) => {
@@ -91,15 +105,16 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
     try {
       await actionFn[actionType]();
+
+      playerStore.getState().updateNestedPlayerInfo(currentPlayer.id, ['canSkipTurn'], true);
     } catch (error) {
       console.error('Action failed:', error);
       throw error;
     }
-
     set({ pendingAction: null });
     if (currentPlayer.doubleTurnLeft) return;
 
-    get().handleNextTurn();
+    // get().handleNextTurn();
   },
 
   setPendingAction: (pendingAction) => set({ pendingAction }),
@@ -108,12 +123,19 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   // gamePlayLogic.ts에 정의된 positionPendingActions 실행
   handlePendingAction: async (position: LandType, currentPlayer: PlayerNamesType) => {
     const { setPendingAction, setGamePhase } = get();
+    const { getAvailableBuildings } = landStore.getState();
     console.log('in handlePendingAction', position, currentPlayer);
 
     const action = positionPendingActions[position.type];
     try {
       if (action) {
-        await action({ position, currentPlayer, setPendingAction, setGamePhase });
+        await action({
+          position,
+          currentPlayer,
+          setPendingAction,
+          setGamePhase,
+          getAvailableBuildings,
+        });
       }
     } catch (err) {
       throw new Error(`err ocurred, ${err}`);
@@ -133,16 +155,15 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     nextTurn(currentPlayer);
 
     set({ gamePhase: 'ROLL' });
+    set({ diceIsRolled: false });
   },
 
   validateAndResetDice: () => {
-    const { dices: diceResult, diceIsRolled, setDiceIsRolled } = get();
+    const { dices: diceResult, diceIsRolled } = get();
 
     if (!isDiceRolled(diceResult) || !diceIsRolled) {
       throw new Error('Dice must be rolled before handling turn');
     }
-
-    setDiceIsRolled(false);
   },
 
   handleIslandTurn: async () => {
@@ -169,10 +190,11 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       //double일 경우 탈출
       if (diceResult.isDouble) {
         updateNestedPlayerInfo(curPlayer.id, ['isInIsland'], false);
+        updateNestedPlayerInfo(curPlayer.id, ['islandTurnLeft'], 0);
         return true;
       }
 
-      await updateIslandTurn(curPlayer.id, -1);
+      updateIslandTurn(curPlayer.id, -1);
     }
 
     get().handleNextTurn();
@@ -227,11 +249,11 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       }
 
       await handlePendingAction(newPosition, curPlayer);
-      const updatedPendingAction = get().pendingAction;
+      // const updatedPendingAction = get().pendingAction;
 
-      if (updatedPendingAction?.type === 'PAY_RENT') {
-        await get().handleUserAction('PAY_RENT');
-      }
+      // if (updatedPendingAction?.type === 'PAY_RENT') {
+      //   await get().handleUserAction('PAY_RENT');
+      // }
     }
   },
 }));

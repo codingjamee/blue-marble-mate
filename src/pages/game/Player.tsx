@@ -18,7 +18,7 @@ const Player = ({ player }: { player: PlayerNamesType }) => {
         )}
       </div>
       <div className="description">
-        <div className="loca">위치 : {`${player.position.position} ${player.position.name}`}</div>
+        <div className="loca">위치 : {`${player.position.flag} ${player.position.name}`}</div>
         <div className="des">
           <h5>현금: </h5>
           <div>₩{player.cash}</div>

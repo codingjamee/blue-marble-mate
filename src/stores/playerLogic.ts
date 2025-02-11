@@ -50,7 +50,7 @@ export const playerInitObj = (color: ValueLabel): PlayerNamesType => ({
   position: {
     id: BOARD_DATA.top[0].id,
     name: BOARD_DATA.top[0].name,
-    position: 'top',
+    flag: '🏁',
   },
   isInIsland: false,
   islandTurnLeft: 0,
@@ -58,6 +58,7 @@ export const playerInitObj = (color: ValueLabel): PlayerNamesType => ({
   isCurrentTurn: false,
   isDouble: false,
   doubleTurnLeft: 0,
+  canSkipTurn: false,
 });
 
 const getPlayerInitialize = ({ number, state }: { number: number; state?: PlayerState }) => {

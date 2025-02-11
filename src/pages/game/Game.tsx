@@ -1,5 +1,5 @@
 import Dice from './Dice';
-import GameControl from './GameControl';
+import GameControl from './control/GameControl';
 import MiniMap from './MiniMap';
 import PlayerInfo from './PlayerInfo';
 import { BOARD_DATA } from '../../utils/mapInfo';

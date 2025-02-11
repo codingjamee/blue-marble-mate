@@ -376,7 +376,7 @@ button {
   margin-right: 0.5rem;
 }
 
-.p-2, .modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, .btn.btn-border, .btn.btn-common, input {
+.p-2, .modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .building-select, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, .btn.btn-border, .btn.btn-common, input {
   padding: 0.5rem;
 }
 
@@ -505,7 +505,7 @@ button {
   padding-right: 1rem;
 }
 
-.py-4 {
+.py-4, .building-select {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
@@ -1806,7 +1806,7 @@ p {
   margin-right: 0.5rem;
 }
 
-.p-2, .modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, input, .btn.btn-common, .btn.btn-border {
+.p-2, .modal-wrapper .modal-container .btn-container .btn.btn-random, .modal-wrapper .modal-container .btn-container .btn.btn-dark, .right-console .player-container .players .player, .right-console .lucky .lucky-items .lucky-item .lucky-card button.btn.btn-border, .right-console .lucky .lucky-items .lucky-item .lucky-card, .building-select, .start-container .btn-start, .start-container .btn-random, .start-container .select-input .selected, input, .btn.btn-common, .btn.btn-border {
   padding: 0.5rem;
 }
 
@@ -1935,7 +1935,7 @@ p {
   padding-right: 1rem;
 }
 
-.py-4 {
+.py-4, .building-select {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
@@ -2668,6 +2668,12 @@ p {
 }
 .cell.bottom {
   background-color: #dcfce7;
+}
+
+.building-select {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .map-container {

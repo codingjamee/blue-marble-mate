@@ -1,18 +1,16 @@
 import { ColorOption } from '../constants/colors';
-import { BoardPosition, LandType } from '../utils/mapType';
+import { BuildingRentType, LandType, NationType } from '../utils/mapType';
 import { GameState } from './gameStoreType';
+
+type BuildingKey = Exclude<BuildingRentType, 'land'>;
 
 export interface PlayerNamesType {
   id: string;
   name: string;
   property?: {
-    propertyId: string;
+    propertyId: number;
     name: string;
-    buildings: {
-      villa: boolean;
-      building: boolean;
-      hotel: boolean;
-    }[];
+    buildings: Record<BuildingKey, boolean>;
   }[];
   luckyKeys?: {
     name: string;
@@ -21,7 +19,7 @@ export interface PlayerNamesType {
   position: {
     id: number;
     name: string;
-    position: LandType;
+    flag: LandType['flag'];
   };
   isInIsland: boolean;
   islandTurnLeft: number;
@@ -29,6 +27,7 @@ export interface PlayerNamesType {
   isCurrentTurn: boolean;
   isDouble: boolean;
   doubleTurnLeft: number;
+  canSkipTurn: boolean;
 }
 
 export interface PlayerState {
@@ -54,6 +53,7 @@ export interface PlayerState {
     position: PlayerNamesType['position']['id'],
   ) => void;
   getPlayerInfo: (id: PlayerNamesType['id']) => PlayerNamesType;
+  getNameById: (id: PlayerNamesType['id']) => PlayerNamesType['name'];
   processPayment: (
     id: PlayerNamesType['id'],
     amount: number,
@@ -61,4 +61,10 @@ export interface PlayerState {
   ) => Promise<boolean>;
   updateIslandTurn: (id: PlayerNamesType['id'], value: number) => void;
   updateFirstIslandState: (id: PlayerNamesType['id']) => void;
+  updateLandOwner: (landId: NationType['id'], playerId: PlayerNamesType['id']) => void;
+  constructBuilding: (
+    landId: NationType['id'],
+    playerId: PlayerNamesType['id'],
+    buildingType: Exclude<BuildingRentType, 'land'>,
+  ) => void;
 }
