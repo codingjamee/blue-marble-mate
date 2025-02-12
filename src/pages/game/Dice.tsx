@@ -4,14 +4,15 @@ import playerStore from '../../stores/playerStore';
 import DiceSvgs from './DiceSvgs';
 import useRollDice from './hooks/useRollDice';
 
-const Dice = () => {
+const Dice = ({ isCurrentPlayerOwner }: { isCurrentPlayerOwner: boolean | null | undefined }) => {
   const {
     setGamePhase,
     handleTurn,
     handleIslandTurn,
     setDices,
     setDiceIsRolled,
-    diceIsRolled: canControl,
+    diceIsRolled,
+    pendingAction,
   } = usePlayStore();
   const { dices, isRolling, isDouble, handleRolling } = useRollDice(setDices, setDiceIsRolled);
   const currentPlayer = playerStore.getState().getNowTurn();
@@ -23,10 +24,12 @@ const Dice = () => {
     currentPlayer.isInIsland ? await handleIslandTurn() : await handleTurn();
   };
 
+  const canRenderDice = !diceIsRolled || (isDouble && !pendingAction) || isCurrentPlayerOwner;
+
   return (
     <section className="dice console-container">
       {currentPlayer.isInIsland ? <h3>무인도 탈출 주사위(더블이면 탈출)</h3> : <h3>주사위 </h3>}
-      {(!canControl || isDouble) && (
+      {canRenderDice && (
         <button
           className={`btn btn-common roll-dice ${isRolling ? 'disabled' : ''}`}
           onClick={rollDice}

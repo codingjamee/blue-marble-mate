@@ -114,7 +114,7 @@ const playerStore = create<PlayerState>((set, get) => ({
     const nextPosition = gameStore.getState().lands[newPosition];
 
     if (nextPosition) {
-      if (!nextPosition.owner) {
+      if (nextPosition.type === 'city' && !nextPosition.owner) {
         playerStore.getState().updateNestedPlayerInfo(nowTurnInfo.id, ['canSkipTurn'], true);
       }
       get().updateNestedPlayerInfo(nowTurnId, ['position'], {
@@ -297,6 +297,23 @@ const playerStore = create<PlayerState>((set, get) => ({
         ...state,
         playerInfos: updatedInfos,
       };
+    });
+  },
+  updateSkip: (playerId, value) => {
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => {
+        if (player.id === playerId) {
+          return {
+            ...player,
+            canSkipTurn: value,
+          };
+        }
+        return player;
+      });
+
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return { ...state, playerInfos: updatedInfos };
     });
   },
 }));

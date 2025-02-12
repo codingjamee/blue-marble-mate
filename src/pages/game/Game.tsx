@@ -4,10 +4,20 @@ import MiniMap from './MiniMap';
 import PlayerInfo from './PlayerInfo';
 import { BOARD_DATA } from '../../utils/mapInfo';
 import gameStore from '../../stores/gameStore';
+import landStore from '../../stores/landStore';
+import playerStore from '../../stores/playerStore';
 
 const Game = () => {
   const { gameName, updateGameState, round } = gameStore((state) => state);
+  const currentPlayer = playerStore.getState().getNowTurn();
+  const landInfo = landStore.getState().getLandInfo(currentPlayer.position.id);
+
   const gameState = gameStore((state) => state.gameState);
+  const ownerAndRent = landStore
+    .getState()
+    .getLandOwnerAndRent(currentPlayer.position.id, currentPlayer.id);
+  const ownerLand = landInfo && landInfo.type === 'city';
+  const isCurrentPlayerOwner = ownerLand && ownerAndRent.isCurrentPlayerOwner;
 
   return (
     <section className="container">
@@ -21,7 +31,7 @@ const Game = () => {
             </div>
           </div>
           {gameState ? (
-            <Dice />
+            <Dice isCurrentPlayerOwner={isCurrentPlayerOwner} />
           ) : (
             <div className="console-container" onClick={() => updateGameState(true)}>
               <button className="btn btn-common">게임 시작하기</button>

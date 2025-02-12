@@ -113,9 +113,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         return false;
       },
       GOLDEN_KEY: async () => {
-        // return new Promise((resolve) => {
-        //   resolve(true);
-        // });
+        playerStore.getState().updateNestedPlayerInfo(currentPlayer.id, ['canSkipTurn'], true);
+        return new Promise((resolve) => {
+          resolve(true);
+        });
       },
     };
 
@@ -158,7 +159,12 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     }
   },
 
-  setDices: (dices) => set({ dices: dices }),
+  setDices: (dices) => {
+    const currentPlayer = playerStore.getState().getNowTurn();
+    playerStore.getState().updateNestedPlayerInfo(currentPlayer.id, ['canSkipTurn'], false);
+
+    set({ dices: dices });
+  },
 
   //더블 여부에 따른 추가 턴 처리
   // 다음 플레이어로 턴 넘기기
@@ -170,6 +176,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
     nextTurn(currentPlayer);
 
+    set({ pendingAction: null });
     set({ gamePhase: 'ROLL' });
     set({ diceIsRolled: false });
   },

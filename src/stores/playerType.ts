@@ -63,4 +63,5 @@ export interface PlayerState {
     playerId: PlayerNamesType['id'],
     buildingType: Exclude<BuildingRentType, 'land'>,
   ) => void;
+  updateSkip: (playerId: PlayerNamesType['id'], value: boolean) => void;
 }

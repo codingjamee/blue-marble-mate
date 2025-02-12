@@ -8,6 +8,8 @@ import BuildingSelect from './BuildingButton';
 import GameActionControls from './GameActionControls';
 
 const GameControl = () => {
+  const [modal, setModal] = useState(false);
+  const [building, setBuilding] = useState<Exclude<BuildingRentType, 'land'>>('villa1');
   const handleUserAction = usePlayStore((state) => state.handleUserAction);
   const currentPlayer = playerStore.getState().getNowTurn();
   const landInfo = landStore.getState().getLandInfo(currentPlayer.position.id);
@@ -18,8 +20,6 @@ const GameControl = () => {
   const ownerLand = landInfo && landInfo.type === 'city';
   const isCurrentPlayerOwner = ownerLand && ownerAndRent.isCurrentPlayerOwner;
 
-  const [modal, setModal] = useState(false);
-  const [building, setBuilding] = useState<Exclude<BuildingRentType, 'land'>>('villa1');
   const buildings = landStore.getState().getAvailableBuildings(currentPlayer.position.id);
 
   return (
@@ -34,7 +34,7 @@ const GameControl = () => {
                   <div>{landInfo.name} 소유주:</div>
                   <div className="owner">{ownerAndRent.ownerName || '없음'}</div>
                 </div>
-                {landInfo.owner && (
+                {ownerLand && landInfo.owner && (
                   <>
                     <div className="des staus">
                       <div>건물 상태:</div>
