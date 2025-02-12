@@ -14,7 +14,6 @@ export function isThisOwnableCity(land: LandType | null): land is CityLandType {
 }
 
 export function hereIsFund(land: LandType): land is FundType {
-  console.log('here is fund', land, land.type === 'fund' || land.type === 'fundRaise');
   return land.type === 'fund' || land.type === 'fundRaise';
 }
 
@@ -32,8 +31,8 @@ const landStore = create<LandState>((set, get) => ({
   },
 
   getOwnerLands: (ownerId) => {
-    return Object.values(get().lands)
-      .filter(isThisOwnableCity)
+    return get()
+      .lands.filter(isThisOwnableCity)
       .filter((land) => land.owner && land.owner === ownerId);
   },
 
@@ -104,14 +103,15 @@ const landStore = create<LandState>((set, get) => ({
 
   updateLandOwner: (position, owner) => {
     set((state) => {
-      const updatedLands = {
-        ...state.lands,
-        [position]: {
-          ...state.lands[position],
-          owner,
-        },
-      };
-
+      const updatedLands = state.lands.map((land) => {
+        if (land.id === position) {
+          return {
+            ...land,
+            owner,
+          };
+        }
+        return land;
+      });
       gameStore.getState().syncLands(updatedLands);
 
       return { lands: updatedLands };
@@ -120,15 +120,16 @@ const landStore = create<LandState>((set, get) => ({
 
   updateBuildings: (position, building) => {
     set((state) => {
-      const updatedLands = {
-        ...state.lands,
-        [position]: {
-          ...state.lands[position],
-          ...(isThisOwnableCity(state.lands[position]) && {
-            buildings: state.lands[position].buildings.concat(building),
-          }),
-        },
-      };
+      const updatedLands = state.lands.map((land) => {
+        // id로 찾아서 업데이트
+        if (land.id === position && isThisOwnableCity(land)) {
+          return {
+            ...land,
+            buildings: [...land.buildings, building],
+          };
+        }
+        return land;
+      });
 
       gameStore.getState().syncLands(updatedLands);
 
@@ -138,12 +139,14 @@ const landStore = create<LandState>((set, get) => ({
 
   updateNestedLandInfo: (position, path, value) => {
     set((state) => {
-      const updatedLand = updateNestedValue(state.lands[position], path, value);
-      const updatedLands = {
-        ...state.lands,
-        [position]: updatedLand,
-      };
+      const currentLands = state.lands;
 
+      const updatedLands = currentLands.map((land) => {
+        if (land.id === position) {
+          return updateNestedValue(land, path, value);
+        }
+        return land;
+      });
       gameStore.getState().syncLands(updatedLands);
 
       return { lands: updatedLands };
@@ -156,7 +159,8 @@ const landStore = create<LandState>((set, get) => ({
     //모금
 
     set((state) => {
-      const updatedLands = state.lands.map((land) => {
+      console.log(Object.values(state.lands));
+      const updatedLands = Object.values(state.lands).map((land) => {
         if (hereIsFund(land) && 'fund' in land) {
           return {
             ...land,
