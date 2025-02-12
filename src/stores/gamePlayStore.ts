@@ -100,7 +100,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         landStore.getState().fundRaising(currentPlayer.position, pendingAction.fund!);
       },
       FUND_RECEIVE: () => {
-        console.log('fund receive 🤲🤲🤲🤲🤲🤲');
+        console.log('fund receive 🤲🤲🤲🤲🤲🤲', pendingAction.fund);
         playerStore.getState().processPayment(pendingAction.fund || 0, currentPlayer.id);
         landStore
           .getState()
@@ -213,7 +213,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       if (diceResult.isDouble) {
         updateNestedPlayerInfo(curPlayer.id, ['isInIsland'], false);
         updateNestedPlayerInfo(curPlayer.id, ['islandTurnLeft'], 0);
-        return true;
+        get().handleNextTurn();
       }
 
       updateIslandTurn(curPlayer.id, -1);
@@ -284,6 +284,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
     // 더블처리
     if (diceResult.isDouble) {
+      playerStore.getState().updateNestedPlayerInfo(curPlayer.id, ['canSkipTurn'], false);
       await playerStore.getState().updateDouble(curPlayer.id, true, 1);
     }
 
