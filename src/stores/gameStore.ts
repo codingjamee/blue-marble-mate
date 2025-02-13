@@ -25,7 +25,6 @@ const gameStore = create<GameState>()(
       round: 1,
 
       createNewStore: async (name: string) => {
-        console.log('createNewStore 호출 name', name);
         const newStore = createStore(`${name}-db`, `${name}-store`);
         setState({ currentStore: newStore });
         return newStore;
@@ -52,7 +51,6 @@ const gameStore = create<GameState>()(
       },
 
       startGame: async () => {
-        console.log('gameStore startGame called');
         await startGameService(setState, getState, {
           gameName: getState().gameName,
           playerStore,

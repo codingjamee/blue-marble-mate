@@ -28,6 +28,7 @@ export interface LandState {
     rentPrice?: number;
   };
   getAvailableBuildings: (landId: LandType['id']) => BuildingRentType[];
+  calculatePayWarp: (fromId: LandType['id'], toId: LandType['id']) => boolean;
 
   // Setters
   updateLandOwner: (position: number, owner: NationType['owner']) => void;

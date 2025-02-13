@@ -1,27 +1,8 @@
 // gamePlayLogic.ts
 import landStore, { hereIsFund, isThisOwnableCity } from './landStore';
-import { PlayerNamesType } from './playerType';
-import { LandType } from '../utils/mapType';
-import { PlayState } from './gamePlayType';
-import { RollResult } from '../pages/game/hooks/useRollDice';
-import { LandState } from './landType';
+import { ActionContext } from './gamePlayType';
 import playerStore from './playerStore';
-
-interface ActionContext {
-  position: LandType;
-  currentPlayer: PlayerNamesType;
-  setPendingAction: PlayState['setPendingAction'];
-  setGamePhase?: PlayState['setGamePhase'];
-  getAvailableBuildings: LandState['getAvailableBuildings'];
-}
-
-export const isDiceRolled = (dices: RollResult | null): dices is RollResult => {
-  return dices !== null;
-};
-
-export function hasPrice(land: LandType): land is LandType & { price: { land: number } } {
-  return 'price' in land && 'land' in land.price;
-}
+import gameStore from './gameStore';
 
 const positionPendingActions = {
   city: async ({
@@ -96,12 +77,13 @@ const positionPendingActions = {
 
   goldenKey: async ({ position, setPendingAction }: ActionContext) => {
     // 골든키 로직
-    setPendingAction({
-      type: 'GOLDEN_KEY',
-      landId: position.id,
-      price: 0,
-      options: null,
-    });
+    // setPendingAction({
+    //   type: 'GOLDEN_KEY',
+    //   landId: position.id,
+    //   price: 0,
+    //   options: null,
+    // });
+    return;
   },
 
   island: async ({ position, setPendingAction, setGamePhase }: ActionContext) => {
@@ -122,7 +104,19 @@ const positionPendingActions = {
   },
 
   start: async () => {},
-  space: async () => {},
+  space: async ({ position, setPendingAction }: ActionContext) => {
+    const colombiaInfo = gameStore
+      .getState()
+      .lands.filter(isThisOwnableCity)
+      .find((land) => land.name === '컬럼비아호')!;
+
+    setPendingAction({
+      type: 'SPACE_MOVE',
+      landId: position.id,
+      price: colombiaInfo.rentPrice.land,
+      options: { owner: colombiaInfo.owner },
+    });
+  },
 } as const;
 
 export { positionPendingActions };

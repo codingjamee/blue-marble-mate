@@ -28,7 +28,11 @@ const Dice = ({ isCurrentPlayerOwner }: { isCurrentPlayerOwner: boolean | null |
 
   return (
     <section className="dice console-container">
-      {currentPlayer.isInIsland ? <h3>무인도 탈출 주사위(더블이면 탈출)</h3> : <h3>주사위 </h3>}
+      {currentPlayer.isInIsland && currentPlayer.islandTurnLeft > 0 ? (
+        <h3>무인도 탈출 주사위(더블이면 탈출)</h3>
+      ) : (
+        <h3>주사위 </h3>
+      )}
       {canRenderDice && (
         <button
           className={`btn btn-common roll-dice ${isRolling ? 'disabled' : ''}`}

@@ -69,4 +69,8 @@
   gap: map-get($map: $spacings, $key: '4');
   @extend .p-2;
   @extend .py-4;
+  &.warp {
+    height: 500px;
+    overflow-y: scroll;
+  }
 }

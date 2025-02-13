@@ -15,7 +15,7 @@
   - 예: 시작금액 대비 200% 성장 시 100% 계산
  */
 
-import { PriceType } from './mapType';
+import { BuildingRentType, PriceType } from './mapType';
 
 const calculateProgress = (turns: any, properties: any, assets: any) => {
   const turnProgress = (turns / 4) * 0.4; // 바퀴 수 가중치 40%
@@ -41,10 +41,15 @@ const updateNestedValue = (obj: any, path: string[], value: any): any => {
   };
 };
 
-export const hasBuildingType = (buildings: string[], type: keyof PriceType): boolean => {
+export const hasBuildingType = (
+  buildings: string[],
+  type: Exclude<BuildingRentType, 'land'>,
+): boolean => {
   switch (type) {
-    case 'villa':
-      return buildings.includes('villa1') || buildings.includes('villa2');
+    case 'villa1':
+      return buildings.includes('villa1');
+    case 'villa2':
+      return buildings.includes('villa2');
     case 'building':
       return buildings.includes('building');
     case 'hotel':

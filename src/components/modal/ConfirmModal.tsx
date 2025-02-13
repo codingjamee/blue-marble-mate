@@ -5,9 +5,10 @@ import Portal from './Portal';
 interface Props extends PropsWithChildren {
   setModal: Dispatch<SetStateAction<boolean>>;
   onConfirm: () => void;
+  noCancel?: boolean;
 }
 
-const ConfirmModal = ({ setModal, children, onConfirm }: Props) => {
+const ConfirmModal = ({ setModal, children, onConfirm, noCancel = false }: Props) => {
   const theme = useThemeStore((state) => state.theme);
 
   return (
@@ -20,9 +21,11 @@ const ConfirmModal = ({ setModal, children, onConfirm }: Props) => {
               <button className="btn btn-dark" onClick={() => onConfirm()}>
                 확인
               </button>
-              <button className="btn btn-random" onClick={(prev) => setModal(!prev)}>
-                취소
-              </button>
+              {!noCancel && (
+                <button className="btn btn-random" onClick={(prev) => setModal(!prev)}>
+                  취소
+                </button>
+              )}
             </div>
           </div>
         </div>

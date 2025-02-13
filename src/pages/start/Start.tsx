@@ -36,10 +36,7 @@ const Start = () => {
               updateRandomGameName();
             }}
             value={gameName}
-            onChangeFn={(value) => {
-              console.log('setGameName, 게임이름을 설정 해주세요');
-              setGameName(value);
-            }}
+            onChangeFn={(value) => setGameName(value)}
           />
           <SelectPlayerNumber isOpen={isOpen} setIsOpen={setIsOpen} />
           <Players />

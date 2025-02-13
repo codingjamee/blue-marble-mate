@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import playerStore from './playerStore';
 import { PlayerNamesType } from './playerType';
 import landStore from './landStore';
-import { isDiceRolled, positionPendingActions } from './gamePlayLogic';
+import { positionPendingActions } from './gamePlayLogic';
+import { isDiceRolled } from './gamePlayType';
 import { RollResult } from '../pages/game/hooks/useRollDice';
 import { LandType } from '../utils/mapType';
 import { PlayState } from './gamePlayType';
@@ -16,14 +17,12 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   diceIsRolled: false,
 
   setDiceIsRolled: (diceIsRolled) => {
-    console.log('setDiceIsRolled is called', diceIsRolled);
     set({ diceIsRolled });
   },
   setGamePhase: (phase) => set({ gamePhase: phase }),
 
   //이동처리 //월급체크해서 받기 //새로운 위치 설정 및 반환
   handleMoving: async (diceResult: RollResult) => {
-    console.log('handleMoving is Called');
     const currentPlayer = playerStore.getState().getNowTurn();
     const currentPositionInfo = currentPlayer.position;
     const newPosition = (currentPositionInfo.id + diceResult.total) % 40; // 보드의 크기에 따라 조정
@@ -40,7 +39,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   //땅 구매, 임대료 지불, 건물 건설 등의 사용자 선택 처리
   // pendingAction 상태에 따른 적절한 액션 실행
   // 액션 완료 후 상태 초기화
-  handleUserAction: async (actionType, building) => {
+  handleUserAction: async (actionType, building, warpPositionId) => {
     console.log('handleUserAction is called 😈', actionType);
     const { pendingAction } = get();
     const currentPlayer = playerStore.getState().getNowTurn();
@@ -70,7 +69,6 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         }
       },
       PAY_RENT: async () => {
-        console.log('PAY_RENT is called!!!');
         if (!pendingAction.options?.owner) return console.log('owner is not exist');
         await playerStore
           .getState()
@@ -95,12 +93,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         return get().handleNextTurn();
       },
       FUND_RAISE: async () => {
-        console.log('fund raise 👼🏻👼🏻👼🏻👼🏻👼🏻');
         playerStore.getState().processPayment(-pendingAction.fund!, currentPlayer.id);
         landStore.getState().fundRaising(currentPlayer.position, pendingAction.fund!);
       },
       FUND_RECEIVE: () => {
-        console.log('fund receive 🤲🤲🤲🤲🤲🤲', pendingAction.fund);
         playerStore.getState().processPayment(pendingAction.fund || 0, currentPlayer.id);
         landStore
           .getState()
@@ -117,6 +113,29 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         return new Promise((resolve) => {
           resolve(true);
         });
+      },
+
+      SPACE_MOVE: async () => {
+        //우주여행일 때 컬럼비아호 소유주에게 20만원지급
+
+        if (pendingAction.options?.owner) {
+          playerStore
+            .getState()
+            .processPayment(
+              pendingAction.price || 0,
+              currentPlayer.id,
+              pendingAction.options?.owner,
+            );
+        }
+        //원하는 위치로 이동
+        if (warpPositionId) {
+          playerStore.getState().updatePlayerPosition(currentPlayer.id, warpPositionId);
+          const calculatePayWarp = landStore.getState().calculatePayWarp;
+          if (calculatePayWarp(currentPlayer.position.id, warpPositionId)) {
+            //시작점 지나면 월급주기
+            await playerStore.getState().processPayment(200000, currentPlayer.id);
+          }
+        }
       },
     };
 
@@ -141,7 +160,6 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   handlePendingAction: async (position: LandType, currentPlayer: PlayerNamesType) => {
     const { setPendingAction, setGamePhase } = get();
     const { getAvailableBuildings } = landStore.getState();
-    console.log('in handlePendingAction', position, currentPlayer);
 
     const action = positionPendingActions[position.type];
     try {
@@ -170,7 +188,6 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   // 다음 플레이어로 턴 넘기기
   // 게임 페이즈 초기화
   handleNextTurn: () => {
-    console.log('handleNextTurn is called');
     const { getNowTurn, nextTurn } = playerStore.getState();
     const currentPlayer = getNowTurn();
 
@@ -190,13 +207,10 @@ const usePlayStore = create<PlayState>()((set, get) => ({
   },
 
   handleIslandTurn: async () => {
-    console.log('handleIslandTurn is called🏝️🏝️🏝️🏝️🏝️🏝️');
-
     const { updateNestedPlayerInfo, updateIslandTurn } = playerStore.getState();
     const { getNowTurn } = playerStore.getState();
 
     const curPlayer = getNowTurn();
-    console.log('curPlayer.islandTurnLeft🏝️🏝️🏝️', curPlayer.islandTurnLeft);
 
     if (curPlayer.isInIsland) {
       const diceResult = get().dices;
@@ -223,7 +237,11 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         get().handleNextTurn();
       }
 
-      updateIslandTurn(curPlayer.id, -1);
+      if (curPlayer.islandTurnLeft === 1) {
+        //1일경우 다음에 탈출함
+        updateNestedPlayerInfo(curPlayer.id, ['isInIsland'], false);
+      }
+      if (!diceResult.isDouble) updateIslandTurn(curPlayer.id, -1);
     }
 
     get().handleNextTurn();
@@ -247,14 +265,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         return get().handleNextTurn();
       }
 
-      //newPosition이 플레이어의 땅일때
-
       await handlePendingAction(newPosition, curPlayer);
-      // const updatedPendingAction = get().pendingAction;
-
-      // if (updatedPendingAction?.type === 'PAY_RENT') {
-      //   await get().handleUserAction('PAY_RENT');
-      // }
     }
   },
 
@@ -280,7 +291,6 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     const escapeIslandTurn = curPlayer.islandTurnLeft === 0;
     if (curPlayer.isInIsland && !escapeIslandTurn) {
       //기존에 island에 있는 경우 (turn 2부터)
-      console.log('현재 플레이어 무인도에 있음', curPlayer.isInIsland, escapeIslandTurn, curPlayer);
       return await get().handleIslandTurn();
     }
 

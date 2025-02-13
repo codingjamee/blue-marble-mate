@@ -1,5 +1,5 @@
 import { PlayState } from '../../../stores/gamePlayType';
-import { isThisOwnableCity } from '../../../stores/landStore';
+import landStore, { isThisOwnableCity } from '../../../stores/landStore';
 import { CityLandType, LandType } from '../../../utils/mapType';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   isLandOwner: boolean | null | undefined;
   canSkipTurn: boolean;
   landType?: LandType['type'];
-  landInfo: LandType | null;
+  landInfo: LandType;
 }
 
 export function isUnbuildable(land: LandType | null): land is CityLandType {
@@ -17,6 +17,8 @@ export function isUnbuildable(land: LandType | null): land is CityLandType {
 
   return unbuildable.includes(land.country);
 }
+
+const canSkipLandType = ['goldenKey', 'start'];
 
 const GameActionControls = ({
   onAction,
@@ -31,6 +33,7 @@ const GameActionControls = ({
     landInfo && landInfo.type === 'city' && landInfo?.buildings
       ? landInfo?.buildings.join(', ')
       : null;
+  const availableBuildings = landStore.getState().getAvailableBuildings(landInfo.id);
 
   console.log('👊👊👊👊👊👊👊', canSkipTurn);
   return (
@@ -61,7 +64,7 @@ const GameActionControls = ({
         </button>
       )}
       {/* 대한민국이 아닐 때 혹은 비행기 아닐떄 */}
-      {isLandOwner && buildings && buildings.length === 0 && !isUnbuildable(landInfo) && (
+      {isLandOwner && availableBuildings.length !== 0 && !isUnbuildable(landInfo) && (
         <>
           <button className="btn btn-common" onClick={() => setModal(true)}>
             건물 매입
@@ -71,7 +74,7 @@ const GameActionControls = ({
           </button>
         </>
       )}
-      {(canSkipTurn || landInfo?.type === 'goldenKey' || isLandOwner) && (
+      {(canSkipTurn || canSkipLandType.includes(landInfo?.type) || isLandOwner) && (
         <button className="btn btn-border" onClick={() => onAction('SKIP')}>
           턴 종료
         </button>

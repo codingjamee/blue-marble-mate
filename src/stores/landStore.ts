@@ -69,7 +69,6 @@ const landStore = create<LandState>((set, get) => ({
     const getCityRentPrice = get().getCityRentPrice;
 
     if (!isThisOwnableCity(land)) {
-      console.log('Here is not a land', land);
       return {
         isCurrentPlayerOwner: undefined,
         hasOwner: undefined,
@@ -91,7 +90,6 @@ const landStore = create<LandState>((set, get) => ({
     const landInfo = get().lands[landId];
 
     if (!isThisOwnableCity(landInfo)) {
-      console.log('This place is not ownable');
       return [];
     }
     const availableBuilding = availableBuildings.filter(
@@ -159,7 +157,6 @@ const landStore = create<LandState>((set, get) => ({
     //모금
 
     set((state) => {
-      console.log(Object.values(state.lands));
       const updatedLands = Object.values(state.lands).map((land) => {
         if (hereIsFund(land) && 'fund' in land) {
           return {
@@ -170,7 +167,6 @@ const landStore = create<LandState>((set, get) => ({
         return land;
       });
 
-      console.log('fund raising updatedLands👼🏻👼🏻👼🏻👼🏻👼🏻', updatedLands);
       gameStore.getState().syncLands(updatedLands);
 
       return { lands: updatedLands };
@@ -178,9 +174,7 @@ const landStore = create<LandState>((set, get) => ({
   },
 
   initializeLands: () => {
-    console.log('initializeLands is called');
     const initialLands = structuredClone(POSITION_DATA);
-    console.log('initialLands??????', initialLands);
 
     set({ lands: initialLands });
     gameStore.getState().syncLands(initialLands);
@@ -191,6 +185,13 @@ const landStore = create<LandState>((set, get) => ({
       mainStore,
     });
     return result;
+  },
+  calculatePayWarp: (fromId, toId) => {
+    if (fromId > toId) {
+      return false;
+    }
+
+    return true;
   },
 }));
 

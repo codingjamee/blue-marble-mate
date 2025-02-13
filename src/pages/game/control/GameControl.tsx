@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ConfirmModal from '../../../components/modal/ConfirmModal';
 import usePlayStore from '../../../stores/gamePlayStore';
 import { BuildingRentType } from '../../../utils/mapType';
@@ -6,13 +6,16 @@ import playerStore from '../../../stores/playerStore';
 import landStore from '../../../stores/landStore';
 import BuildingSelect from './BuildingButton';
 import GameActionControls from './GameActionControls';
+import SpaceJumpSelector from './SpaceJumpSelector';
 
 const GameControl = () => {
   const [modal, setModal] = useState(false);
+  const currentPlayer = playerStore.getState().getNowTurn();
+  const [spaceModal, setSpaceModal] = useState(false);
+  const [warpPosition, setPosition] = useState(currentPlayer.position.id);
   const [building, setBuilding] = useState<Exclude<BuildingRentType, 'land'>>('villa1');
   const handleUserAction = usePlayStore((state) => state.handleUserAction);
-  const currentPlayer = playerStore.getState().getNowTurn();
-  const landInfo = landStore.getState().getLandInfo(currentPlayer.position.id);
+  const landInfo = landStore.getState().getLandInfo(currentPlayer.position.id)!;
   const canControl = usePlayStore.getState().diceIsRolled;
   const ownerAndRent = landStore
     .getState()
@@ -21,6 +24,10 @@ const GameControl = () => {
   const isCurrentPlayerOwner = ownerLand && ownerAndRent.isCurrentPlayerOwner;
 
   const buildings = landStore.getState().getAvailableBuildings(currentPlayer.position.id);
+
+  useEffect(() => {
+    currentPlayer.position.name === '우주여행' && setSpaceModal(true);
+  }, [currentPlayer.position.name]);
 
   return (
     <>
@@ -66,6 +73,21 @@ const GameControl = () => {
             <ConfirmModal setModal={setModal} onConfirm={() => handleUserAction('BUILD', building)}>
               <h2>매입할 건물 선택</h2>
               <BuildingSelect buildings={buildings} setBuilding={setBuilding} />
+            </ConfirmModal>
+          )}
+          {spaceModal && (
+            <ConfirmModal
+              setModal={setModal}
+              onConfirm={() => {
+                if (warpPosition === currentPlayer.position.id)
+                  return console.log('이동할 위치를 선택해주세요');
+                handleUserAction('SPACE_MOVE', undefined, warpPosition);
+                setSpaceModal(false);
+              }}
+              noCancel={true}
+            >
+              <h2>이동할 위치 선택</h2>
+              <SpaceJumpSelector setPosition={setPosition} />
             </ConfirmModal>
           )}
         </section>
