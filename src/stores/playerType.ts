@@ -1,4 +1,5 @@
 import { ColorOption } from '../constants/colors';
+import { LuckyKey } from '../data/luckyKeysType';
 import { BuildingRentType, LandType, NationType } from '../utils/mapType';
 import { GameState } from './gameStoreType';
 
@@ -12,9 +13,7 @@ export interface PlayerNamesType {
     name: string;
     buildings: Record<BuildingKey, boolean>;
   }[];
-  luckyKeys?: {
-    name: string;
-  }[];
+  luckyKeys?: LuckyKey[];
   cash: number;
   position: LandType;
   isInIsland: boolean;
@@ -64,4 +63,5 @@ export interface PlayerState {
     buildingType: Exclude<BuildingRentType, 'land'>,
   ) => void;
   updateSkip: (playerId: PlayerNamesType['id'], value: boolean) => void;
+  updateLuckyKeys: (luckyInfo: LuckyKey, playerId: PlayerNamesType['id']) => void;
 }

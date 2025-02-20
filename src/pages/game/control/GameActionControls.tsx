@@ -29,10 +29,7 @@ const GameActionControls = ({
   landInfo,
 }: Props) => {
   const hasOwner = landInfo ? landInfo.type === 'city' && landInfo?.owner : null;
-  const buildings =
-    landInfo && landInfo.type === 'city' && landInfo?.buildings
-      ? landInfo?.buildings.join(', ')
-      : null;
+
   const availableBuildings = landStore.getState().getAvailableBuildings(landInfo.id);
 
   console.log('👊👊👊👊👊👊👊', canSkipTurn);

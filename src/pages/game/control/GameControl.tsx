@@ -7,11 +7,13 @@ import landStore from '../../../stores/landStore';
 import BuildingSelect from './BuildingButton';
 import GameActionControls from './GameActionControls';
 import SpaceJumpSelector from './SpaceJumpSelector';
+import KeyControl from './KeyControl';
 
 const GameControl = () => {
   const [modal, setModal] = useState(false);
   const currentPlayer = playerStore.getState().getNowTurn();
   const [spaceModal, setSpaceModal] = useState(false);
+  const [goldenKeyModal, setGoldenKeyModal] = useState(false);
   const [warpPosition, setPosition] = useState(currentPlayer.position.id);
   const [building, setBuilding] = useState<Exclude<BuildingRentType, 'land'>>('villa1');
   const handleUserAction = usePlayStore((state) => state.handleUserAction);
@@ -27,6 +29,10 @@ const GameControl = () => {
 
   useEffect(() => {
     currentPlayer.position.name === '우주여행' && setSpaceModal(true);
+  }, [currentPlayer.position.name]);
+
+  useEffect(() => {
+    currentPlayer.position.name === '황금열쇠' && setGoldenKeyModal(true);
   }, [currentPlayer.position.name]);
 
   return (
@@ -88,6 +94,21 @@ const GameControl = () => {
             >
               <h2>이동할 위치 선택</h2>
               <SpaceJumpSelector setPosition={setPosition} />
+            </ConfirmModal>
+          )}
+          {goldenKeyModal && (
+            <ConfirmModal
+              setModal={() => setGoldenKeyModal(false)}
+              onConfirm={() => {
+                // if (warpPosition === currentPlayer.position.id)
+                //   return console.log('이동할 위치를 선택해주세요');
+                // handleUserAction('SPACE_MOVE', undefined, warpPosition);
+                // setSpaceModal(false);
+              }}
+              noCancel={true}
+            >
+              <h2>황금열쇠</h2>
+              <KeyControl setModal={setGoldenKeyModal} />
             </ConfirmModal>
           )}
         </section>

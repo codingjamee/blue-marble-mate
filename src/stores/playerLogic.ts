@@ -45,7 +45,7 @@ export const playerInitObj = (color: ValueLabel): PlayerNamesType => ({
   id: uuid(),
   name: '',
   property: undefined,
-  luckyKeys: undefined,
+  luckyKeys: [],
   cash: 200000,
   position: POSITION_DATA[0],
   isInIsland: false,

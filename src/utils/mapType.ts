@@ -24,7 +24,7 @@ interface BaseLandType {
   name: string;
   flag: string;
   owner: string | null;
-  buildings: BuildingRentType[];
+  buildings: Exclude<BuildingRentType, 'land'>[];
 }
 
 // City specific data

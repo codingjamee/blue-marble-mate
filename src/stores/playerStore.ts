@@ -316,6 +316,15 @@ const playerStore = create<PlayerState>((set, get) => ({
       return { ...state, playerInfos: updatedInfos };
     });
   },
+
+  updateLuckyKeys: (luckyInfo, playerId) =>
+    set((state) => ({
+      playerInfos: state.playerInfos.map((player) =>
+        player.id === playerId
+          ? { ...player, luckyKeys: [...(player.luckyKeys || []), luckyInfo] }
+          : player,
+      ),
+    })),
 }));
 
 playerStore.getState().loadGamePlayers();

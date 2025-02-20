@@ -18,7 +18,7 @@ const BOARD_DATA: BoardData = {
     },
     {
       id: 1,
-      name: '타이페이',
+      name: '타이베이',
       type: 'city',
       flag: '🇹🇼',
       country: '타이완',

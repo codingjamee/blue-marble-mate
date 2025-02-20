@@ -6,6 +6,7 @@ import { availableBuildings, POSITION_DATA } from '../utils/mapInfo';
 import { LandState } from './landType';
 import { BuildingRentType, CityLandType, FundType, LandType } from '../utils/mapType';
 import playerStore from './playerStore';
+import { BuildingType } from '../data/luckyKeysType';
 
 export function isThisOwnableCity(land: LandType | null): land is CityLandType {
   if (!land || !('owner' in land)) return false;
@@ -84,6 +85,29 @@ const landStore = create<LandState>((set, get) => ({
       ownerName: land.owner ? playerStore.getState().getNameById(land.owner) : null,
       rentPrice: getCityRentPrice(landId) || 0,
     };
+  },
+
+  calculateKeyCosts: (landId, costs) => {
+    const land = get().lands[landId];
+
+    if (!isThisOwnableCity(land)) {
+      return 0;
+    }
+
+    const calculateCost = () => {
+      if (land.buildings.length === 0) return 0;
+      const rentPrice = land.buildings.reduce(
+        (rentPrice: number, building: Exclude<BuildingRentType, 'land'>) => {
+          const buildingName = building.replace(/[0-9]/g, '').toUpperCase() as BuildingType;
+          const price = costs[buildingName];
+          return (rentPrice += price);
+        },
+        0,
+      );
+
+      return rentPrice;
+    };
+    return calculateCost();
   },
 
   getAvailableBuildings: (landId) => {

@@ -1,3 +1,4 @@
+import { BuildingCost } from '../data/luckyKeysType';
 import { LandType, NationType, BuildingRentType } from '../utils/mapType';
 import { GameData } from './gameStoreType';
 import { PlayerNamesType } from './playerType';
@@ -39,4 +40,5 @@ export interface LandState {
   // Initialization & Loading
   initializeLands: () => void;
   loadGameLands: () => Promise<GameData | null | undefined>;
+  calculateKeyCosts: (landId: LandType['id'], costs: BuildingCost) => number;
 }
