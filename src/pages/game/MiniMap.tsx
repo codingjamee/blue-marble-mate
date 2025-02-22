@@ -22,9 +22,9 @@ const MiniMap = ({ BOARD_DATA }: MiniMapProps) => {
           </div>
           <div className="center-area">
             <div className="logo">부루마불</div>
-            <img src="src/assets/BackgroundSpace.jpg" alt="" />
+            <img src="/BackgroundSpace.jpg" alt="" />
             <div className="line"></div>
-            <img src="src/assets/station.png" alt="" className="station" />
+            <img src="/station.png" alt="" className="station" />
           </div>
           <div className="right-column">
             {BOARD_DATA.right.map((cell) => (
