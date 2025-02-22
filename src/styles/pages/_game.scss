@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
     gap: map-get($map: $spacings, $key: '2');
+    // max-width: 346px;
     @extend .p-4;
     @include themed() {
       background-color: t('btn-secondary-dark');

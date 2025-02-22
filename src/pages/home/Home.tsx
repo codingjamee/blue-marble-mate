@@ -1,5 +1,5 @@
 import LogoComponent from "./LogoComponent";
-import RecentlySaved from "./RecentlySaved";
+// import RecentlySaved from "./RecentlySaved";
 import StartButton from "./StartButton";
 
 const Home = () => {
@@ -7,7 +7,7 @@ const Home = () => {
     <main className="container">
       <LogoComponent />
       <StartButton />
-      <RecentlySaved />
+      {/* <RecentlySaved /> */}
     </main>
   );
 };
