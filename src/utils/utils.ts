@@ -15,7 +15,7 @@
   - 예: 시작금액 대비 200% 성장 시 100% 계산
  */
 
-import { BuildingRentType, PriceType } from './mapType';
+import { BuildingRentType } from './mapType';
 
 const calculateProgress = (turns: any, properties: any, assets: any) => {
   const turnProgress = (turns / 4) * 0.4; // 바퀴 수 가중치 40%

@@ -1,8 +1,7 @@
 // src/layouts/RootLayout.tsx
-import { Outlet } from "react-router-dom";
-import useThemeStore from "../stores/useThemeStore";
-import ThemeToggle from "../pages/home/ThemeToggle";
-import Header from "./Header";
+import { Outlet } from 'react-router-dom';
+import useThemeStore from '../stores/useThemeStore';
+import Header from './Header';
 
 const RootLayout = () => {
   const theme = useThemeStore((state) => state.theme);

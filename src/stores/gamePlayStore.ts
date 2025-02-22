@@ -88,27 +88,27 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         }
       }
     },
-    RECEIVE: async (pickedKey, currentPlayer) => {
+    RECEIVE: async (_, currentPlayer) => {
       playerStore.getState().processPayment(100000, currentPlayer.id);
     },
-    PAY: async (pickedKey, currentPlayer, pendingAction) => {
+    PAY: async (_, currentPlayer, pendingAction) => {
       console.log('황금열쇠 pay 실행');
       playerStore.getState().processPayment(pendingAction?.price || 0, currentPlayer.id);
     },
-    BUILDING_PAYMENT: async (pickedKey, currentPlayer, pendingAction) => {
+    BUILDING_PAYMENT: async (_, currentPlayer, pendingAction) => {
       console.log('황금열쇠 건물 페이 실행');
       playerStore.getState().processPayment(pendingAction?.total || 0, currentPlayer.id);
     },
-    SELL_BUILDING: async (pickedKey, currentPlayer, pendingAction) => {
+    SELL_BUILDING: async (_, _2, pendingAction) => {
       console.log('sell building action실행, ');
       console.log('팔 물건', pendingAction?.target, '타입', pendingAction?.type);
     },
-    MOVE: async (pickedKey, currentPlayer, pendingAction) => {
+    MOVE: async (_, currentPlayer, pendingAction) => {
       console.log('MOVE is called');
       if (!pendingAction?.position) return console.warn('pendingAction.position is undefined');
       playerStore.getState().updatePlayerPosition(currentPlayer.id, pendingAction?.position);
     },
-    WORLD_TOUR: async (pickedKey, currentPlayer, pendingAction) => {
+    WORLD_TOUR: async (_, currentPlayer, pendingAction) => {
       get().actionHandlers['FUND_RECEIVE'](pendingAction, currentPlayer);
     },
     ESCAPE: async () => {},
@@ -160,12 +160,12 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     SKIP: async () => {
       return get().handleNextTurn();
     },
-    FUND_RAISE: async (pendingAction, currentPlayer, building, warpPositionId) => {
+    FUND_RAISE: async (pendingAction, currentPlayer, _, _2) => {
       if (!pendingAction) return;
       playerStore.getState().processPayment(-pendingAction.fund!, currentPlayer.id);
       landStore.getState().fundRaising(currentPlayer.position, pendingAction.fund!);
     },
-    FUND_RECEIVE: async (pendingAction, currentPlayer, building, warpPositionId) => {
+    FUND_RECEIVE: async (pendingAction, currentPlayer, _, _2) => {
       if (!pendingAction) return;
       playerStore.getState().processPayment(pendingAction.fund || 0, currentPlayer.id);
       landStore
@@ -184,7 +184,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     //   playerStore.getState().updateNestedPlayerInfo(currentPlayer.id, ['canSkipTurn'], true);
     //   return;
     // },
-    PICK_GOLDEN_KEY: async (pendingAction, currentPlayer, building, warpPositionId) => {
+    PICK_GOLDEN_KEY: async (_, currentPlayer, _2, _3) => {
       const pickedKey = getRandomElement(LUCKY_KEYS);
       set({ pickedKey, pendingAction: null });
 
@@ -194,7 +194,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       keyPendingActions(pickedKey, setPendingAction, currentPlayer);
     },
 
-    SPACE_MOVE: async (pendingAction, currentPlayer, building, warpPositionId) => {
+    SPACE_MOVE: async (pendingAction, currentPlayer, _, warpPositionId) => {
       //우주여행일 때 컬럼비아호 소유주에게 20만원지급
       if (!pendingAction) return;
 
