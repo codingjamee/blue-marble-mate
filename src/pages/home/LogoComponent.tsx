@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 const LogoComponent = () => {
   return (
     <div className="logo-container">
