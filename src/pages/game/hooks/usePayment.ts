@@ -5,7 +5,7 @@ const usePayment = () => {
   const { processPayment } = playerStore();
 
   const handlePayment = (userId: PlayerNamesType['id'], salary: number) => {
-    processPayment(userId, salary);
+    processPayment(salary, userId);
   };
 
   return { handlePayment };

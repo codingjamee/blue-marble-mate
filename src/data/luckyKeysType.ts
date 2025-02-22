@@ -1,3 +1,5 @@
+import { LandType } from '../utils/mapType';
+
 export type BuildingType = 'HOTEL' | 'BUILDING' | 'VILLA';
 
 export type BuildingCost = Record<BuildingType, number>;
@@ -10,6 +12,13 @@ export type ConditionalPayment = {
 };
 
 export type MoveDestination = string | number;
+
+export const isLuckyActionType = <T extends LuckyKeyAction['type']>(
+  action: LuckyKeyAction,
+  type: T,
+): action is Extract<LuckyKeyAction, { type: T }> => {
+  return action.type === type;
+};
 
 export type LuckyKeyAction =
   | { type: 'PAY'; amount: number }
@@ -24,7 +33,7 @@ export type LuckyKeyAction =
   | { type: 'ESCAPE'; itemPrice?: number }
   | { type: 'FREE_PASS' }
   | { type: 'BUILDING_PAYMENT'; costs: BuildingCost }
-  | { type: 'SELL_BUILDING' }
+  | { type: 'SELL_BUILDING'; target?: { price: number; id: LandType['id'] } }
   | {
       type: 'WORLD_TOUR';
       collectFund: boolean;

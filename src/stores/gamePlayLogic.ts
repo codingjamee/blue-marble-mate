@@ -1,9 +1,9 @@
 // gamePlayLogic.ts
 import landStore, { hereIsFund, isThisOwnableCity } from './landStore';
-import { ActionContext, GoldenActionType, PlayState } from './gamePlayType';
+import { ActionContext, PlayState } from './gamePlayType';
 import playerStore from './playerStore';
 import gameStore from './gameStore';
-import { LuckyKey, MoveDestination } from '../data/luckyKeysType';
+import { BuildingCost, isLuckyActionType, LuckyKey, MoveDestination } from '../data/luckyKeysType';
 import { CityLandType, LandType } from '../utils/mapType';
 import { PlayerNamesType } from './playerType';
 
@@ -196,12 +196,15 @@ const keyPendingActions = (
         currentPlayer,
       );
 
+      if (!rentLandId) return console.warn('rant land id is undefined');
+
       const landsAndrentPrice = landStore
         .getState()
         .getLandOwnerAndRent(rentLandId, currentPlayer.id);
 
       setPendingAction({
         type: 'MOVE_WITH_PAYMENT',
+        landId: rentLandId,
         landsAndrentPrice,
         destinationId,
       });
@@ -220,11 +223,11 @@ const keyPendingActions = (
     },
     BUILDING_PAYMENT: () => {
       if (!currentPlayer.property) return;
-      if (pickedKey.action.type !== 'BUILDING_PAYMENT') return;
+      if (!isLuckyActionType(pickedKey.action, 'BUILDING_PAYMENT')) return;
+      const action = pickedKey.action as { type: 'BUILDING_PAYMENT'; costs: BuildingCost };
+
       const rents = currentPlayer.property.map((property) => {
-        const rentPrice = landStore
-          .getState()
-          .calculateKeyCosts(property.propertyId, pickedKey.action.costs);
+        const rentPrice = landStore.getState().calculateKeyCosts(property.propertyId, action.costs);
         return { id: property.propertyId, rentPrice };
       });
       const total = rents.reduce((rent, price) => (rent += price.rentPrice), 0);
@@ -234,6 +237,7 @@ const keyPendingActions = (
 
     SELL_BUILDING: () => {
       if (!currentPlayer.property) return console.log('소유한 재산이 없습니다.');
+      if (!isLuckyActionType(pickedKey.action, 'SELL_BUILDING')) return;
 
       const playerLands = currentPlayer.property?.map((property) => property.propertyId);
       const landsPrices = playerLands.map((land) => {

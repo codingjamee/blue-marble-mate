@@ -1,4 +1,11 @@
-const Cell = ({ data, position }) => {
+import { BoardPosition, LandType } from '../../utils/mapType';
+
+type Props = {
+  data: LandType;
+  position: BoardPosition;
+};
+
+const Cell = ({ data, position }: Props) => {
   return (
     <div className={`cell ${data.type} ${position}`}>
       <div className="cell-content">
