@@ -252,14 +252,18 @@ const usePlayStore = create<PlayState>()((set, get) => ({
       return;
     }
 
-    const pickedKey = get().pickedKey;
-    if (!pickedKey) return console.warn('picked Key is null');
-
     const actionFn = isActionType(actionType)
       ? () =>
           get().actionHandlers[actionType](pendingAction, currentPlayer, building, warpPositionId)
-      : () =>
-          get().goldenKeyHandlers[pickedKey.action.type](pickedKey, currentPlayer, pendingAction);
+      : () => {
+          const pickedKey = get().pickedKey;
+          if (!pickedKey) return console.warn('picked Key is null');
+          return get().goldenKeyHandlers[pickedKey.action.type](
+            pickedKey,
+            currentPlayer,
+            pendingAction,
+          );
+        };
 
     try {
       await actionFn();
