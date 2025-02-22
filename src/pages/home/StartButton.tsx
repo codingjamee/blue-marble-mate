@@ -8,9 +8,9 @@ const StartButton = () => {
         <button className="btn btn-start" onClick={() => navigate("/start")}>
           새게임 시작하기
         </button>
-        <button className="btn btn-saved" onClick={() => navigate("/saved")}>
+        {/* <button className="btn btn-saved" onClick={() => navigate("/saved")}>
           저장된 게임 불러오기
-        </button>
+        </button> */}
       </div>
     </>
   );

@@ -2804,9 +2804,15 @@ p {
   }
 }
 
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .game-container .left-console {
   display: flex;
   flex-direction: column;
+  max-width: 500px;
   gap: 1rem;
 }
 @media screen and (min-width: 1024px) {
@@ -2935,6 +2941,9 @@ p {
   background-color: #374151;
 }
 
+.right-console {
+  width: 500px;
+}
 @media screen and (min-width: 1024px) {
   .right-console {
     flex-direction: column;

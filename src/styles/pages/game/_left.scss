@@ -1,7 +1,12 @@
 .game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   .left-console {
     display: flex;
     flex-direction: column;
+    max-width: 500px;
+
     // display: none;
 
     // background-color: bisque;
