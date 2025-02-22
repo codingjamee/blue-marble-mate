@@ -1,22 +1,21 @@
 import { Dispatch, SetStateAction } from 'react';
 import usePlayStore from '../../../stores/gamePlayStore';
-import { LuckyKeyAction } from '../../../data/luckyKeysType';
 
 const KeyControl = ({ setModal }: { setModal: Dispatch<SetStateAction<boolean>> }) => {
   const pickedKey = usePlayStore((state) => state.pickedKey);
   const handleUserAction = usePlayStore((state) => state.handleUserAction);
 
-  const getActionType = (type: LuckyKeyAction['type']) => {
-    switch (type) {
-      case 'WORLD_TOUR':
-        return 'FUND_RECEIVE';
-      case 'ESCAPE':
-      case 'FREE_PASS':
-        return null;
-      default:
-        return type;
-    }
-  };
+  // const getActionType = (type: LuckyKeyAction['type']) => {
+  //   switch (type) {
+  //     case 'WORLD_TOUR':
+  //       return 'FUND_RECEIVE';
+  //     case 'ESCAPE':
+  //     case 'FREE_PASS':
+  //       return null;
+  //     default:
+  //       return type;
+  //   }
+  // };
 
   return (
     <div className="building-select warp">

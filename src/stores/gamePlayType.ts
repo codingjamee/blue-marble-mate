@@ -1,6 +1,6 @@
 import { LuckyKey } from '../data/luckyKeysType';
 import { RollResult } from '../pages/game/hooks/useRollDice';
-import { LandType, BuildingRentType } from '../utils/mapType';
+import { LandType, BuildingRentType, PriceType, NationType } from '../utils/mapType';
 import { LandState } from './landType';
 import { PlayerNamesType } from './playerType';
 
@@ -65,11 +65,21 @@ export interface PlayState {
   isDouble: boolean;
   pendingAction: {
     type: ActionType | GoldenType;
-    landId: LandType['id'];
+    landId?: LandType['id'];
     price?: number;
     options?: pendingOptionType | null;
     fund?: number;
     position?: LandType['id'];
+    landsAndrentPrice?: {
+      isCurrentPlayerOwner?: boolean;
+      hasOwner?: boolean;
+      ownerId: NationType['owner'] | null;
+      ownerName: NationType['name'] | null;
+      rentPrice?: number;
+    };
+    destinationId?: any;
+    total?: number;
+    target?: { price: PriceType; id: number };
   } | null;
   diceIsRolled: boolean;
   pickedKey: LuckyKey | null;
@@ -88,7 +98,7 @@ export interface PlayState {
   handleTurn: () => Promise<true | void>;
   handleIslandTurn: () => Promise<true | void>;
   handleUserAction: (
-    actionType: ActionType,
+    actionType: ActionType | GoldenType,
     building?: Exclude<BuildingRentType, 'land'>,
     warpPosition?: PlayerNamesType['position']['id'],
   ) => Promise<void>;

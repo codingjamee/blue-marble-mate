@@ -220,6 +220,7 @@ const LUCKY_KEYS: LuckyKey[] = [
     contents: '당신의 부동산 중에서 가장 비싼 곳을 반액으로 은행에 파세요',
     action: {
       type: 'SELL_BUILDING',
+      target: undefined,
     },
   },
   {

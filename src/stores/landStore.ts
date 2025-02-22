@@ -147,7 +147,7 @@ const landStore = create<LandState>((set, get) => ({
         if (land.id === position && isThisOwnableCity(land)) {
           return {
             ...land,
-            buildings: [...land.buildings, building],
+            buildings: building === 'land' ? [...land.buildings] : [...land.buildings, building],
           };
         }
         return land;

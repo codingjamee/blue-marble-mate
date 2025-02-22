@@ -65,14 +65,15 @@ const usePlayStore = create<PlayState>()((set, get) => ({
 
       const rentLandName = pickedKey.action.payment.paymentProperty.rentLandName;
       const rentLandId = getDestinationId(rentLandName, lands, currentPlayer);
+      if (!rentLandId) return console.warn('rentLandId is undefined');
       const landsAndrentPrice = landStore
         .getState()
         .getLandOwnerAndRent(rentLandId, currentPlayer.id);
 
       await playerStore.getState().updatePlayerPosition(currentPlayer.id, destinationId);
 
-      if (landsAndrentPrice && landsAndrentPrice.hasOwner) {
-        const { useRentPrice } = pickedKey.action.payment;
+      if (landsAndrentPrice && landsAndrentPrice.hasOwner && landsAndrentPrice.ownerId) {
+        const { useRentPrice } = pickedKey.action.payment.paymentProperty;
         const rent = useRentPrice ? landsAndrentPrice.rentPrice : 0;
         const toId = useRentPrice ? landsAndrentPrice.ownerId : undefined;
 
@@ -104,6 +105,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     },
     MOVE: async (pickedKey, currentPlayer, pendingAction) => {
       console.log('MOVE is called');
+      if (!pendingAction?.position) return console.warn('pendingAction.position is undefined');
       playerStore.getState().updatePlayerPosition(currentPlayer.id, pendingAction?.position);
     },
     WORLD_TOUR: async (pickedKey, currentPlayer, pendingAction) => {
@@ -122,6 +124,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
           .processPayment(pendingAction.price ? -pendingAction.price : 0, currentPlayer.id);
 
         console.log(result, 'processPayment is Fulfilled');
+        if (!pendingAction?.landId) return console.warn('pendingAction.landId is undefined');
 
         landStore.getState().updateLandOwner(pendingAction.landId, currentPlayer.id);
         playerStore.getState().updateLandOwner(pendingAction.landId, currentPlayer.id);
@@ -141,8 +144,11 @@ const usePlayStore = create<PlayState>()((set, get) => ({
         );
     },
     BUILD: async (pendingAction, currentPlayer, building) => {
+      if (!pendingAction) return console.warn('pending action is undefined');
       console.log(building);
-      if (!building) return console.log('building is undefined');
+      if (!building) return console.warn('building is undefined');
+      if (!pendingAction?.landId) return console.warn('pendingAction.landId is undefined');
+
       landStore.getState().updateBuildings(pendingAction.landId, building);
       playerStore.getState().constructBuilding(pendingAction.landId, currentPlayer.id, building);
     },
@@ -247,6 +253,7 @@ const usePlayStore = create<PlayState>()((set, get) => ({
     }
 
     const pickedKey = get().pickedKey;
+    if (!pickedKey) return console.warn('picked Key is null');
 
     const actionFn = isActionType(actionType)
       ? () =>
