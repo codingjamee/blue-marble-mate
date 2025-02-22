@@ -2,38 +2,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { generateRandomGameName } from '../utils/sessionNaming';
-import playerStore, { PlayerNamesType } from './playerStore';
-import dayjs from 'dayjs';
+import playerStore from './playerStore';
 import { createStore, UseStore } from 'idb-keyval';
 import { customStorage, loadGameService, saveToDB, startGameService } from './gameLogic';
-
-export interface GameState {
-  gameName: string;
-  isOnline: boolean;
-  gameState: boolean;
-  players: PlayerNamesType[];
-  createdAt: dayjs.Dayjs | null;
-  round: number;
-  currentStore: ReturnType<typeof createStore> | null;
-  gameList: string[]; // 모든 게임 이름 목록
-  setGameName: (name: string) => Promise<void>;
-  updateRandomGameName: () => Promise<void>;
-  updateEmptyGameName: () => Promise<void>;
-  startGame: (value?: boolean) => Promise<void>;
-  loadGame: () => Promise<GameData | null | undefined>;
-  endGame: (value?: boolean) => void;
-  resetGame: () => void;
-  deleteGame: (name: string) => Promise<void>;
-  createNewStore: (name: string) => Promise<UseStore>;
-  syncPlayers: (players: PlayerNamesType[]) => void;
-}
-
-export interface GameData {
-  gameName: string;
-  players: PlayerNamesType[];
-  createdAt: dayjs.Dayjs;
-  gameState: boolean;
-}
+import landStore from './landStore';
+import { GameState } from './gameStoreType';
 
 // 메인 스토어 생성
 export const mainStore: UseStore = createStore('main-game-db', 'main-game-store');
@@ -45,6 +18,7 @@ const gameStore = create<GameState>()(
       isOnline: navigator.onLine,
       gameState: false,
       players: [],
+      lands: [],
       createdAt: null,
       currentStore: null,
       gameList: [], // 게임 목록 초기화
@@ -72,24 +46,41 @@ const gameStore = create<GameState>()(
         }
       },
 
+      updateGameState: (state: boolean) => {
+        setState({ gameState: state });
+      },
+
       startGame: async () => {
         await startGameService(setState, getState, {
           gameName: getState().gameName,
           playerStore,
           mainStore,
+          landStore,
         });
+        // Land Store 초기화
+        landStore.setState({ currentGameName: getState().gameName });
+        await landStore.getState().initializeLands();
+
         getState().loadGame();
         playerStore.getState().startTurn();
       },
 
       loadGame: async () => {
         const result = await loadGameService(setState, getState, { mainStore });
+        landStore.getState().loadGameLands();
+
         return result;
       },
 
       syncPlayers: (players) => {
         setState({ players });
-        saveToDB(getState, players);
+        saveToDB({ get: getState, players });
+      },
+
+      syncLands: (lands) => {
+        console.log('syncLands is called', lands);
+        setState({ lands });
+        saveToDB({ get: getState, lands });
       },
 
       deleteGame: async (name: string) => {
@@ -101,7 +92,10 @@ const gameStore = create<GameState>()(
       },
 
       resetGame: () => {
+        console.log('reset Game is Called');
         setState({ gameName: '', players: [] });
+        playerStore.getState().setPlayerInit();
+        landStore.getState().initializeLands();
       },
 
       endGame: (value) => setState({ gameState: value ?? false }),
@@ -116,6 +110,7 @@ const gameStore = create<GameState>()(
           players: state.players,
           gameState: state.gameState,
           createdAt: state.createdAt,
+          lands: state.lands,
         }) as GameState,
     },
   ),

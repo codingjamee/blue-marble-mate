@@ -1,50 +1,38 @@
-# React + TypeScript + Vite
+# 웹 기반 보드게임 - BoardMaster
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 프로젝트 소개
 
-Currently, two official plugins are available:
+네트워크 상태와 무관하게 안정적으로 즐길 수 있는 오프라인 지원 웹 보드게임입니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 주요 기능
 
-## Expanding the ESLint configuration
+1. 오프라인 게임 데이터 관리
+2. 자동 저장/복구 시스템
+3. 턴 기반 게임플레이
+4. 실시간 게임 상태 시각화
+5. 다크모드 지원
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 기술적 특징
 
-- Configure the top-level `parserOptions` property like this:
+1. 오프라인 우선 아키텍처
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+   - IndexedDB 활용한 데이터 영속성 보장
+   - 자동 저장/복구 시스템 구현
+   - 네트워크 독립적 게임 진행
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. 모듈화된 상태 관리
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+   - Zustand 기반 도메인별 스토어 설계
+   - 이벤트 기반 게임 로직 구현
+   - 상태 업데이트 부작용 최소화
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+3. 확장 가능한 게임 시스템
+
+   - 관심사 분리를 통한 도메인별 로직 분리
+   - 이벤트 기반 게임 규칙 확장 구조
+   - 독립적인 스토어 간 데이터 정합성 보장
+
+4. 사용자 경험 최적화
+   - 끊김 없는 게임플레이 제공
+   - 실시간 게임 상태 시각화
+   - 사용자 선호 테마 지원

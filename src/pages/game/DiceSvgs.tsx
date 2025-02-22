@@ -5,7 +5,10 @@ import Dice4 from '../../assets/Dice4.svg?react';
 import Dice5 from '../../assets/Dice5.svg?react';
 import Dice6 from '../../assets/Dice6.svg?react';
 
-const DiceSvgs = {
+export type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+type DiceSvgsType = Record<DiceValue, JSX.Element>;
+
+const DiceSvgs: DiceSvgsType = {
   1: <Dice1 />,
   2: <Dice2 />,
   3: <Dice3 />,

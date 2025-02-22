@@ -1,7 +1,7 @@
 import User from '../../assets/User.svg?react';
-import { PlayerType } from './PlayerInfo';
+import { PlayerNamesType } from '../../stores/playerType';
 
-const Player = ({ player }: { player: PlayerType }) => {
+const Player = ({ player }: { player: PlayerNamesType }) => {
   return (
     <article className="player" key={player.id}>
       <div className="name">
@@ -18,7 +18,7 @@ const Player = ({ player }: { player: PlayerType }) => {
         )}
       </div>
       <div className="description">
-        <div className="loca">위치 : {`${player.position.name} ${player.position.number}`}</div>
+        <div className="loca">위치 : {`${player.position.flag} ${player.position.name}`}</div>
         <div className="des">
           <h5>현금: </h5>
           <div>₩{player.cash}</div>

@@ -1,10 +1,10 @@
 import { ColorOption, colorOptions, ValueLabel } from '../constants/colors';
-import { BOARD_DATA } from '../utils/mapInfo';
+import { POSITION_DATA } from '../utils/mapInfo';
 import { getRandomElement } from '../utils/utils';
-import { PlayerNamesType, PlayerState } from './playerStore';
+import { PlayerNamesType, PlayerState } from './playerType';
 import { v4 as uuid } from 'uuid';
-import { get as getFromDB } from 'idb-keyval';
-import { GameState } from './gameStore';
+import { get as getFromDB, UseStore } from 'idb-keyval';
+import { GameState } from './gameStoreType';
 
 export type SetStateFunction<T> = (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
 
@@ -41,22 +41,20 @@ const getRandomColors = ({ number, state }: { number: number; state?: PlayerStat
   return randomColors;
 };
 
-export const playerInitObj = (color: ValueLabel) => ({
+export const playerInitObj = (color: ValueLabel): PlayerNamesType => ({
   id: uuid(),
   name: '',
   property: undefined,
-  luckyKeys: undefined,
+  luckyKeys: [],
   cash: 200000,
-  position: {
-    name: BOARD_DATA.top[0].name,
-    number: BOARD_DATA.top[0].id,
-  },
+  position: POSITION_DATA[0],
   isInIsland: false,
   islandTurnLeft: 0,
   playerColor: color,
   isCurrentTurn: false,
   isDouble: false,
   doubleTurnLeft: 0,
+  canSkipTurn: false,
 });
 
 const getPlayerInitialize = ({ number, state }: { number: number; state?: PlayerState }) => {
@@ -69,12 +67,13 @@ const loadGamePlayersService = async (
   setState: SetStateFunction<PlayerState>,
   createNewStore: GameState['createNewStore'],
   options: {
-    mainStore: any;
+    mainStore: UseStore;
   },
 ) => {
   try {
     const lastGameName = await getFromDB<string>('currentGame', options.mainStore);
     if (lastGameName) {
+      console.log('loadGamePlayersService lastGameName', lastGameName);
       const store = await createNewStore(lastGameName);
       const gameData = await getFromDB<GameState>(lastGameName, store);
       console.log(gameData);

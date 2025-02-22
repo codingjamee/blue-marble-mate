@@ -1,4 +1,5 @@
-import { GameData, GameState } from './gameStore';
+import { GameData } from './gameStoreType';
+import { GameState } from './gameStoreType';
 import dayjs from 'dayjs';
 import {
   createStore,
@@ -7,8 +8,26 @@ import {
   UseStore,
   del as delFromDB,
 } from 'idb-keyval';
-import { PlayerNamesType, PlayerState } from './playerStore';
+import { PlayerNamesType, PlayerState } from './playerType';
 import { StoreApi } from 'zustand';
+import { LandState } from './landType';
+import { LandType } from '../utils/mapType';
+
+export const connectionManager = {
+  connections: new Map<string, UseStore>(),
+
+  async getConnection(name: string): Promise<UseStore> {
+    if (!this.connections.has(name)) {
+      const store = createStore(`${name}-db`, `${name}-store`);
+      this.connections.set(name, store);
+    }
+    return this.connections.get(name)!;
+  },
+
+  async closeConnection(name: string) {
+    this.connections.delete(name);
+  },
+};
 
 const startGameService = async (
   setState: (state: Partial<GameState>) => void,
@@ -17,21 +36,24 @@ const startGameService = async (
     gameName: string;
     playerStore: StoreApi<PlayerState>;
     mainStore: any;
+    landStore: StoreApi<LandState>;
   },
 ) => {
   const { gameName } = getState();
-  const newStore = createStore(`${gameName}-db`, `${gameName}-store`);
+  const store = await connectionManager.getConnection(gameName);
   const players = options.playerStore.getState().playerInfos;
+  const lands = options.landStore.getState().lands;
 
   const gameData: GameData = {
     gameName,
     players,
+    lands,
     createdAt: dayjs(),
-    gameState: true,
+    gameState: false,
   };
 
   try {
-    await setToDB(gameName, gameData, newStore);
+    await setToDB(gameName, gameData, store);
     await setToDB('currentGame', gameName, options.mainStore);
 
     setState({
@@ -43,20 +65,29 @@ const startGameService = async (
   }
 };
 
-const saveToDB = async (get: () => GameState, players: PlayerNamesType[]) => {
+const saveToDB = async ({
+  get,
+  players,
+  lands,
+}: {
+  get: () => GameState;
+  players?: PlayerNamesType[];
+  lands?: LandType[];
+}) => {
+  const state = get();
   const gameName = get().gameName;
-  const currentStore = get().currentStore || (await get().createNewStore(get().gameName));
+  const store = await connectionManager.getConnection(gameName);
 
-  if (currentStore) {
-    const gameData = {
-      gameName: get().gameName,
-      players,
-      gameState: get().gameState,
-      createdAt: get().createdAt || dayjs(),
-      updatedAt: new Date(),
-    };
-    await setToDB(gameName, gameData, currentStore);
-  }
+  const gameData = {
+    gameName: state.gameName,
+    players: state.players || players,
+    lands: state.lands || lands,
+    gameState: state.gameState,
+    createdAt: state.createdAt || dayjs(),
+    updatedAt: new Date(),
+  };
+
+  await setToDB(gameName, gameData, store);
 };
 
 const loadGameService = async (
@@ -69,8 +100,10 @@ const loadGameService = async (
   try {
     const lastGameName = await getFromDB<string>('currentGame', options.mainStore);
     if (lastGameName) {
-      const store = await getState().createNewStore(lastGameName);
+      const store = await connectionManager.getConnection(lastGameName);
       const gameData = await getFromDB<GameData>(lastGameName, store);
+
+      console.log('gameLogic', gameData);
 
       if (gameData) {
         setState({
@@ -83,7 +116,9 @@ const loadGameService = async (
       return gameData;
     }
   } catch (error) {
-    console.error('Failed to load game:', error);
+    if (getState().gameName) {
+      await connectionManager.closeConnection(getState().gameName);
+    }
     return null;
   }
 };
@@ -106,7 +141,7 @@ const customStorage = (mainStore: UseStore) => ({
   },
   removeItem: async (name: IDBValidKey) => {
     try {
-      await delFromDB(name);
+      await delFromDB(name, mainStore);
     } catch (err) {
       console.error('Error removing from IndexedDB:', err);
     }

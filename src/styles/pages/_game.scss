@@ -62,3 +62,15 @@
     background-color: #dcfce7;
   }
 }
+
+.building-select {
+  display: flex;
+  flex-direction: column;
+  gap: map-get($map: $spacings, $key: '4');
+  @extend .p-2;
+  @extend .py-4;
+  &.warp {
+    height: 500px;
+    overflow-y: scroll;
+  }
+}

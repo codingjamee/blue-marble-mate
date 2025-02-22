@@ -15,7 +15,6 @@ const ColorElem = ({ label, value, setColor, checked }: Props) => {
       className="color-elem"
       onClick={() => {
         setColor(value);
-        console.log(label);
       }}
       key={`${label}-${value}`}
     >

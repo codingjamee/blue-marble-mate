@@ -1,5 +1,5 @@
-import { GameState } from '../../stores/gameStore';
-import { PlayerNamesType } from '../../stores/playerStore';
+import { GameState } from '../../stores/gameStoreType';
+import { PlayerNamesType } from '../../stores/playerType';
 
 interface Props {
   gameName: GameState['gameName'];

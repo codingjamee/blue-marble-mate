@@ -1,6 +1,6 @@
 import Random from '../../assets/Random.svg?react';
-import { GameState } from '../../stores/gameStore';
-import { PlayerNamesType } from '../../stores/playerStore';
+import { GameState } from '../../stores/gameStoreType';
+import { PlayerNamesType } from '../../stores/playerType';
 interface Props {
   label: string;
   placeholder: string;

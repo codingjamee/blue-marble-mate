@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ColorOption, colorOptions } from '../constants/colors';
+import { colorOptions } from '../constants/colors';
 import { generateRandomPlayerName } from '../utils/playerNaming';
 import {
   getPlayerInitialize,
@@ -7,64 +7,48 @@ import {
   getUpdatedPlayerInit,
   loadGamePlayersService,
 } from './playerLogic';
-import gameStore, { GameState, mainStore } from './gameStore';
+import gameStore, { mainStore } from './gameStore';
 import { updateNestedValue } from '../utils/utils';
-
-export interface PlayerNamesType {
-  id: string;
-  name: string;
-  property?: {
-    propertyId: string;
-    name: string;
-    buildings: {
-      villa: boolean;
-      building: boolean;
-      hotel: boolean;
-    }[];
-  }[];
-  luckyKeys?: {
-    name: string;
-  }[];
-  cash: number;
-  position: {
-    name: string;
-    number: number;
-  };
-  isInIsland: boolean;
-  islandTurnLeft: number;
-  playerColor: ColorOption['value'];
-  isCurrentTurn: boolean;
-  isDouble: boolean;
-  doubleTurnLeft: number;
-}
-
-export interface PlayerState {
-  playerNumber: number;
-  playerInfos: PlayerNamesType[];
-  setPlayerNumber: (number: PlayerState['playerNumber']) => void;
-  setPlayerInit: () => void;
-  updatePlayerNumber: (number: PlayerState['playerNumber']) => void;
-  updatePlayerName: (index: number, state: PlayerNamesType['name']) => void;
-  updateRandomPlayerName: (playerId: PlayerNamesType['id']) => void;
-  updateEmptyName: () => void;
-  updatePlayerColor: (index: PlayerNamesType['id'], state: PlayerNamesType['playerColor']) => void;
-  // up9datePlayerInfo: (id: PlayerNamesType['id'] value: Pick<PlayerNamesType>) => void;
-  updateRandomPlayerColor: (playerId: PlayerNamesType['id']) => void;
-  updatePlayer: (id: string, path: string[], value: any) => void;
-  getNowTurnId: () => string;
-  startTurn: () => void;
-  loadGamePlayers: () => Promise<GameState | null | undefined>;
-  // setState: (fn: any) => void;
-  // syncToGame: (gameStore: StoreApi<GameState>) => Promise<void>;
-}
+import { PlayerState, PlayerNamesType } from './playerType';
+import landStore from './landStore';
 
 const playerStore = create<PlayerState>((set, get) => ({
   playerNumber: 2,
   playerInfos: getPlayerInitialize({ number: 2 }),
+  //getter
+  getNowTurnId: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    return currentPlayer?.id ?? get().playerInfos[0].id;
+  },
+
+  getNowTurn: () => {
+    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
+    return currentPlayer ?? get().playerInfos[0];
+  },
+  getPlayerInfo: (id) => {
+    const playerInfo = get().playerInfos.find((player) => player.id === id);
+    //없다면 기본값 반환
+    if (!playerInfo) return getPlayerInitialize({ number: 1 })[0];
+    return playerInfo;
+  },
+  getNameById: (id) => {
+    const playerInfo = get().getPlayerInfo(id);
+    return playerInfo.name;
+  },
+
+  loadGamePlayers: async () => {
+    const result = await loadGamePlayersService(set, gameStore.getState().createNewStore, {
+      mainStore,
+    });
+    return result;
+  },
+
+  //setter
   setPlayerNumber: (number: PlayerState['playerNumber']) => set(() => ({ playerNumber: number })),
   setPlayerInit: () =>
     set((state) => ({
       playerInfos: getPlayerInitialize({ number: 2, state: state }),
+      playerNumber: 2,
     })),
   updatePlayerNumber: (number) =>
     set((state: PlayerState) => ({
@@ -110,7 +94,7 @@ const playerStore = create<PlayerState>((set, get) => ({
       return { ...state, playerInfos: stateWithNewColor };
     }),
 
-  updatePlayer: (id, path, value) => {
+  updateNestedPlayerInfo: (id, path, value) => {
     set((state) => {
       const updatedPlayerInfos = state.playerInfos.map((player) =>
         player.id === id ? updateNestedValue(player, path, value) : player,
@@ -124,29 +108,223 @@ const playerStore = create<PlayerState>((set, get) => ({
       };
     });
   },
+  updatePlayerPosition: (nowTurnId, newPosition) => {
+    const nowTurnInfo = get().getNowTurn();
+
+    const nextPosition = gameStore.getState().lands[newPosition];
+
+    if (nextPosition) {
+      if (nextPosition.type === 'city' && !nextPosition.owner) {
+        playerStore.getState().updateNestedPlayerInfo(nowTurnInfo.id, ['canSkipTurn'], true);
+      }
+      get().updateNestedPlayerInfo(nowTurnId, ['position'], {
+        ...nowTurnInfo.position,
+        name: nextPosition.name,
+        id: nextPosition.id,
+        flag: nextPosition.flag,
+        type: nextPosition.type,
+      });
+    }
+  },
+  updateDouble: (id, isDouble, turnLeft) => {
+    const playerInfo = get().getPlayerInfo(id);
+
+    set((state) => {
+      const updatedPlayerInfos = state.playerInfos.map((player) => ({
+        ...player,
+        isDouble,
+        doubleTurnLeft: playerInfo.doubleTurnLeft + turnLeft,
+      }));
+
+      gameStore.getState().syncPlayers(updatedPlayerInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedPlayerInfos,
+      };
+    });
+  },
+
+  processPayment: (amount, fromId, toId) => {
+    // fromId : 내는 친구 toId : 받는 친구 // amount는 내는친구 위주
+    return new Promise((resolve, reject) => {
+      try {
+        set((state) => {
+          const updatedInfos = state.playerInfos.map((player) => ({
+            ...player,
+            cash:
+              player.id === fromId
+                ? player.cash + amount
+                : player.id === toId
+                  ? player.cash - amount
+                  : player.cash,
+          }));
+
+          console.log('processPayment', updatedInfos);
+          gameStore.getState().syncPlayers(updatedInfos);
+
+          return {
+            ...state,
+            playerInfos: updatedInfos,
+          };
+        });
+
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 
   startTurn: () => {
     const firstPlayer = get().playerInfos[0];
-    get().updatePlayer(firstPlayer.id, ['isCurrentTurn'], true);
+    get().updateNestedPlayerInfo(firstPlayer.id, ['isCurrentTurn'], true);
   },
 
-  nextTurn: () => {
-    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
-    if (!currentPlayer) return;
-    get().updatePlayer(currentPlayer?.id, ['isCurrentTurn'], false);
-  },
+  nextTurn: (currentPlayer) => {
+    const currentIndex = get().playerInfos.findIndex((player) => player.id === currentPlayer.id);
+    const nextIndex = (currentIndex + 1) % get().playerInfos.length;
+    const nextPlayer = get().playerInfos[nextIndex];
 
-  getNowTurnId: () => {
-    const currentPlayer = get().playerInfos.find((player) => player.isCurrentTurn);
-    return currentPlayer?.id ?? get().playerInfos[0].id;
-  },
+    set((state) => {
+      const updatedPlayerInfos = state.playerInfos.map((player) => ({
+        ...player,
+        isCurrentTurn: player.id === nextPlayer.id,
+        canSkipTurn: false,
+        isDouble: false,
+      }));
 
-  loadGamePlayers: async () => {
-    const result = await loadGamePlayersService(set, gameStore.getState().createNewStore, {
-      mainStore,
+      gameStore.getState().syncPlayers(updatedPlayerInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedPlayerInfos,
+      };
     });
-    return result;
   },
+  updateIslandTurn: (playerId, value) => {
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => ({
+        ...player,
+        islandTurnLeft:
+          player.id === playerId ? player.islandTurnLeft + value : player.islandTurnLeft,
+      }));
+
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+  updateFirstIslandState: (playerId) => {
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => ({
+        ...player,
+        isInIsland: player.id === playerId,
+        islandTurnLeft: player.id === playerId ? 3 : player.islandTurnLeft,
+      }));
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+
+  updateLandOwner: (landId, playerId) => {
+    const landInfo = landStore.getState().getLandInfo(landId);
+    if (!landInfo) throw Error('유효하지 않은 landID');
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => ({
+        ...player,
+
+        property:
+          player.id === playerId
+            ? [
+                ...(player.property || []),
+                {
+                  propertyId: landId,
+                  name: landInfo.name,
+                  buildings: {
+                    villa1: false,
+                    villa2: false,
+                    building: false,
+                    hotel: false,
+                  },
+                },
+              ]
+            : player.property,
+      }));
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+  constructBuilding: (landId, playerId, buildingType) => {
+    const landInfo = landStore.getState().getLandInfo(landId);
+    if (!landInfo) throw Error('유효하지 않은 landID');
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => {
+        if (player.id !== playerId) return player;
+
+        const updatedProperty = (player.property || []).map((prop) => {
+          if (prop.propertyId !== landId) return prop;
+
+          const updatedBuildings = { ...prop.buildings };
+          updatedBuildings[buildingType] = true;
+
+          return {
+            ...prop,
+            buildings: updatedBuildings,
+          };
+        });
+
+        return {
+          ...player,
+          property: updatedProperty,
+        };
+      });
+
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return {
+        ...state,
+        playerInfos: updatedInfos,
+      };
+    });
+  },
+  updateSkip: (playerId, value) => {
+    set((state) => {
+      const updatedInfos = state.playerInfos.map((player) => {
+        if (player.id === playerId) {
+          return {
+            ...player,
+            canSkipTurn: value,
+          };
+        }
+        return player;
+      });
+
+      gameStore.getState().syncPlayers(updatedInfos);
+
+      return { ...state, playerInfos: updatedInfos };
+    });
+  },
+
+  updateLuckyKeys: (luckyInfo, playerId) =>
+    set((state) => ({
+      playerInfos: state.playerInfos.map((player) =>
+        player.id === playerId
+          ? { ...player, luckyKeys: [...(player.luckyKeys || []), luckyInfo] }
+          : player,
+      ),
+    })),
 }));
 
 playerStore.getState().loadGamePlayers();
