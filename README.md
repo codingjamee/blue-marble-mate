@@ -1,4 +1,4 @@
-# 웹 기반 보드게임 - BoardMaster
+# 웹 기반 보드게임 - blue marble mate
 
 ## 프로젝트 소개
 
