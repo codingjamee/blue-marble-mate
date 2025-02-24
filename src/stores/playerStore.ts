@@ -327,6 +327,6 @@ const playerStore = create<PlayerState>((set, get) => ({
     })),
 }));
 
-playerStore.getState().loadGamePlayers();
+// playerStore.getState().loadGamePlayers();
 
 export default playerStore;

@@ -66,10 +66,20 @@ const gameStore = create<GameState>()(
       },
 
       loadGame: async () => {
-        const result = await loadGameService(setState, getState, { mainStore });
-        landStore.getState().loadGameLands();
-
-        return result;
+        console.log('loadGame called');
+        try {
+          const result = await loadGameService(setState, getState, { mainStore });
+          console.log(result);
+          if (result) {
+            landStore.getState().loadGameLands();
+            playerStore.getState().loadGamePlayers();
+            return result;
+          }
+        } catch (error) {
+          console.error('Failed to load game:', error);
+          getState().resetGame();
+        }
+        return null;
       },
 
       syncPlayers: (players) => {
@@ -88,7 +98,6 @@ const gameStore = create<GameState>()(
         setState((state) => ({
           gameList: state.gameList.filter((gameName) => gameName !== name),
         }));
-        // TODO: 해당 게임의 스토어 삭제 로직 추가
       },
 
       resetGame: () => {
