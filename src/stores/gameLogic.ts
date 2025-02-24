@@ -103,12 +103,10 @@ const loadGameService = async (
       const store = await connectionManager.getConnection(lastGameName);
       const gameData = await getFromDB<GameData>(lastGameName, store);
 
-      console.log('gameLogic', gameData);
-
       if (gameData) {
         setState({
           ...gameData,
-          createdAt: dayjs(gameData.createdAt),
+          createdAt: gameData.createdAt,
           currentStore: store,
           gameName: lastGameName,
         });
@@ -116,6 +114,7 @@ const loadGameService = async (
       return gameData;
     }
   } catch (error) {
+    console.log('error occured', error);
     if (getState().gameName) {
       await connectionManager.closeConnection(getState().gameName);
     }
