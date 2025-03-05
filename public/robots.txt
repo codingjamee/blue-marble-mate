@@ -1,0 +1,4 @@
+# 대상: 모든 크롤러
+
+User-agent: * 
+Allow: /

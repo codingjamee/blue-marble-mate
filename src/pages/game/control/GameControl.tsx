@@ -32,7 +32,7 @@ const GameControl = () => {
   }, [currentPlayer.position.name]);
 
   useEffect(() => {
-    currentPlayer.position.name === '황금열쇠' && setGoldenKeyModal(true);
+    currentPlayer.position.name === '황금열쇠' && canControl && setGoldenKeyModal(true);
   }, [currentPlayer.position.name]);
 
   return (
